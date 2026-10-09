@@ -387,6 +387,73 @@ td .tag.booked{display:inline-block;margin:4px 0 2px}
 .whochip[aria-pressed="false"]{color:var(--muted)}
 .whochip[aria-pressed="true"]{background:var(--heart-soft);border-color:var(--heart-line);color:var(--heart)}
 .whofilter .seg button:disabled{opacity:.45;cursor:default}
+/* progress */
+.progress{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.pg-bar{display:inline-block;width:90px;height:6px;border-radius:999px;background:var(--line);overflow:hidden;flex:none}
+.pg-bar span{display:block;height:100%;background:var(--heart);border-radius:999px}
+.progress b{color:var(--ink)}
+/* quick pick */
+.qpbanner{display:flex;align-items:center;gap:16px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--heart-soft);border:1px solid var(--heart-line)}
+.qpb-text{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.qpb-text b{font-family:var(--f-display);font-size:18px;color:var(--heart)}
+.qpb-text span{font-size:13px;color:var(--ink)}
+.qpb-btn{font:inherit;font-size:16px;font-weight:700;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 22px;border:0;border-radius:999px;background:var(--heart);color:var(--on-heart);cursor:pointer;white-space:nowrap;box-shadow:0 6px 14px -6px rgba(176,40,28,.55);transition:transform .15s ease}
+.qpb-btn:hover:not(:disabled){transform:translateY(-1px)}
+.qpb-btn:disabled{opacity:.5;cursor:default;box-shadow:none}
+.qpb-btn .ic{width:18px;height:18px}
+.qpb-btn .ic path{fill:currentColor;stroke:none}
+@media (max-width:640px){.qpbanner{flex-direction:column;align-items:stretch;gap:10px}.qpb-btn{justify-content:center}}
+.qp{border:0;border-radius:16px;background:var(--card);color:var(--ink);padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100vh - 24px);box-shadow:0 12px 28px -10px rgba(0,0,0,.45)}
+.qp::backdrop{background:rgba(20,16,12,.65)}
+.qp-in{display:flex;flex-direction:column;max-height:calc(100vh - 24px)}
+.qp-top{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.qp-top .pg-bar{flex:1;width:auto}
+.qp-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.qp-card{overflow:auto;flex:1}
+.qp-ph{aspect-ratio:4/3;cursor:zoom-in}
+.qp-body{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.qp-body .name{font-size:20px}
+.qp-who{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qp-who .mini{margin-left:auto}
+.qp-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.qpa{font:inherit;font-size:15px;font-weight:700;min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.qpa .ic{width:18px;height:18px}
+.qpa.yes{background:var(--heart);border-color:var(--heart);color:var(--on-heart)}
+.qpa.yes .ic path{fill:currentColor}
+.qpa.later{color:var(--muted)}
+.qp-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 14px 12px;font-size:12px}
+.qp-done{padding:28px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.qp-done h2{font-family:var(--f-display);margin:0}
+.qp-done p{color:var(--muted);margin:0;max-width:36ch}
+/* photo viewer */
+.card .ph img{cursor:zoom-in}
+.lb{border:0;padding:0;background:#0d0b09;width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0}
+.lb::backdrop{background:#0d0b09}
+.lb-in{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.lb-in img{max-width:100%;max-height:calc(100% - 56px);object-fit:contain}
+.lb-bar{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:12px 16px;color:#efece6;font-size:13px;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.lb-bar a{color:#efece6;opacity:.8}
+.lb-bar .linkbtn{margin-left:auto;color:#efece6;min-height:44px}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:64px;border:0;border-radius:10px;background:rgba(0,0,0,.45);color:#fff;cursor:pointer;display:grid;place-items:center}
+.lb-nav.prev{left:10px}.lb-nav.next{right:10px}
+img.img-fail{visibility:hidden}
+/* Performance: off-screen cards/rows are not laid out or painted until they come near */
+.grid>.card{content-visibility:auto;contain-intrinsic-size:auto 600px}
+@media (max-width:640px){table.pick tbody tr,table.trip tbody tr{content-visibility:auto;contain-intrinsic-size:auto 300px}}
+/* photo carousel */
+.ph .dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:5px;pointer-events:none}
+.ph .dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.ph .dots span.on{background:#fff;width:16px;border-radius:3px}
+.phnav{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(0,0,0,.4);color:#fff;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .15s ease;z-index:1}
+.phnav.prev{left:8px}.phnav.next{right:8px}
+.card:hover .phnav,.phnav:focus-visible{opacity:1}
+@media (hover:none){.phnav{display:none}}
+.ph .credit{bottom:26px}
+@media (max-width:640px),(pointer:coarse){
+  .card .ph::before{display:none}
+  .hero-art .lanterns g{animation:none}
+  .card{transition:none}
+}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -419,6 +486,8 @@ header.top>.side{order:2}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head><body>
+<dialog id="qp" class="qp" aria-labelledby="qpName"><div class="qp-in" id="qpIn"></div></dialog>
+<dialog id="lb" class="lb" aria-label="照片"><div class="lb-in" id="lbIn"></div></dialog>
 <dialog id="whoDlg" class="whodlg" aria-labelledby="whoTitle">
   <form method="dialog">
     <h2 id="whoTitle">你是誰？</h2>
@@ -464,6 +533,7 @@ header.top>.side{order:2}
         <div class="stat all"><b id="sAll">0</b><span>三人都愛</span></div>
       </div>
       <div class="me" role="group" aria-label="我是誰"><span>我是</span><div class="seg" id="me"></div></div>
+      <div class="progress" id="progress" hidden></div>
       <span class="sync" id="sync" data-state="wait" role="status">連線中…</span>
     </div>
   </header>
@@ -483,6 +553,7 @@ header.top>.side{order:2}
       <div class="more" id="more">
         <select id="region" aria-label="地區"></select>
         <select id="heartF" aria-label="愛心"></select>
+        <select id="declF" aria-label="我的表態"></select>
         <span class="sortctl"><select id="sortKey" aria-label="排序依據"></select><button type="button" id="sortDir" class="sortdir"></button></span>
       </div>
       <div class="seg" role="group" aria-label="檢視方式">
@@ -495,6 +566,10 @@ header.top>.side{order:2}
   </div>
 
   <div class="notice" id="notice" hidden></div>
+  <div class="qpbanner" id="qpBanner">
+    <div class="qpb-text"><b>快速挑選</b><span id="qpbSub">一次看一個地點，按「想去」或「之後再說」，幾分鐘就能看完。</span></div>
+    <button type="button" class="qpb-btn" id="qpOpen"><svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6S2.4 10.2 2.4 6.3A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.6 1.3c0 3.9-5.6 7.3-5.6 7.3z"/></svg>開始挑選</button>
+  </div>
   <div class="countrow"><p class="count" id="count"></p><button type="button" class="linkbtn" id="clearTop" hidden>清除篩選</button></div>
   <div id="out"></div>
   </div>
@@ -547,6 +622,9 @@ const catIcon=(c,cls="ic-cat")=>`<svg class="${cls}" viewBox="0 0 24 24" aria-hi
 const ICON_LANTERN='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5h8l-1.4 9.5H5.4zM4 2.5l4-1 4 1"/><circle cx="8" cy="14" r="1.1"/></svg>';
 // Empty state: a tuk-tuk parked under a paper umbrella.
 const EMPTY_ART='<svg class="empty-art" viewBox="0 0 200 110" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 96h180" opacity=".4"/><path d="M40 88V62a12 12 0 0 1 12-12h40l14 18h12a8 8 0 0 1 8 8v12M46 50V38h42v12M86 50v18h20M62 88h28"/><circle cx="52" cy="88" r="8"/><circle cx="118" cy="88" r="8"/><path d="M128 52a24 20 0 0 1 48 0q-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0zM152 32v20M152 52v36" opacity=".8"/><path d="M168 18c2-3 6-3 8 0M178 10c1.5-2 4.5-2 6 0" opacity=".45"/></g></svg>';
+const CHEV_L='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHEV_R='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_X='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6"/></svg>';
 const ICON_HEART='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6S2.4 10.2 2.4 6.3A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.6 1.3c0 3.9-5.6 7.3-5.6 7.3z"/></svg>';
 const ICON_PIN='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 1.5c-2.2 0-4 1.8-4 4 0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="5.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
 const ICON_CLOCK='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.8V8l2.3 1.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -667,7 +745,7 @@ const LODGING=[
   {id:"jhaban",n:"Jhaban Home",r:"古城",a:"17/1 Jhaban Rd, Old City",in:"2026-10-15",out:"2026-10-18",rt:"",rv:"",note:"Google 地圖位置在古城正中間，比行程表先前推估的東北角更靠中心",pid:"ChIJK5Xqm0872jARw61a71nET9U",ll:[18.791161,98.986093]},
   {id:"thee",n:"THEE Vijit Lanna",r:"古城東・塔佩門",a:"82/1 Soi 2, Chang Moi",in:"2026-10-18",out:"2026-10-20",rt:"4.7",rv:"714",note:"有泳池，下午有免費飲料",pid:"ChIJJde5dQo72jARyQ3vQlxWk9o",ll:[18.792089,98.993925]}
 ];
-const state={sub:"全部",cat:"全部",region:"全部",heartF:"",day:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
+const state={sub:"全部",cat:"全部",region:"全部",heartF:"",decl:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
 // Each person's hearts live at their own Firebase path. Charlie keeps the original /must data.
 const PEOPLE=[{key:"charlie",name:"Charlie",path:"must"},{key:"howard",name:"Howard",path:"hearts/howard"},{key:"lindsay",name:"Lindsay",path:"hearts/lindsay"}];
 const WHO=Object.fromEntries(PEOPLE.map(x=>[x.key,x]));
@@ -695,6 +773,12 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 // Only Charlie inherits the preset picks (p.m), since Charlie's hearts are the old 必去 data.
 const hearted=(p,who)=>{const v=remote[who][p.id]; return typeof v==="boolean"?v:(who==="charlie"&&!!p.m);};
+// 看過: places this person already went through in quick pick (想去 or 之後再說). Kept on this device only.
+let SEEN=new Set();
+const seenKey=()=>"cnxSeen_"+me;
+function loadSeen(){SEEN=new Set(); if(!me) return; try{(JSON.parse(localStorage.getItem(seenKey())||"[]")||[]).forEach(id=>SEEN.add(id));}catch(e){}}
+function saveSeen(){if(!me) return; try{localStorage.setItem(seenKey(),JSON.stringify([...SEEN]));}catch(e){}}
+const seen=p=>!!me&&(SEEN.has(p.id)||hearted(p,me));
 const heartCount=p=>PEOPLE.reduce((n,x)=>n+hearted(p,x.key),0);
 const isMust=p=>heartCount(p)>0;
 const allHearted=p=>heartCount(p)===PEOPLE.length;
@@ -721,14 +805,31 @@ async function loadLive(id){
     if(!r.ok) throw r.status;
     const j=await r.json();
     const skip=SKIP_PHOTOS[id]||[];
-    const ph=(j.photos||[]).filter((x,i)=>!skip.some(([n,a])=>n===i&&((x.authorAttributions||[])[0]||{}).displayName===a)).slice(0,MAX_PHOTOS).map(x=>{const u=mediaUrl(x.name,560); return {src:u,thumb:u,by:(x.authorAttributions||[])[0]||null};});
+    const ph=(j.photos||[]).filter((x,i)=>!skip.some(([n,a])=>n===i&&((x.authorAttributions||[])[0]||{}).displayName===a)).slice(0,MAX_PHOTOS).map(x=>{const u=mediaUrl(x.name,560); return {src:u,thumb:u,big:mediaUrl(x.name,1200),by:(x.authorAttributions||[])[0]||null};});
     if(ph.length){LIVE[id]=ph; refreshPlace(id);}
   }catch(e){liveTried.delete(id);}   // a failed request is retried the next time the card comes into view
 }
+// Redraw just these places (cards or picking-table rows) plus the counters. Falls back to a full render when the
+// change can move places in or out of the list or reorder it (heart filter or heart sort active).
+function updatePlaces(ids){
+  ids=[...new Set(ids)].filter(Boolean); if(!ids.length) return;
+  if(state.heartF||state.sortKey==="must"||state.decl){render(); return;}
+  ids.forEach(id=>{
+    const p=P.find(x=>x.id===id); if(!p) return;
+    const c=document.querySelector(`#out [data-card="${CSS.escape(id)}"]`); if(c){c.outerHTML=card(p); return;}
+    const r=document.querySelector(`#out tr[data-row="${CSS.escape(id)}"]`); if(r){const t=document.createElement("tbody"); t.innerHTML=pickRow(p); r.replaceWith(t.firstElementChild);}
+  });
+  $("#sMust").textContent=P.filter(isMust).length; $("#sAll").textContent=P.filter(allHearted).length;
+  releaseLanterns(); watchPhotos(); renderProgress(); renderBanner();
+  if(mapReady) drawMarkers();
+  if(!$("#mapPanel").hidden) renderTrip();
+}
 function refreshPlace(id){
+  if($("#qp").open&&qpCurrent()&&qpCurrent().id===id){renderQP();}
   const c=document.querySelector(`#out [data-card="${id}"]`);
-  if(c){c.outerHTML=card(placeById(id)); watchPhotos(); return;}
-  if(document.querySelector(`#out [data-photos="${id}"], #tripOut [data-photos="${id}"]`)){render(); return;}
+  if(c){const t=document.createElement("div"); t.innerHTML=card(placeById(id)); const nph=t.querySelector(".ph"), oph=c.querySelector(".ph"); if(nph&&oph) oph.replaceWith(nph); else c.outerHTML=t.innerHTML; return;}
+  const row=document.querySelector(`#out tr[data-row="${CSS.escape(id)}"]`); if(row){const t=document.createElement("tbody"); t.innerHTML=pickRow(placeById(id)); row.replaceWith(t.firstElementChild); watchPhotos(); return;}
+  if(document.querySelector(`#tripOut [data-photos="${CSS.escape(id)}"]`)){renderTrip(); return;}
   if(LODGING.some(h=>h.id===id)&&$("#stayPanel").innerHTML){renderStay(); watchPhotos();}
 }
 // Load a place's photos only when it is about to be seen, so a visit doesn't fetch all 69 at once.
@@ -747,6 +848,8 @@ function buildControls(){
   $("#region").innerHTML=["全部",...REGIONS].map(r=>`<option value="${r}">${r==="全部"?"所有地區":r}</option>`).join("");
   $("#region").onchange=e=>{state.region=e.target.value;render();};
   $("#heartF").onchange=e=>{state.heartF=e.target.value;render();};
+  $("#declF").onchange=e=>{state.decl=e.target.value;render();};
+  $("#qpOpen").onclick=()=>openQuickPick();
   $("#me").innerHTML=PEOPLE.map(x=>`<button type="button" data-me="${x.key}" aria-pressed="${me===x.key}">${x.name}</button>`).join("");
   syncMe();
   $("#filterBtn").onclick=()=>{const r=$("#rail"), o=!r.classList.contains("open"); r.classList.toggle("open",o); $("#filterBtn").setAttribute("aria-expanded",String(o));};
@@ -768,6 +871,9 @@ function syncMe(){
   $("#heartF").innerHTML=[["","愛心：不限"],["mine","我的愛心"],["any","至少一人愛"],["all","三人都愛"]]
     .map(([v,l])=>`<option value="${v}"${v==="mine"&&!me?" disabled":""}>${l}</option>`).join("");
   if(state.heartF==="mine"&&!me) state.heartF="";
+  loadSeen();
+  $("#declF").innerHTML=[["","看過的也顯示"],["todo","只看我還沒看過的"]].map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
+  $("#declF").hidden=!me; $("#declF").value=state.decl;
   $("#heartF").value=state.heartF;
 }
 function setMe(k){me=WHO[k]?k:null; try{me?localStorage.setItem("cnxMe",me):localStorage.removeItem("cnxMe");}catch(e){} syncMe(); note(""); render();}
@@ -796,18 +902,20 @@ const openNow=p=>{if(!p.oh) return null; if(p.oh==="24h") return true; const t=c
 const tripState={now:false,q:"",sortKey:"",sortDir:"asc"};
 const planDate=()=>tripState.now&&TRIP_DAYS.includes(cmToday())?cmToday():"";
 const dayPass=p=>!tripState.now||openNow(p)!==false;
+// 我還沒看過的: places not yet hearted or passed with 之後再說.
+const declPass=p=>!me||state.decl!=="todo"||!seen(p);
 const heartPass=p=>!state.heartF||(state.heartF==="mine"?(me&&hearted(p,me)):state.heartF==="any"?isMust(p):allHearted(p));
-function activeFilters(){return (state.region!=="全部")+(!!state.heartF);}
+function activeFilters(){return (state.region!=="全部")+(!!state.heartF)+(!!state.decl);}
 function clearFilters(){
-  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",heartF:"",q:""});
-  $("#q").value=""; $("#region").value="全部"; $("#heartF").value="";
+  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",heartF:"",decl:"",q:""});
+  $("#q").value=""; $("#region").value="全部"; $("#heartF").value=""; $("#declF").value="";
   syncChips(); render();
 }
 function setView(v,quiet){state.view=v;$("#vCards").setAttribute("aria-pressed",String(v==="cards"));$("#vTable").setAttribute("aria-pressed",String(v==="table"));try{localStorage.setItem("cnxView",v);}catch(e){} if(!quiet)render();}
 
 function filtered(){
   return P.filter(p=>(state.cat==="全部"||p.c===state.cat)&&(state.sub==="全部"||p.sub===state.sub)&&(state.region==="全部"||p.r===state.region)
-    &&heartPass(p)
+    &&heartPass(p)&&declPass(p)
     &&(!state.q||[p.n,p.loc,p.a,p.note,p.tip,p.c,p.r,p.sub].join(" ").toLowerCase().includes(state.q.toLowerCase())))
    .sort((a,b)=>sortCmp(a,b)||CATS.indexOf(a.c)-CATS.indexOf(b.c));
 }
@@ -897,9 +1005,9 @@ function heartBtn(p,compact){
 function card(p){
   const ph=phList(p), n=heartCount(p);
   return `<article class="card${isMust(p)?" must":""}" data-card="${p.id}" data-photos="${p.id}">
-    <div class="ph">${n?`<span class="badge${n===PEOPLE.length?" all":""}" data-badge="${p.id}">${n===PEOPLE.length?ICON_LANTERN+"三人都愛":ICON_HEART+n+'<span class="vh"> 個愛心</span>'}</span>`:""}${ph.length?`<img src="${ph[0].src}" alt="${esc(p.n)} 照片" loading="lazy" data-ph="${p.id}" data-i="0">${credit(ph[0])}`:`<span class="glyph">${catIcon(p.c,"ic-big")}<span>${esc(p.c)}</span></span>`}
+    <div class="ph">${n?`<span class="badge${n===PEOPLE.length?" all":""}" data-badge="${p.id}">${n===PEOPLE.length?ICON_LANTERN+"三人都愛":ICON_HEART+n+'<span class="vh"> 個愛心</span>'}</span>`:""}${ph.length?`<img src="${ph[0].src}" alt="${esc(p.n)} 照片" loading="lazy" decoding="async" data-ph="${p.id}" data-i="0">${credit(ph[0])}`:`<span class="glyph">${catIcon(p.c,"ic-big")}<span>${esc(p.c)}</span></span>`}
+      ${ph.length>1?`<button type="button" class="phnav prev" data-phstep="-1" aria-label="上一張照片">${CHEV_L}</button><button type="button" class="phnav next" data-phstep="1" aria-label="下一張照片">${CHEV_R}</button><div class="dots" aria-hidden="true">${ph.map((_,i)=>`<span${i===0?' class="on"':""}></span>`).join("")}</div>`:""}
       <div class="phbtns"><a class="mini" href="${imgUrl(p)}" target="_blank" rel="noopener">更多照片</a></div></div>
-    ${ph.length>1?`<div class="strip">${ph.map((x,i)=>`<button type="button" class="sw${i===0?" on":""}" data-sw="${p.id}" data-i="${i}" aria-label="第 ${i+1} 張照片"><img src="${x.thumb}" alt="" loading="lazy"></button>`).join("")}</div>`:""}
     <div class="body">
       <div><h3 class="name">${esc(p.n)}</h3>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}</div>
       <div class="tags">${tags(p)}</div>
@@ -909,10 +1017,11 @@ function card(p){
     </div>
     <div class="foot">${heartBtn(p)}${whoDots(p)}<a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></article>`;
 }
+const pickRow=p=>`<tr class="${isMust(p)?"must":""}" data-row="${p.id}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<a class="mini tmap" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="tsrc">${p.src==="建議"?`<span class="tag rec">AI 建議</span>`:`<span class="tag">團隊挑的</span>`}${bookingOf(p)?`<div><span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span></div>`:""}</td><td class="ttip">${p.tip?esc(p.tip):""}</td><td class="tnotes">${notesBlock(p)}</td></tr>`;
 const thumb=p=>phList(p)[0]?`<img class="thumb" src="${phList(p)[0].thumb}" alt="" loading="lazy"${phList(p)[0].by?` title="Google 地圖 · ${esc(phList(p)[0].by.displayName||"")}"`:""}>`:"";
 function table(list){
   return `<div class="tablebox"><table class="pick"><thead><tr>${PICK_COLS.map(c=>th(c)).join("")}</tr></thead><tbody>${
-    list.map(p=>`<tr class="${isMust(p)?"must":""}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<a class="mini tmap" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="tsrc">${p.src==="建議"?`<span class="tag rec">AI 建議</span>`:`<span class="tag">團隊挑的</span>`}${bookingOf(p)?`<div><span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span></div>`:""}</td><td class="ttip">${p.tip?esc(p.tip):""}</td><td class="tnotes">${notesBlock(p)}</td></tr>`).join("")
+    list.map(pickRow).join("")
   }</tbody></table></div>`;
 }
 // 行程資訊 tab: practical info for the places people picked.
@@ -961,6 +1070,18 @@ function writeUrlState(){
   const qs=u.toString(), url=location.pathname+(qs?"?"+qs:"")+location.hash;
   if(url!==location.pathname+location.search+location.hash) history.replaceState(null,"",url);
 }
+function renderBanner(){
+  const left=me?P.filter(p=>!seen(p)).length:P.length;
+  $("#qpbSub").textContent=!me?"一次看一個地點，按「想去」或「之後再說」，幾分鐘就能看完。":left?`還有 ${left} 個地點你還沒看過，一次看一個，按「想去」或「之後再說」。`:"全部都看過了！之後再說的地點還在列表裡，隨時可以再按愛心。";
+  $("#qpOpen").lastChild.textContent=me&&left&&left<P.length?"繼續挑選":"開始挑選";
+  $("#qpOpen").disabled=!!me&&!left;
+}
+function renderProgress(){
+  const el=$("#progress"); if(!me){el.hidden=true; return;}
+  const n=P.filter(seen).length, h=P.filter(p=>hearted(p,me)).length;
+  el.hidden=false;
+  el.innerHTML=`<span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(n/P.length*100)}%"></span></span><span>${WHO[me].name} 已看過 <b>${n}</b>／${P.length}・想去 ${h}</span>`;
+}
 function render(){
   const ae=document.activeElement, keep=ae&&ae.dataset&&ae.dataset.draft?{id:ae.dataset.draft,pos:ae.selectionStart}:null;
   renderSubs();
@@ -975,6 +1096,7 @@ function render(){
   $("#out").innerHTML=!list.length?`<div class="empty">${EMPTY_ART}<span>這個條件下沒有地點，換個條件試試。</span><button type="button" class="chip" data-clear>清除所有篩選</button></div>`:state.view==="table"?table(list):`<div class="grid">${list.map(card).join("")}</div>`;
   releaseLanterns();
   watchPhotos();
+  renderProgress(); renderBanner();
   if(keep){const t=document.querySelector(`[data-draft="${keep.id}"]`); if(t){t.focus({preventScroll:true}); t.setSelectionRange(keep.pos,keep.pos);}}
   if(mapReady) drawMarkers();
   if(!$("#mapPanel").hidden) renderTrip();
@@ -1218,10 +1340,82 @@ function askWho(then){
   if(d.showModal) d.showModal(); else d.setAttribute("open","");
   const first=d.querySelector(".whobtn"); if(first) first.focus();
 }
+async function putFB(path,val){const r=await fetch(FB+"/"+path+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status;}
+async function setHeartNow(p,val){remote[me][p.id]=val; updatePlaces([p.id]); try{await putFB(WHO[me].path+"/"+encodeURIComponent(p.id),val); setSync(true);}catch(e){setSync(false); showToast("愛心沒有存到雲端，請檢查網路後再試一次。");}}
+// Quick pick: one undecided place at a time with big 想去 / 之後再說 / 不想去 buttons.
+const QP={queue:[],i:0,hist:[]};
+function openQuickPick(){
+  if(!me){askWho(openQuickPick); return;}
+  loadSeen(); QP.queue=filtered().filter(p=>!seen(p)).map(p=>p.id); QP.i=0; QP.hist=[];
+  const d=$("#qp"); renderQP(); d.showModal?d.showModal():d.setAttribute("open","");
+}
+function qpCurrent(){return QP.i<QP.queue.length?placeById(QP.queue[QP.i]):null;}
+function renderQP(){
+  const p=qpCurrent(), done=P.filter(seen).length;
+  const head=`<div class="qp-top"><span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(done/P.length*100)}%"></span></span><span class="qp-count">${WHO[me].name} 已看過 ${done}／${P.length}</span><button type="button" class="linkbtn" data-qp="close">關閉</button></div>`;
+  if(!p){$("#qpIn").innerHTML=head+`<div class="qp-done"><h2 id="qpName">這一批都看完了</h2><p>目前想去 ${P.filter(x=>hearted(x,me)).length} 個。之後再說的地點還在列表裡，隨時可以再按愛心。</p><button type="button" class="chip send" data-qp="close">完成</button></div>`; return;}
+  loadLive(p.id);
+  const ph=phList(p)[0];
+  $("#qpIn").innerHTML=head+`<div class="qp-card">
+    <div class="ph qp-ph">${ph?`<img src="${ph.src}" alt="${esc(p.n)} 照片">${credit(ph)}`:`<span class="glyph">${catIcon(p.c,"ic-big")}<span>${esc(p.c)}</span></span>`}</div>
+    <div class="qp-body">
+      <h2 class="name" id="qpName">${esc(p.n)}</h2>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}
+      <div class="tags">${tags(p)}</div>
+      ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}
+      ${p.note?`<p class="note"><span class="notes-k">我們的備註</span> ${esc(p.note)}</p>`:""}
+      <div class="qp-who">${whoDots(p)}<span class="local">${PEOPLE.filter(x=>hearted(p,x.key)).map(x=>x.name).join("、")||"還沒有人按愛心"}</span><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div>
+    </div></div>
+    <div class="qp-actions">
+      <button type="button" class="qpa later" data-qp="later"><span>之後再說</span></button>
+      <button type="button" class="qpa yes" data-qp="yes">${ICON_HEART}<span>想去</span></button>
+    </div>
+    <div class="qp-foot"><button type="button" class="linkbtn" data-qp="undo" ${QP.hist.length?"":"disabled"}>上一步</button><span class="local">第 ${QP.i+1}／${QP.queue.length} 個・鍵盤 ← 之後再說、→ 想去</span></div>`;
+}
+async function qpAct(a){
+  const p=qpCurrent();
+  if(a==="close"){const d=$("#qp"); d.close?d.close():d.removeAttribute("open"); render(); return;}
+  if(a==="undo"){const h=QP.hist.pop(); if(!h) return; const q=placeById(h.id); if(hearted(q,me)!==h.heart) await setHeartNow(q,h.heart); if(!h.seen){SEEN.delete(q.id); saveSeen();} QP.i=Math.max(0,QP.i-1); renderQP(); return;}
+  if(!p) return;
+  QP.hist.push({id:p.id,heart:hearted(p,me),seen:SEEN.has(p.id)});
+  if(a==="yes") await setHeartNow(p,true);
+  SEEN.add(p.id); saveSeen();
+  QP.i++; renderQP();
+}
+// Photo viewer: tap a card photo for a large view; arrows, swipe or keys move between photos.
+const LB={id:null,i:0};
+function openLightbox(id,i){LB.id=id; LB.i=i||0; renderLB(); const d=$("#lb"); d.showModal?d.showModal():d.setAttribute("open","");}
+function lbGo(step){const ph=phList(placeById(LB.id)); if(!ph.length) return; LB.i=(LB.i+step+ph.length)%ph.length; renderLB();}
+function renderLB(){
+  const p=placeById(LB.id), ph=phList(p), x=ph[LB.i]; if(!x) return;
+  $("#lbIn").innerHTML=`<img src="${x.big||x.src}" alt="${esc(p.n)} 照片 ${LB.i+1}">
+    <div class="lb-bar"><b>${esc(p.n)}</b><span>${LB.i+1}／${ph.length}</span>${x.by?`<a href="${esc(x.by.uri||"#")}" target="_blank" rel="noopener">Google 地圖 · ${esc(x.by.displayName||"")}</a>`:""}<button type="button" class="linkbtn" data-lb="close">關閉</button></div>
+    ${ph.length>1?`<button type="button" class="lb-nav prev" data-lb="prev" aria-label="上一張"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="lb-nav next" data-lb="next" aria-label="下一張"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:""}`;
+}
+let lbTouch=null;
+// Card photo carousel: only the shown photo is requested; the next one loads when someone swipes or taps an arrow.
+function stepPhoto(c,step){
+  const p=placeById(c.dataset.card), ph=phList(p), img=c.querySelector(".ph img"); if(!img||ph.length<2) return;
+  const i=((+img.dataset.i||0)+step+ph.length)%ph.length, x=ph[i];
+  img.src=x.src; img.dataset.i=i;
+  const old=c.querySelector(".ph .credit"); if(old) old.remove(); img.insertAdjacentHTML("afterend",credit(x));
+  c.querySelectorAll(".dots span").forEach((d,k)=>d.classList.toggle("on",k===i));
+}
+let swipe=null, swiped=false;
+document.addEventListener("touchstart",e=>{const ph=e.target.closest(".card .ph"); swipe=ph?{ph,x:e.touches[0].clientX,y:e.touches[0].clientY}:null;},{passive:true});
+document.addEventListener("touchend",e=>{if(!swipe) return; const t=e.changedTouches[0], dx=t.clientX-swipe.x, dy=t.clientY-swipe.y;
+  if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5){const c=swipe.ph.closest("[data-card]"); if(c){stepPhoto(c,dx<0?1:-1); swiped=true; setTimeout(()=>swiped=false,350);}}
+  swipe=null;},{passive:true});
 function note(msg){const n=$("#notice");n.textContent=msg;n.hidden=!msg;}
 function showWhoHint(){const n=$("#notice"); n.innerHTML=`<span>你是誰？選好就能按愛心、留言：</span>${PEOPLE.map(x=>`<button type="button" class="chip small" data-me="${x.key}">${x.name}</button>`).join("")}`; n.hidden=false;}
 
 document.addEventListener("click",async e=>{
+  const lbb=e.target.closest("[data-lb]");
+  if(lbb){const a=lbb.dataset.lb; if(a==="close"){const d=$("#lb"); d.close?d.close():d.removeAttribute("open");} else lbGo(a==="next"?1:-1); return;}
+  if(e.target.closest("#lb")&&!e.target.closest(".lb-bar,.lb-nav")&&e.target.id!=="lbIn"&&e.target.tagName!=="IMG"){const d=$("#lb"); d.close?d.close():d.removeAttribute("open"); return;}
+  const phImg=swiped?null:e.target.closest(".card .ph img, .qp-ph img");
+  if(phImg){const c=phImg.closest("[data-card]"); const id=c?c.dataset.card:qpCurrent()&&qpCurrent().id; if(id){openLightbox(id,+(phImg.dataset.i||0)); return;}}
+  const qa=e.target.closest("[data-qp]");
+  if(qa){if(!qa.disabled) qpAct(qa.dataset.qp); return;}
   const pw=e.target.closest("[data-pickwho]");
   if(pw){const d=$("#whoDlg"); d.close?d.close():d.removeAttribute("open"); setMe(pw.dataset.pickwho); showToast(`嗨 ${WHO[me].name}！之後按愛心、留言都會用這個名字`); const f=whoThen; whoThen=null; if(f) f(); return;}
   const ca=e.target.closest("[data-cadd]");
@@ -1258,7 +1452,7 @@ document.addEventListener("click",async e=>{
     const prevLocal=hearted(p,who), next=!prevLocal;
     const orig=pending[pk]?pending[pk].orig:prevLocal;
     if(pending[pk]) clearTimeout(pending[pk].timer);
-    remote[who][id]=next; render(); {const b=document.querySelector(`#out [data-heart="${id}"]`); if(b) b.focus({preventScroll:true});}
+    remote[who][id]=next; updatePlaces([id]); {const b=document.querySelector(`#out [data-heart="${id}"]`); if(b) b.focus({preventScroll:true});}
     const commit=async()=>{
       delete pending[pk];
       if(next===orig){setSync(true);return;}
@@ -1268,10 +1462,12 @@ document.addEventListener("click",async e=>{
     pending[pk]={timer:setTimeout(commit,UNDO_MS),orig};
     showToast((next?"已加上 ":"已取消 ")+name+" 的愛心 · "+p.n,()=>{
       if(pending[pk]) clearTimeout(pending[pk].timer); delete pending[pk];
-      remote[who][id]=prevLocal; render();
+      remote[who][id]=prevLocal; updatePlaces([id]);
     });
     return;
   }
+  const ps=e.target.closest("[data-phstep]");
+  if(ps){const c=ps.closest("[data-card]"); if(c) stepPhoto(c,+ps.dataset.phstep); return;}
   const sw=e.target.closest("[data-sw]");
   if(sw){const card=sw.closest(".card,.stay-card"), img=card.querySelector(".ph img"), i=+sw.dataset.i, x=phList(placeById(sw.dataset.sw))[i]; if(!img||!x) return;
     img.src=x.src; img.dataset.i=i; const old=card.querySelector(".ph .credit"); if(old) old.remove(); img.insertAdjacentHTML("afterend",credit(x));
@@ -1282,6 +1478,20 @@ buildControls(); readUrlState(); render();
 setInterval(()=>{if(tripState.now) render();},60000);
 $("#tq").oninput=e=>{tripState.q=e.target.value.trim(); renderTrip(); if(mapReady) drawMarkers();};
 $("#openNowT").onchange=e=>{tripState.now=e.target.checked; renderTrip(); if(mapReady) drawMarkers();};   // keep "open now" current
+document.addEventListener("keydown",e=>{
+  if($("#qp").open){const k={ArrowLeft:"later",ArrowDown:"later",ArrowRight:"yes"}[e.key]; if(k){e.preventDefault(); qpAct(k);} return;}
+  if($("#lb").open){if(e.key==="ArrowLeft"){e.preventDefault(); lbGo(-1);} if(e.key==="ArrowRight"){e.preventDefault(); lbGo(1);}}
+});
+$("#qp").addEventListener("close",()=>render());
+// Google photo requests can fail (e.g. the per-minute photo quota): the viewer falls back to the normal size,
+// other photos are hidden so the card's illustrated background shows instead of a broken image.
+document.addEventListener("error",e=>{
+  const im=e.target; if(!(im instanceof HTMLImageElement)||!im.src.includes("places.googleapis.com")) return;
+  if(im.closest("#lbIn")&&im.src.includes("maxWidthPx=1200")){const x=phList(placeById(LB.id))[LB.i]; if(x&&x.src!==im.src){im.src=x.src; return;}}
+  im.classList.add("img-fail");
+},true);
+$("#lb").addEventListener("touchstart",e=>{lbTouch=e.touches[0].clientX;},{passive:true});
+$("#lb").addEventListener("touchend",e=>{if(lbTouch==null) return; const dx=e.changedTouches[0].clientX-lbTouch; if(Math.abs(dx)>40) lbGo(dx<0?1:-1); lbTouch=null;});
 document.addEventListener("input",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id) drafts[id]=e.target.value;});
 document.addEventListener("keydown",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id&&e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault(); sendComment(id);}});
 TABS.forEach(([k,tb])=>{$("#"+tb).onclick=()=>setTab(k);});
@@ -1293,7 +1503,11 @@ if(!me) showWhoHint();
 const FB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app";
 function setSync(ok){const n=document.getElementById("sync"); if(n){n.dataset.state=ok?"ok":"off"; n.textContent=ok?"已同步":"離線，愛心可能沒存到";}}
 setTimeout(()=>{const n=document.getElementById("sync"); if(n&&n.dataset.state==="wait") setSync(false);},8000);
-function applyAll(who,obj){const m={}; Object.keys(obj||{}).forEach(k=>{if(typeof obj[k]==="boolean") m[k]=obj[k];}); remote[who]=m; render();}
+function applyAll(who,obj){
+  const m={}; Object.keys(obj||{}).forEach(k=>{if(typeof obj[k]==="boolean") m[k]=obj[k];});
+  const old=remote[who]||{}, changed=[...new Set([...Object.keys(old),...Object.keys(m)])].filter(k=>old[k]!==m[k]);
+  remote[who]=m; if(changed.length) updatePlaces(changed);
+}
 // A denied path (rules not opened yet) disables that person's hearts instead of flagging the page offline.
 async function pullOne(x){
   try{const r=await fetch(FB+"/"+x.path+".json");
@@ -1307,9 +1521,9 @@ function listen(x){
     const es=new EventSource(FB+"/"+x.path+".json");
     es.addEventListener("put",ev=>{try{const d=JSON.parse(ev.data);
       if(d.path==="/"){applyAll(x.key,d.data);}
-      else{const id=d.path.slice(1); if(typeof d.data==="boolean") remote[x.key][id]=d.data; else delete remote[x.key][id]; render();}
+      else{const id=d.path.slice(1), before=remote[x.key][id]; if(typeof d.data==="boolean") remote[x.key][id]=d.data; else delete remote[x.key][id]; if(before!==remote[x.key][id]) updatePlaces([id]);}
       setSync(true);}catch(e){}});
-    es.addEventListener("patch",ev=>{try{const d=JSON.parse(ev.data); Object.keys(d.data||{}).forEach(k=>{remote[x.key][k.replace(/^\//,"")]=d.data[k];}); render();}catch(e){}});
+    es.addEventListener("patch",ev=>{try{const d=JSON.parse(ev.data), ids=[]; Object.keys(d.data||{}).forEach(k=>{const id=k.replace(/^\//,""); if(remote[x.key][id]!==d.data[k]){remote[x.key][id]=d.data[k]; ids.push(id);}}); updatePlaces(ids);}catch(e){}});
     es.addEventListener("cancel",()=>{es.close(); reachable[x.key]=false; render();});
     es.onerror=()=>{if(reachable[x.key]!==false) setSync(false);};
   }catch(e){}
