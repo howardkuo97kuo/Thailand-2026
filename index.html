@@ -1452,12 +1452,14 @@ function mergeAdded(){
   });
   render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
 }
+// Browsers allow only ~6 open connections per host, and hearts + comments already hold live streams to Firebase.
+// So agent-added places, removals and the inbox are polled instead of streamed (faster while 新增地點 is open).
+const polled={};
 function liveJSON(path,apply){
-  (async()=>{try{const r=await fetch(FB+"/"+path+".json"); if(r.status===401||r.status===403){if(path==="inbox") inboxBlocked=true; return;} if(!r.ok) return; apply(await r.json()||{});
-    const es=new EventSource(FB+"/"+path+".json");
-    es.addEventListener("put",()=>{fetch(FB+"/"+path+".json").then(r=>r.ok?r.json():null).then(d=>{if(d!==undefined) apply(d||{});}).catch(()=>{});});
-    es.addEventListener("patch",()=>{fetch(FB+"/"+path+".json").then(r=>r.ok?r.json():null).then(d=>{if(d!==undefined) apply(d||{});}).catch(()=>{});});
-  }catch(e){}})();
+  const tick=async()=>{try{const r=await fetch(FB+"/"+path+".json"); if(r.status===401||r.status===403){if(path==="inbox") inboxBlocked=true; return;} if(!r.ok) return;
+    const txt=await r.text(); if(polled[path]===txt) return; polled[path]=txt; apply(JSON.parse(txt)||{});}catch(e){}};
+  tick(); setInterval(()=>{if(path==="inbox"&&$("#addPanel").hidden) return; tick();},path==="inbox"?8000:30000);
+  if(path==="inbox") setInterval(()=>{if($("#addPanel").hidden) tick();},60000);
 }
 const INBOX_STATUS={new:["待處理","wait"],processing:["處理中","wait"],added:["已加入","ok"],duplicate:["已在地點庫","ok"],failed:["找不到","off"]};
 function renderInbox(){
@@ -1474,7 +1476,8 @@ async function submitInbox(text,noteTxt){
   if(!me){askWho(()=>submitInbox(text,noteTxt)); return;}
   if(inboxBlocked){showToast("收件匣還沒開放，資料庫權限設定好之後就能使用。"); return;}
   try{const r=await fetch(FB+"/inbox.json",{method:"POST",body:JSON.stringify({text,note:noteTxt||"",who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
-    $("#addText").value=""; $("#addNote").value=""; showToast("已送出，AI 處理好之後會自動出現在地點庫。");}
+    $("#addText").value=""; $("#addNote").value=""; showToast("已送出，AI 處理好之後會自動出現在地點庫。");
+    try{const d=await (await fetch(FB+"/inbox.json")).json(); INBOX=d||{}; renderInbox();}catch(e){}}
   catch(e){showToast(e===401||e===403?"收件匣還沒開放，資料庫權限設定好之後就能使用。":"沒有送出，請檢查網路後再試一次。");}
 }
 async function setRemoved(id,val){
@@ -1555,7 +1558,8 @@ document.addEventListener("click",async e=>{
 });
 
 buildControls(); readUrlState(); render();
-$("#addForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#addText").value.trim(); if(t) submitInbox(t,$("#addNote").value.trim());});
+$("#addForm").addEventListener("submit",async e=>{e.preventDefault(); const t=$("#addText").value.trim(), b=$("#addSend"); if(!t||b.disabled) return;
+  b.disabled=true; b.textContent="送出中…"; try{await submitInbox(t,$("#addNote").value.trim());} finally{b.disabled=false; b.textContent="送出";}});
 setInterval(()=>{if(tripState.now) render();},60000);
 $("#tq").oninput=e=>{tripState.q=e.target.value.trim(); renderTrip(); if(mapReady) drawMarkers();};
 $("#openNowT").onchange=e=>{tripState.now=e.target.checked; renderTrip(); if(mapReady) drawMarkers();};   // keep "open now" current
