@@ -3,6 +3,9 @@
 <meta name="theme-color" content="#f5f1ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15120f" media="(prefers-color-scheme: dark)">
 <title>清邁員旅地點庫</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-title" content="清邁地點庫">
 <meta name="robots" content="noindex, nofollow">
 <meta name="description" content="10/15–10/20 清邁員旅的候選地點：景點、美食、咖啡、按摩與市集，附照片。每個人按自己的愛心，大家即時同步。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6f5c'/%3E%3Cg fill='none' stroke='%23f0b628' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 26h18M9 26v-3h14v3M11 23v-2.5h10V23M13 20.5c0-4 1.4-6.5 3-7.5 1.6 1 3 3.5 3 7.5M14.5 12.5h3M16 12.5V5'/%3E%3C/g%3E%3C/svg%3E">
@@ -16,6 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://places.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600&text=%E0%B9%80%E0%B8%8A%E0%B8%B5%E0%B8%A2%E0%B8%87%E0%B9%83%E0%B8%AB%E0%B8%A1%E0%B9%88&display=swap">
 <style>
@@ -232,7 +236,8 @@ footer b{color:var(--ink);font-weight:500}
 .seg-n{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
 .stay-ticks{display:flex;gap:4px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin:6px 0 22px}
 .stay-ticks span{display:flex;justify-content:space-between}
-.stay-ticks em{font-style:normal}
+.stay-ticks em{font-style:normal;margin-left:8px}
+@media (max-width:640px){.stay-line{height:auto;min-height:44px}.seg-night{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;padding:6px 10px}.seg-name{white-space:normal;line-height:1.3}}
 .stay-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;max-width:820px}
 .stay-card{background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;overflow:hidden}
 .dates{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--paper);border:1px solid var(--line)}
@@ -281,6 +286,25 @@ tr.detail .notes{border-top:0;max-width:760px}
 .mc p{margin:6px 0}
 .mc-a{display:flex;gap:12px;align-items:center;margin-top:6px}
 .mc-a button,.mc-a a{font:inherit;font-size:12.5px;color:#1f6f5c;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.tag.closed{color:var(--heart);background:var(--heart-soft);border-color:transparent}
+.house-pin{background:none;border:0}
+.leaflet-container{font-family:var(--f-body)}
+.leaflet-popup-content .mc{margin:0}
+.cheat{margin-top:28px;max-width:820px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.cheat h2{font-family:var(--f-display);font-size:18px;margin:0 0 8px}
+.cheat dl{grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+.cheat dt{font-weight:700;color:var(--ink);letter-spacing:0}
+.routes{display:flex;gap:8px;align-items:center;margin:0 0 10px;min-width:0}
+.routes .chips{flex:1;min-width:0}
+@media (max-width:640px){.routes{flex-direction:column;align-items:stretch;gap:6px}.routes .chips{flex:none}}
+.route-pin{background:none;border:0}
+.route-pin span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#f0b628;color:#231f1c;font:700 13px/1 var(--f-mono);border:2px solid #231f1c;box-shadow:0 2px 6px -1px rgba(0,0,0,.4)}
+.route-steps{list-style:none;margin:10px 0 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:8px}
+.route-steps li{display:flex;gap:10px;align-items:flex-start;font-size:13px}
+.route-steps .route-when{color:var(--muted);font-size:12px}
+.route-steps .rn{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--saffron);color:#231f1c;font:700 12px/1 var(--f-mono)}
+.route-steps .linkbtn{font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none;padding:0}
+.route-steps .local{display:block}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -364,12 +388,13 @@ header.top>.side{order:2}
   <div id="placesPanel" role="tabpanel" aria-labelledby="tabPlaces">
   <div class="rail" id="rail">
     <div class="row">
-      <input id="q" type="search" placeholder="搜尋名稱、地址、備註、小提醒" aria-label="搜尋" aria-keyshortcuts="/" title="按 / 可直接開始搜尋">
+      <input id="q" type="search" placeholder="搜尋地點或關鍵字" aria-label="搜尋" aria-keyshortcuts="/" title="按 / 可直接開始搜尋">
       <button type="button" class="chip filterbtn" id="filterBtn" aria-expanded="false" aria-controls="more">篩選</button>
       <div class="more" id="more">
         <select id="region" aria-label="地區"></select>
         <select id="status" aria-label="狀態"></select>
         <select id="heartF" aria-label="愛心"></select>
+        <select id="dayF" aria-label="哪天去"></select>
         <span class="sortctl"><select id="sortKey" aria-label="排序依據"></select><button type="button" id="sortDir" class="sortdir"></button></span>
       </div>
       <div class="seg" role="group" aria-label="檢視方式">
@@ -392,13 +417,16 @@ header.top>.side{order:2}
       <div class="chips" id="mapCats" role="group" aria-label="地圖顯示的分類"></div>
       <label class="maptoggle"><input type="checkbox" id="mapHearts"> 只看有愛心</label>
     </div>
+    <div class="routes"><span class="sublabel">路線靈感</span><div class="chips" id="routeChips" role="group" aria-label="路線靈感"></div></div>
     <div id="map" role="region" aria-label="清邁地點地圖"><p class="map-msg">地圖載入中…</p></div>
-    <p class="map-note">住宿以黑色房子標示；有人按愛心的地點會加上金色外框。點標記可看簡介與 Google 地圖連結。</p>
+    <ol class="route-steps" id="routeSteps" hidden></ol>
+    <p class="map-note"><span id="mapDay"></span>住宿以黑色房子標示；有人按愛心的地點會加上金色外框。點標記可看簡介與 Google 地圖連結。</p>
   </section>
 
   <footer>
     <div class="band" aria-hidden="true"></div>
     <p><b>狀態</b>：備選＝還在考慮；不去＝已決定不去，保留紀錄。<b>建議</b>＝清單外、另外推薦的點。</p>
+    <p><b>哪天去</b>：選行程日期會隱藏當天沒開的地點，並顯示離當晚住宿的距離；選「現在營業中」以清邁時間即時篩選。</p>
     <p><b>愛心</b>：先在上方選「我是誰」，就能按自己的愛心；其他人的愛心以名字縮寫顯示。標「預設必去」的地點，是依清單備註、有人指名、米其林與時間限定先替 Charlie 勾的，可以直接取消。</p>
     <p>地址、營業時間與評分：Google 地圖，2026-10-09 查詢。營業時間可能異動，出發前請再確認。照片來自 Google 地圖上店家與旅客上傳的圖片，左下角標示上傳者；點「更多照片」可在 Google 搜尋看更多。</p>
   </footer>
@@ -425,93 +453,94 @@ const EMPTY_ART='<svg class="empty-art" viewBox="0 0 200 110" aria-hidden="true"
 const ICON_HEART='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6S2.4 10.2 2.4 6.3A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.6 1.3c0 3.9-5.6 7.3-5.6 7.3z"/></svg>';
 const ICON_PIN='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 1.5c-2.2 0-4 1.8-4 4 0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="5.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
 const ICON_CLOCK='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.8V8l2.3 1.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_HOME='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M2.5 7.5 8 3l5.5 4.5M4 6.5V13h8V6.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 const ICON_STAR='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 2.2l1.7 3.5 3.8.5-2.8 2.7.7 3.8L8 10.8l-3.4 1.9.7-3.8-2.8-2.7 3.8-.5z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
 // s: 狀態（備選、不去；排程由其他工具處理）; m: 預設必去; src: 清單 / 建議
 const P=[
-{id:"house",n:"THE HOUSE by Ginger",c:"美食",sub:"泰式料理",r:"古城",a:"199 Mun Mueang Rd, Old City",h:"11:00–23:00",rt:"4.3",rv:"3,460",note:"清單備註「推推」；已訂位 10/15 18:30、3 人",why:"已訂位，清單備註「推推」",s:"D1",m:true,src:"清單",pid:"ChIJNVnFK7062jARHAtoL1m4ZYk",tip:"必點炸魚、椰奶咖哩蝦、西瓜涼拌，前菜拼盤可略；冷氣很強帶件薄外套。每人約 400–1,200 銖，可刷卡。",ll:[18.792788,98.993221]},
-{id:"riflesso",n:"Riflesso Artisan Gelato Old City",c:"咖啡甜點",sub:"義式冰淇淋",r:"古城",a:"63 Sri Poom Rd, Old City",h:"12:00–22:00",rt:"4.9",rv:"733",note:"開心果口味評價最好",s:"D1",m:false,src:"清單",pid:"ChIJkXDudgA72jARORnHV23Gya8",tip:"開心果、椰子、榴槤口味評價最高，可先試吃再選；價位接近台北，可刷卡。",ll:[18.795120,98.989337]},
-{id:"reliever",n:"Reliever Health massage",c:"按摩",r:"古城",a:"201-203 Prapokklao Rd, Old City（北門旁）",h:"12:00–23:30",rt:"4.9",rv:"640",note:"營業到很晚，Day 1 抵達當晚做 60–90 分鐘",s:"D1",m:false,src:"建議",pid:"ChIJmwuEnKo72jARiNs7GAhtkXM",tip:"草藥熱壓＋熱椰子油按摩評價最好（90 分約 800 銖），按完有薑茶；晚上常客滿，最好先預約，店裡有貓。",ll:[18.794980,98.986760]},
-{id:"maesai",n:"Khao Soi Maesai",c:"美食",sub:"泰北咖哩麵",r:"尼曼",a:"29/1 Soi Ratchaphuek, Chang Phueak",h:"08:00–16:00，週日休",rt:"4.5",rv:"6,086",note:"米其林推薦泰北咖哩雞腿麵；中午排隊多，早去",why:"米其林推薦，泰北咖哩麵代表店",s:"D2",m:true,src:"清單",pid:"ChIJqcysHow62jAR6ElsdYpG8EU",tip:"點雞腿咖哩麵（約 55 銖），湯頭偏甜、椰奶味濃；先拿號碼牌，9–11 點前到不太用排，週日休。",ll:[18.799599,98.975213]},
-{id:"umong",n:"Wat Umong 林間古寺",c:"景點",r:"西郊",a:"135 Su Thep",h:"04:00–20:00，門票約 THB 20",rt:"4.6",rv:"11,831",note:"林間古寺與地下隧道佛龕，早上最涼",s:"D2",m:false,src:"建議",pid:"ChIJnWhAb3A62jARWVBZnaOa7-0",tip:"外國人門票 20 銖，停留約 30–60 分；隧道內有蝙蝠氣味；回程不好叫車，可和 Baan Kang Wat 排一起（車程約 8 分）。",ll:[18.782726,98.952110]},
-{id:"bkw",n:"Baan Kang Wat",c:"景點",r:"西郊",a:"191-197 Soi Wat Umong, Su Thep",h:"10:00–18:00，週一休",rt:"4.5",rv:"7,192",note:"藝術家村，建議上午去避開人潮",s:"D2",m:false,src:"清單",pid:"ChIJdxPPqzUx2jARn86GcuRsD1s",tip:"中午很熱又塞車，建議早上去；小店手作品質好但價格偏高，園區咖哩雞腿麵很紅。週一休。",ll:[18.776326,98.948729]},
-{id:"ginger",n:"GINGER FARM kitchen @One Nimman",c:"美食",sub:"泰式料理",r:"尼曼",a:"One Nimman, Nimmanhaemin Rd",h:"11:00–23:00",rt:"4.3",rv:"3,708",note:"米其林推薦",s:"D2",m:false,src:"清單",pid:"ChIJI7OL9GE62jARTIo-coWTeBw",tip:"推炸魚、泰式炒河粉、咖哩麵；份量很大別點太多，每人約 400–600 銖；平日下午人少，可在 Google 地圖訂位。",ll:[18.799845,98.967547]},
-{id:"moonlight",n:"Muse Moonlight massage and spa",c:"按摩",r:"尼曼",a:"12/3 Nimmanhaemin Rd（Nimman 17）",h:"12:00–23:00",rt:"4.8",rv:"2,653",note:"網友說超推",why:"清單備註「網友說超推」",s:"D2",m:true,src:"清單",pid:"ChIJ_5SAtGk72jARTUMR91REjjI",tip:"足部＋頭頸 90 分約 600 銖、精油 2 小時約 990 銖起；頂樓包廂白天較熱可要求換房，按完送薑茶米餅。",ll:[18.795107,98.967532]},
-{id:"blackitch",n:"Blackitch Artisan Kitchen",c:"美食",sub:"精緻套餐",r:"尼曼",a:"27/1 Nimmanhaemin Soi 7",h:"11:30–14:00、17:00–22:00，週三休",rt:"4.6",rv:"398",note:"主廚套餐，每人約 THB 2,000 起，需預約",why:"Day 2 主廚套餐晚餐，要提前訂位",s:"D2",m:true,src:"清單",pid:"ChIJU9Y16Ik62jARJnrozimcTLc",tip:"約 11 道的主廚套餐，每人 2,000 銖起；要提早約一個月用 LINE 訂位並付訂金，週三休。",ll:[18.798126,98.969557]},
-{id:"jingjai",n:"真心市集 Jing Jai Market",c:"購物市集",r:"北區",a:"46 Atsadathon Rd, Pa Tan",h:"週六日 06:30 起，早上最熱鬧",rt:"4.5",rv:"12,305",note:"週末限定的手作與農夫市集",why:"週末限定，只有 Day 3 週六能去",s:"D3",m:true,src:"清單",pid:"ChIJzfxey8A62jARBouRzNKxv58",tip:"手作與農夫市集只有週六日早上（6:30 起、越早越好），平日只有店家與餐廳；手作價格偏高，有小吃區與乾淨廁所，可排半天。",ll:[18.806230,98.995325]},
-{id:"lung",n:"Lung Khajohn Wat Ket",c:"美食",sub:"街頭小吃",r:"夜市・濱河",a:"109 Charoenrat Rd, Wat Ket",h:"06:00–14:30，週日休",rt:"4.6",rv:"408",note:"米其林街邊小吃：椰奶蒸米皮捲、西米球",why:"米其林街邊小吃，週日公休",s:"D3",m:true,src:"清單",pid:"ChIJMb2sBrA62jAREBOddQOc-Mc",tip:"必吃椰奶蒸米皮捲，每份幾十銖；6:00 開、常 11 點就剩一種口味，越早越好；帶現金、無冷氣，週日休。",ll:[18.792303,99.002195]},
-{id:"phrasingh",n:"Wat Phra Singh 帕辛寺",c:"景點",r:"古城",a:"2 Samlarn Rd, Old City",h:"05:30–19:30",rt:"4.7",rv:"17,662",note:"古城最大寺廟，需遮肩過膝",s:"D3",m:false,src:"建議",pid:"ChIJbyRKbps62jAR6VTNF-fZVpY",tip:"外國人進主殿 50 銖，需遮肩過膝；有臥佛殿與蘭納壁畫，約停留 40 分鐘。",ll:[18.788526,98.981995]},
-{id:"sp",n:"SP Chicken 東北烤雞",c:"美食",sub:"烤雞",r:"古城",a:"9/1 Samlarn Rd Soi 1, Old City",h:"10:00–17:00，只收現金",rt:"4.2",rv:"2,232",note:"必比登推薦；下午可能賣完",why:"必比登推薦",s:"D3",m:true,src:"清單",pid:"ChIJO4sKZ5s62jARyP3E8ZJoyDk",tip:"必點烤雞（小春雞，半隻一人份）和烤豬肋排，青木瓜偏鹹；只收現金、無冷氣，下午烤雞可能賣完。",ll:[18.787553,98.981196]},
-{id:"kalm",n:"Kalm Village",c:"景點",r:"古城",a:"14 Phra Pok Klao Rd Soi 4, Old City",h:"09:30–18:30，週三休",rt:"4.8",rv:"2,911",note:"藝術文化中心，有瑜伽與手作課可報名",s:"D3",m:false,src:"清單",pid:"ChIJLbX7JJI72jARhFaSmKv7fS0",tip:"免費參觀；頂樓可遠眺柴迪隆寺，咖啡館與 2 樓圖書館適合避暑；週三休。",ll:[18.783363,98.986467]},
-{id:"abby",n:"ABBY Society Old Town 瑜伽",c:"課程體驗",r:"古城",a:"10 Wiang Kaew Rd 2F, Old City",h:"09:00–19:00",rt:"4.9",rv:"79",note:"小班制，WhatsApp 預約",s:"D3",m:false,src:"清單",pid:"ChIJ-9JbEwA72jARMuSki1YvLak",tip:"小班 3–8 人英文授課，WhatsApp 預約；只收現金。",ll:[18.793217,98.986579]},
-{id:"moonim",n:"ร้านหมูนิ่มจิ้มจุ่ม",loc:"泰式炭火火鍋，清邁皇家大學前",c:"美食",sub:"火鍋",r:"北區",a:"243 Chang Phueak",h:"17:00–23:30",rt:"4.8",rv:"37",note:"林西想吃；開店就有人排隊，建議 17:00–17:30 到",why:"林西指名想吃",s:"D3",m:true,src:"清單",pid:"ChIJ6WCNCl072jARVHHy28ZBWac",tip:"牛肉厚切評價最好，湯頭清、綠色醬料較辣；多是在地客、開店就排隊；只收現金。",ll:[18.808910,98.984793]},
-{id:"jazz",n:"The North Gate Jazz Co-Op",c:"景點",r:"古城",a:"91/1-2 Sri Poom Rd（北門）",h:"19:00–24:00",rt:"4.7",rv:"5,682",note:"現場爵士，想坐室內要 20:00 前到",s:"D3",m:false,src:"清單",pid:"ChIJVysZJZc62jARMcaDlAs-u4E",tip:"免門票、點飲料即可，酒類約 200–400 銖；座位很少，多數人站在門口聽，記得給樂手小費；對面船麵攤車評價很好。",ll:[18.795230,98.987072]},
-{id:"porkleg",n:"凤飞飞猪脚饭 ขาหมูช้างเผือก",c:"美食",sub:"飯類",r:"古城",a:"北門 Chang Phueak Gate 旁",h:"17:00–24:00",rt:"4.2",rv:"1,915",note:"北門另有知名的牛仔帽阿姨豬腳飯（17:00–24:00，1,915 則評論）",s:"D3",m:false,src:"清單",tip:"就是北門有名的「牛仔帽阿姨」豬腳飯攤；17:00 開到半夜，晚餐時段要排隊；路邊攤請帶現金。",pid:"ChIJG9eEK5E62jARDb2Ukq5XTNM",ll:[18.795820,98.985515]},
-{id:"graphx",n:"GRAPH X",c:"咖啡甜點",sub:"精品咖啡",r:"古城東・塔佩門",a:"198/2 Chang Moi Rd",h:"09:00–17:00",rt:"4.7",rv:"85",note:"GRAPH 的分店，日式倉庫風，離 THEE 走路 5 分鐘",s:"D4",m:false,src:"建議",pid:"ChIJt-JDvDA72jARNI5QrBewfaE",tip:"推 No.16、No.18 特調；空間明亮好拍，每杯約 100–150 銖。",ll:[18.790011,98.995857]},
-{id:"ekachan",n:"Ekachan The Wisdom of Ethnic Thai Cuisine",c:"美食",sub:"泰北料理",r:"夜市・濱河",a:"95 Changklan Rd",h:"11:00–15:00、17:00–22:00",rt:"4.4",rv:"1,221",note:"平河邊柚木屋，米其林推薦；建議訂位",why:"你特地加進清單的餐廳",s:"D4",m:true,src:"清單",pid:"ChIJp-fil2I72jAR9EpXSU6dJ3A",tip:"推涼拌牛肉、炸雞翅、軟殼蟹、冬陰功；要先在 Google 地圖訂位；份量精緻，每人約 400–1,000 銖。",ll:[18.783221,99.003534]},
-{id:"ziri",n:"Ziri Massage and Spa",c:"按摩",r:"古城",a:"99/3 Ratchapakhinai Rd, Old City",h:"10:00–22:00",rt:"5.0",rv:"2,923",note:"非常熱門，評論建議提早一到兩週預約",s:"D4",m:false,src:"清單",pid:"ChIJ5bL-yFU72jAROyrLu4MsGOE",tip:"熱油＋泰式 2 小時約 990 銖（早上優惠約 890）；按前可畫圖標出要加強的部位；熱門時段要預約。",ll:[18.786742,98.990290]},
-{id:"chedi",n:"柴迪隆寺 Wat Chedi Luang",c:"景點",r:"古城",a:"103 Prapokklao Rd, Old City",h:"05:00–22:30",rt:"4.7",rv:"19,128",note:"清單備註「推推」；傍晚光線最好",why:"清單備註「推推」",s:"D4",m:true,src:"清單",pid:"ChIJFRQRM5k62jARuqhLBJpw91w",tip:"外國人需購票約 50 銖，需遮肩過膝；傍晚光線最好；週日傍晚門口就是週日夜市，可接著逛。",ll:[18.786969,98.986580]},
-{id:"sunday",n:"週日夜市／塔佩門步行街",c:"購物市集",r:"古城",a:"Ratchadamnoen Rd，塔佩門到帕辛寺",h:"只有週日 17:00–22:30",rt:"4.5",rv:"6,857",note:"清單裡的「塔佩門步行街」和「週日夜市」是同一個市集",why:"只有週日開，錯過就沒了",s:"D4",m:true,src:"清單",pid:"ChIJs_Isopg62jARSxmmZpK66tw",tip:"只有週日 17:00–22:30，人非常多，全逛約 2 小時；小吃便宜、沿路有按摩；嘟嘟車喊價偏高，用 Grab 較划算。",ll:[18.787796,98.992961]},
-{id:"rotipadae",n:"Roti Pa Dae",c:"咖啡甜點",sub:"羅提",r:"古城東・塔佩門",a:"Tha Phae Rd（塔佩門外）",h:"18:30–24:00",rt:"4.2",rv:"2,231",note:"必比登推薦羅提，要排隊、自己寫單",why:"必比登推薦",s:"D4",m:true,src:"清單",pid:"ChIJGcRIjKM62jARjr4cxW4C6TA",tip:"自己拿紙條寫單、插單，等叫號付款取餐，約等 20 分；每份 20–45 銖，起司口味最脆，加蛋會變軟。",ll:[18.788053,98.995894]},
-{id:"bazaar",n:"清邁夜市 Night Bazaar",c:"購物市集",r:"夜市・濱河",a:"Changklan Rd",h:"17:00–24:00",rt:"4.3",rv:"27,472",note:"每天都開，伴手禮與小吃",s:"D4",m:false,src:"清單",pid:"ChIJW0qnDKY62jARHbAmfwD1Lgs",tip:"觀光取向、價格偏高要殺價；美食廣場有表演；旁邊 Big C 可順便採買。",ll:[18.785224,99.000299]},
-{id:"magic",n:"Magic Brew Coffee",c:"咖啡甜點",sub:"精品咖啡",r:"北區",a:"1/4 Soi Sotsueksa, Chang Phueak",h:"07:00–15:30，週三休",rt:"4.9",rv:"465",note:"網友說夭壽好喝",why:"清單備註「網友說夭壽好喝」",s:"D5",m:true,src:"清單",pid:"ChIJ-7ZPy7I72jARYkhM3AgAkRM",tip:"必點現泡泰奶（約 40 銖），柳橙美式也推；店很小座位少，15:30 打烊、週三休。",ll:[18.804057,98.978887]},
-{id:"onepct",n:"1% Pilates Chiangmai",c:"課程體驗",r:"北區",a:"10/16 Superhighway 5F, Chang Phueak",h:"08:00–20:00",rt:"5.0",rv:"98",note:"小班 5 人，可試上單堂，需先預約",s:"D5",m:false,src:"建議",pid:"ChIJ1zVfBQA72jAR2h43X4V1iS4",tip:"有中英雙語老師，初學者友善；小班要先預約。",ll:[18.805177,98.969510]},
-{id:"kaosoy",n:"Kao Soy Nimman 烤山尼曼",c:"美食",sub:"泰北咖哩麵",r:"尼曼",a:"22 Nimmanhaemin Soi 7",h:"10:00–21:00",rt:"4.2",rv:"5,713",note:"米其林推薦泰北咖哩麵",s:"D5",m:false,src:"清單",pid:"ChIJ9Vbj3Yk62jAR4R5XMgrf6ag",tip:"推泰北香腸咖哩麵、海鮮咖哩麵，雞腿炸雞偏乾可略；每人約 200–250 銖；避開用餐尖峰較能坐到冷氣區。",ll:[18.797924,98.969279]},
-{id:"hatthasin",n:"Hatthasin massage for health",c:"按摩",r:"尼曼",a:"15 Nimmanhaemin Soi 11",h:"09:00–24:00",rt:"4.6",rv:"533",note:"力道大，壯碩的人適合；Kung、Nine 兩位師傅好",why:"清單指名 Kung、Nine 兩位師傅",s:"D5",m:true,src:"清單",pid:"ChIJjQ0MdVg72jARI6Saf7Iiw7Q",tip:"評價兩極、師傅手法落差大，建議直接指定 Kung 或 Nine；一樓按摩區靠櫃檯較吵。",ll:[18.796985,98.968589]},
-{id:"maya",n:"瑪雅百貨 MAYA Lifestyle",c:"購物市集",r:"尼曼",a:"55/5 Huay Kaew Rd",h:"10:00–22:00",rt:"4.4",rv:"17,799",note:"頂樓可看夜景，地下樓有超市",s:"D5",m:false,src:"清單",pid:"ChIJC1o2yWE62jARfjKPh-dUjiQ",tip:"4 樓美食街平價乾淨，B1 有超市；頂樓可看夜景，走累了可來吹冷氣。",ll:[18.801893,98.967561]},
-{id:"pari",n:"PARI-",c:"美食",sub:"日式居酒屋",r:"尼曼",a:"17 Siri Mangkalajarn Rd Lane 9",h:"18:00–23:00",rt:"4.6",rv:"1,042",note:"米其林推薦，日式居酒屋 × 泰北食材，座位少需訂位",why:"米其林推薦，需訂位",s:"D5",m:true,src:"清單",pid:"ChIJeUR3m3s72jARlBChsU4pK10",tip:"晚上才有單點、中午只有 3 種定食；晚餐要訂位，生魚類開門後很快賣完；推炸豆腐、甜點，每人約 400–1,200 銖。",ll:[18.794258,98.972421]},
-{id:"asiascenic",n:"Asia Scenic Thai Cooking School",c:"課程體驗",r:"古城",a:"31 Ratchadamnoen Rd Soi 5, Old City",h:"半日班約 4 小時，需線上預約",rt:"5.0",rv:"4,204",note:"含市場導覽與自己煮的午餐",s:"D6",m:false,src:"建議",pid:"ChIJx00YgaI62jARiP_kVGvSCqE",tip:"先逛市場再煮 5 道菜，份量很多，課前別吃早餐；Tommy、A 老師評價好，可刷卡。",ll:[18.789748,98.991170]},
-{id:"makkhanb",n:"Makkha Health & Spa（Night Bazaar）",c:"按摩",r:"夜市・濱河",a:"105 Loi Kroh Rd",h:"10:00–24:00",rt:"4.8",rv:"940",note:"做完送芒果糯米",s:"D6",m:false,src:"清單",pid:"ChIJp5aIjEw72jARZk9oGKq-8so",tip:"按完送芒果糯米，比古城店安靜；在 Klook 先買較便宜，建議預約。",ll:[18.784064,98.999341]},
-{id:"bigc",n:"Big C Market Pantip",c:"購物市集",r:"夜市・濱河",a:"152/1 Changklan Rd",h:"09:00–24:00",rt:"4.2",rv:"2,350",note:"零食、伴手禮一次買",s:"D6",m:false,src:"清單",pid:"ChIJ3X0LhTE72jARH80_k5oNIj4",tip:"開到 24:00、可退稅；但果乾、泰奶不一定便宜，果乾去瓦洛洛市場買較划算；塑膠袋收費。",ll:[18.782071,98.999662]},
-{id:"gex",n:"G Exchange 換匯",c:"其他",r:"古城東・塔佩門",a:"10/1 Loi Kroh Rd",h:"09:00–22:00",rt:"4.8",rv:"133",note:"匯率好，需帶護照",why:"換匯要用，匯率好",s:"備選",m:true,src:"清單",pid:"ChIJy1QnFzc72jARBOzC59qmuLE",tip:"帶護照（會影印）；匯率接近台銀、免排隊，每天開到 22:00。",ll:[18.784924,98.993854]},
-{id:"madam",n:"MADAM CNX",c:"購物市集",r:"古城東・塔佩門",a:"38 Tha Phae Rd",h:"10:30–16:30，週六日休",rt:"4.8",rv:"30",note:"Gini 送的包包；週末改在真心市集擺攤，熱門款早上就賣完",why:"Gini 送的包包店",s:"備選",m:true,src:"清單",pid:"ChIJP53Nc8g72jARqqWW8dMPzhs",tip:"週六日不開店（改到真心市集擺攤）；10:30 開門很快就擠滿，包包 S 約 190、M 約 290 銖起；老闆娘會說中文，可刷卡。",ll:[18.787801,99.001689]},
-{id:"graphcafe",n:"GRAPH Cafe",c:"咖啡甜點",sub:"精品咖啡",r:"古城",a:"25/1 Ratvithi Rd, Old City",h:"09:00–17:00",rt:"4.5",rv:"1,272",note:"Gini 推薦；本店座位很少，Day 4 排的是分店 GRAPH X",s:"備選",m:false,src:"清單",pid:"ChIJSyvmuqI62jAR8Zm8mwo5MXQ",tip:"推 MONOCHROME、Midtown、檸檬黑糖蘇打美式；店很小適合 4 人以內，只收現金。",ll:[18.791663,98.991544]},
-{id:"copenn",n:"Copenn Chiangmai",c:"購物市集",r:"尼曼",a:"24/9 Nimmanhaemin Soi 17, 2F（Roast8ry 樓上）",h:"10:00–18:00",rt:"4.2",rv:"31",note:"在地香氛品牌",s:"備選",m:false,src:"清單",pid:"ChIJK20H4Ro72jAR7TcUcCU5NnQ",tip:"號稱「泰國的 Aesop」，可慢慢試聞；店內不能飲食，飲料先喝完再進去；中高價位。",ll:[18.794873,98.968516]},
-{id:"kiewkai",n:"Kiew Kai Ka @One Nimman",c:"美食",sub:"泰式料理",r:"尼曼",a:"One Nimman D116 & D120",h:"11:00–22:00",rt:"3.8",rv:"942",note:"米其林推薦；Blackitch 的平價替代",s:"備選",m:false,src:"清單",pid:"ChIJVVVVVQU62jARfkU9ZMH8OaU",tip:"推炸魚佐魚露、豬頸肉、冬陰功；評價兩極、偏辣偏鹹，另收約 17% 服務費與稅；17:00 前通常不用訂位。",ll:[18.799810,98.968429]},
-{id:"joost",n:"Joost Smoothies",c:"咖啡甜點",sub:"果昔果汁",r:"尼曼",a:"23 Nimmanhaemin Soi 13",h:"08:00–23:00",rt:"4.6",rv:"416",note:"脆友說山竹優格很好吃",s:"備選",m:false,src:"清單",pid:"ChIJ8fMLkiw72jARpzKhBbX2Bk0",tip:"山竹冰沙約 150 銖、酪梨約 100 銖；中午水果可能缺貨，下午 3 點半後較穩；排隊叫號，座位少多外帶。",ll:[18.796513,98.968648]},
-{id:"rogu",n:"Rogu Roti",c:"咖啡甜點",sub:"羅提",r:"尼曼",a:"15/4 Nimmanhaemin Soi 3",h:"09:00–01:00",rt:"4.5",rv:"3,794",note:"甜鹹羅提都有，營業到很晚",s:"備選",m:false,src:"清單",pid:"ChIJQXJ8IWI62jAR4ihMz2nz3nY",tip:"白天去餅皮較脆；推鹹口味和香蕉煉乳，甜度偏高；室內油煙重，可坐室外。",ll:[18.799089,98.967252]},
-{id:"7senses",n:"7 Senses Gelato",c:"咖啡甜點",sub:"義式冰淇淋",r:"尼曼",a:"41/5 Nimmanhaemin Soi 11",h:"12:00–22:00",rt:"4.8",rv:"1,397",note:"義大利師傅手作",s:"備選",m:false,src:"清單",pid:"ChIJP4XeykA72jARZ3REyycrBns",tip:"可先試吃；推開心果、Ricotta 無花果，單球約 99 銖。",ll:[18.796894,98.969612]},
-{id:"klay",n:"KLĀY cafe",c:"咖啡甜點",sub:"早午餐",r:"尼曼",a:"16/1 Nimmanhaemin Soi 5",h:"08:30–18:00",rt:"4.7",rv:"1,229",note:"早午餐",s:"備選",m:false,src:"清單",pid:"ChIJIwdqWq472jARU53vPN57PVg",tip:"餐點與牛肉飯評價好、咖啡評價普通；可訂位，每人約 200–400 銖，店內也賣香氛。",ll:[18.798503,98.968605]},
-{id:"ristr8to",n:"Ristr8to Original",c:"咖啡甜點",sub:"精品咖啡",r:"尼曼",a:"15/3 Nimmanhaemin Rd",h:"07:00–17:30",rt:"4.6",rv:"1,300",note:"拉花冠軍咖啡店",s:"備選",m:false,src:"建議",pid:"ChIJIdQIQbc72jARb7Z3AF_aLSg",tip:"點熱的拉花奶咖（Flat White、拉花拿鐵）最值得，黑咖啡評價普通；每杯約 100–150 銖，17:30 打烊。",ll:[18.799098,98.967226]},
-{id:"roast8ry",n:"Roast8ry Coffee Flagship",c:"咖啡甜點",sub:"精品咖啡",r:"尼曼",a:"24/9 Nimmanhaemin Soi 17",h:"08:00–17:00",rt:"4.6",rv:"1,378",note:"自家烘豆，和 Copenn 同一棟",s:"備選",m:false,src:"建議",pid:"ChIJUwbvRP072jARfsOb81lnJFQ",tip:"有 5 種冠軍拉花可選，想拍拉花過程要先跟店員說；價格偏高、主打拉花，味道評價普通。",ll:[18.794878,98.968485]},
-{id:"cherngdoi",n:"Cherng Doi Roast Chicken",c:"美食",sub:"烤雞",r:"尼曼",a:"2/8 Suk Kasame Rd",h:"11:00–20:00，週一休",rt:"4.3",rv:"3,251",note:"烤雞、炸木瓜沙拉",s:"備選",m:false,src:"清單",pid:"ChIJs5TfLmI62jARMIq8IHLug_c",tip:"必點烤雞（約 105 銖）、炸青木瓜沙拉；有圖片菜單；尖峰要排，離峰去，週一休。",ll:[18.799259,98.966082]},
-{id:"warmup",n:"Warm Up Cafe",c:"景點",r:"尼曼",a:"40 Nimmanhaemin Rd",h:"19:00–03:00",rt:"4.3",rv:"2,996",note:"老牌夜店，每晚有現場樂團",s:"備選",m:false,src:"清單",pid:"ChIJMVzfImM62jARFvgBR2MjagI",tip:"本地夜店兼 Live house：外場吃喝聽歌、內場 DJ 很吵；啤酒便宜、調酒普通，想聊天不適合。",ll:[18.795249,98.965509]},
-{id:"museforest",n:"Muse Forestias Massage and Spa",c:"按摩",r:"尼曼",a:"2 Nimmanhaemin Soi 9",h:"11:30–23:30",rt:"4.9",rv:"6,092",note:"Day 2 人多分兩組時的另一間",s:"備選",m:false,src:"清單",pid:"ChIJyb15dTk72jAR0t81tp6gJhM",tip:"肩頸＋足部 90 分約 600 銖，草藥熱敷評價好；有評論說師傅邊按邊聊天，可先請她們安靜。",ll:[18.797506,98.967248]},
-{id:"stayments",n:"Stayments Massage",c:"按摩",r:"尼曼",a:"7/2 Suk Kasame Rd",h:"09:00–21:00",rt:"4.9",rv:"127",note:"網友推薦；運動按摩，評論常指名 Kae Kae",s:"備選",m:false,src:"清單",pid:"ChIJyc_1V2E62jARe74ACYpWoP4",tip:"運動按摩指名 Kae Kae，很搶手要先預約；裝潢簡單但 CP 值高。",ll:[18.799899,98.963898]},
-{id:"sumbamboo",n:"sum bamboo massage（Nimman）",c:"按摩",r:"尼曼",a:"25/7 Nimmanhaemin Soi 15",h:"11:00–23:00",rt:"4.7",rv:"162",note:"網友推薦；力道重，會踩背，半開放空間",s:"備選",m:false,src:"清單",pid:"ChIJb4BqDw472jARaRXR6pGqUb0",tip:"只有 4 床的開放通鋪，力道重會踩背；預約要付 100 銖訂金；老闆娘會先確認痠痛部位。",ll:[18.795566,98.968501]},
-{id:"mooyim",n:"Mooyim JimJum Hotpot",c:"美食",sub:"火鍋",r:"北區",a:"5/2 Taewan Rd, Chang Phueak",h:"17:00–03:00",rt:"4.1",rv:"930",note:"Day 3 火鍋備案，露天炭火、較熱",s:"備選",m:false,src:"清單",pid:"ChIJKzyYsPQ62jARc6Nsb4ENJIc",tip:"每盤 19 銖起的香茅陶鍋，兩人約 200–250 銖；只收現金、炭火無冷氣，坐路邊較涼；客滿會被帶到二店。",ll:[18.805789,98.973227]},
-{id:"chum",n:"CHUM Northern Kitchen @Old City",c:"美食",sub:"泰北料理",r:"古城",a:"24 Phra Singh Rd, Old City",h:"10:30–20:00",rt:"4.6",rv:"1,156",note:"網友說平價好吃，泰北菜",s:"備選",m:false,src:"清單",pid:"ChIJPZe2-aE72jARGFwpqLCzNdU",tip:"推炸雞翅、泰北香腸炒飯、咖哩燉豬肉；一定要訂位（只有一樓有冷氣、二樓油煙重）；每道約 100 銖，刷卡未滿 500 加 3%。",ll:[18.789662,98.983838]},
-{id:"malee",n:"Malee Noodle",c:"美食",sub:"麵食",r:"古城",a:"古城西側，近 Wat Phra Singh",h:"08:30–20:30",rt:"4.5",rv:"886",note:"冬蔭功酸辣麵、泰式炒河粉",s:"備選",m:false,src:"清單",pid:"ChIJRWCoISs72jARjr9coW96E3E",tip:"推冬陰功酸辣麵、豬血內臟粿條湯（約 60 銖）、椰奶布丁；份量大又便宜，點心評價普通。",ll:[18.790000,98.978489]},
-{id:"northlands",n:"Northlands Restaurant",c:"美食",sub:"泰式料理",r:"古城",a:"Old City（靠近 THE HOUSE）",h:"06:40–21:00",rt:"4.8",rv:"1,790",note:"家常泰菜，老闆娘會送水果",s:"備選",m:false,src:"清單",pid:"ChIJ050SMr062jARCOmushQcbqc",tip:"一盤約 50 銖、份量大，老闆娘常送水果；家常口味、出餐較慢，趕時間不適合。",ll:[18.792764,98.992822]},
-{id:"khunkae",n:"Khun Kae's Juice Bar",c:"咖啡甜點",sub:"果昔果汁",r:"古城",a:"19/3 Mun Mueang Rd, Old City",h:"09:00–19:30",rt:"4.6",rv:"2,701",note:"水果碗、果昔",s:"備選",m:false,src:"清單",pid:"ChIJURS_Tb062jARtnFTkoQaMgQ",tip:"果昔碗約 95 銖、果汁 50–60 銖；座位少常要等，一人點一樣就很飽。",ll:[18.792824,98.991620]},
-{id:"makkhaah",n:"Makkha Health & Spa（Ancient House）",c:"按摩",r:"古城",a:"38/1 Soi Ratchamanka 8, Old City",h:"10:00–23:00",rt:"4.6",rv:"807",note:"老房子裡的 Spa",s:"備選",m:false,src:"清單",pid:"ChIJGV4FvZw62jARNmHqRY-PPyQ",tip:"60 年柚木老屋，按完送芒果糯米；在 KKday 或 Klook 先買較便宜；問卷寫清楚要加強的部位。",ll:[18.786315,98.981016]},
-{id:"wildrose",n:"Wild Rose Yoga",c:"課程體驗",r:"古城",a:"Phra Pok Klao Rd Lane 4/1, Old City",h:"課表制，多為 09:45、14:00 場",rt:"4.7",rv:"346",note:"環境很好，需 WhatsApp 預約",s:"備選",m:false,src:"清單",pid:"ChIJ45vXtJ862jARwEmra4K7MxI",tip:"半開放教室蚊子多（有防蚊液），進門前要洗腳、手機包包不能帶進教室；需先 WhatsApp 預約，英文授課。",ll:[18.782663,98.988006]},
-{id:"zabbelee",n:"Zabb E Lee Thai Cooking School",c:"課程體驗",r:"古城",a:"Somphet Market 集合（7 Mun Mueang Rd）",h:"07:00–22:00，分上午、晚上班",rt:"5.0",rv:"4,817",note:"Asia Scenic 客滿時的替代",s:"備選",m:false,src:"建議",pid:"ChIJ3x3B6ZA62jARvdzTBB6KPUg",tip:"會到古城 3 公里內住宿接送，先逛市場再到約 25 分車程外的教室；做 4 道菜加芒果糯米，英文授課、可選素食。",ll:[18.791625,98.993117]},
+{id:"house",n:"THE HOUSE by Ginger",c:"美食",sub:"泰式料理",r:"古城",a:"199 Mun Mueang Rd, Old City",h:"11:00–23:00",rt:"4.3",rv:"3,460",note:"清單備註「推推」；已訂位 10/15 18:30、3 人",why:"已訂位，清單備註「推推」",s:"D1",m:true,src:"清單",pid:"ChIJNVnFK7062jARHAtoL1m4ZYk",tip:"必點炸魚、椰奶咖哩蝦、西瓜涼拌，前菜拼盤可略；冷氣很強帶件薄外套。每人約 400–1,200 銖，可刷卡。",ll:[18.792788,98.993221],oh:[[660, 1380], [2100, 2820], [3540, 4260], [4980, 5700], [6420, 7140], [7860, 8580], [9300, 10020]]},
+{id:"riflesso",n:"Riflesso Artisan Gelato Old City",c:"咖啡甜點",sub:"義式冰淇淋",r:"古城",a:"63 Sri Poom Rd, Old City",h:"12:00–22:00",rt:"4.9",rv:"733",note:"開心果口味評價最好",s:"D1",m:false,src:"清單",pid:"ChIJkXDudgA72jARORnHV23Gya8",tip:"開心果、椰子、榴槤口味評價最高，可先試吃再選；價位接近台北，可刷卡。",ll:[18.795120,98.989337],oh:[[720, 1320], [2160, 2760], [3600, 4200], [5040, 5640], [6480, 7080], [7920, 8520], [9360, 9960]]},
+{id:"reliever",n:"Reliever Health massage",c:"按摩",r:"古城",a:"201-203 Prapokklao Rd, Old City（北門旁）",h:"12:00–23:30",rt:"4.9",rv:"640",note:"營業到很晚，Day 1 抵達當晚做 60–90 分鐘",s:"D1",m:false,src:"建議",pid:"ChIJmwuEnKo72jARiNs7GAhtkXM",tip:"草藥熱壓＋熱椰子油按摩評價最好（90 分約 800 銖），按完有薑茶；晚上常客滿，最好先預約，店裡有貓。",ll:[18.794980,98.986760],oh:[[720, 1410], [2160, 2850], [3600, 4290], [5040, 5730], [6480, 7170], [7920, 8610], [9360, 10050]]},
+{id:"maesai",n:"Khao Soi Maesai",c:"美食",sub:"泰北咖哩麵",r:"尼曼",a:"29/1 Soi Ratchaphuek, Chang Phueak",h:"08:00–16:00，週日休",rt:"4.5",rv:"6,086",note:"米其林推薦泰北咖哩雞腿麵；中午排隊多，早去",why:"米其林推薦，泰北咖哩麵代表店",s:"D2",m:true,src:"清單",pid:"ChIJqcysHow62jAR6ElsdYpG8EU",tip:"點雞腿咖哩麵（約 55 銖），湯頭偏甜、椰奶味濃；先拿號碼牌，9–11 點前到不太用排，週日休。",ll:[18.799599,98.975213],cd:[0],oh:[[1920, 2400], [3360, 3840], [4800, 5280], [6240, 6720], [7680, 8160], [9120, 9600]]},
+{id:"umong",n:"Wat Umong 林間古寺",c:"景點",r:"西郊",a:"135 Su Thep",h:"04:00–20:00，門票約 THB 20",rt:"4.6",rv:"11,831",note:"林間古寺與地下隧道佛龕，早上最涼",s:"D2",m:false,src:"建議",pid:"ChIJnWhAb3A62jARWVBZnaOa7-0",tip:"外國人門票 20 銖，停留約 30–60 分；隧道內有蝙蝠氣味；回程不好叫車，可和 Baan Kang Wat 排一起（車程約 8 分）。",ll:[18.782726,98.952110],oh:[[240, 1200], [1680, 2640], [3120, 4080], [4560, 5520], [6000, 6960], [7440, 8400], [8880, 9840]]},
+{id:"bkw",n:"Baan Kang Wat",c:"景點",r:"西郊",a:"191-197 Soi Wat Umong, Su Thep",h:"10:00–18:00，週一休",rt:"4.5",rv:"7,192",note:"藝術家村，建議上午去避開人潮",s:"D2",m:false,src:"清單",pid:"ChIJdxPPqzUx2jARn86GcuRsD1s",tip:"中午很熱又塞車，建議早上去；小店手作品質好但價格偏高，園區咖哩雞腿麵很紅。週一休。",ll:[18.776326,98.948729],cd:[1],oh:[[600, 1080], [3480, 3960], [4920, 5400], [6360, 6840], [7800, 8280], [9240, 9720]]},
+{id:"ginger",n:"GINGER FARM kitchen @One Nimman",c:"美食",sub:"泰式料理",r:"尼曼",a:"One Nimman, Nimmanhaemin Rd",h:"11:00–23:00",rt:"4.3",rv:"3,708",note:"米其林推薦",s:"D2",m:false,src:"清單",pid:"ChIJI7OL9GE62jARTIo-coWTeBw",tip:"推炸魚、泰式炒河粉、咖哩麵；份量很大別點太多，每人約 400–600 銖；平日下午人少，可在 Google 地圖訂位。",ll:[18.799845,98.967547],oh:[[660, 1380], [2100, 2820], [3540, 4260], [4980, 5700], [6420, 7140], [7860, 8580], [9300, 10020]]},
+{id:"moonlight",n:"Muse Moonlight massage and spa",c:"按摩",r:"尼曼",a:"12/3 Nimmanhaemin Rd（Nimman 17）",h:"12:00–23:00",rt:"4.8",rv:"2,653",note:"網友說超推",why:"清單備註「網友說超推」",s:"D2",m:true,src:"清單",pid:"ChIJ_5SAtGk72jARTUMR91REjjI",tip:"足部＋頭頸 90 分約 600 銖、精油 2 小時約 990 銖起；頂樓包廂白天較熱可要求換房，按完送薑茶米餅。",ll:[18.795107,98.967532],oh:[[720, 1380], [2160, 2820], [3600, 4260], [5040, 5700], [6480, 7140], [7920, 8580], [9360, 10020]]},
+{id:"blackitch",n:"Blackitch Artisan Kitchen",c:"美食",sub:"精緻套餐",r:"尼曼",a:"27/1 Nimmanhaemin Soi 7",h:"11:30–14:00、17:00–22:00，週三休",rt:"4.6",rv:"398",note:"主廚套餐，每人約 THB 2,000 起，需預約",why:"Day 2 主廚套餐晚餐，要提前訂位",s:"D2",m:true,src:"清單",pid:"ChIJU9Y16Ik62jARJnrozimcTLc",tip:"約 11 道的主廚套餐，每人 2,000 銖起；要提早約一個月用 LINE 訂位並付訂金，週三休。",ll:[18.798126,98.969557],cd:[3],oh:[[690, 840], [1020, 1320], [2130, 2280], [2460, 2760], [3570, 3720], [3900, 4200], [6450, 6600], [6780, 7080], [7890, 8040], [8220, 8520], [9330, 9480], [9660, 9960]]},
+{id:"jingjai",n:"真心市集 Jing Jai Market",c:"購物市集",r:"北區",a:"46 Atsadathon Rd, Pa Tan",h:"週六日 06:30 起，早上最熱鬧",rt:"4.5",rv:"12,305",note:"週末限定的手作與農夫市集",why:"週末限定，只有 Day 3 週六能去",s:"D3",m:true,src:"清單",pid:"ChIJzfxey8A62jARBouRzNKxv58",tip:"手作與農夫市集只有週六日早上（6:30 起、越早越好），平日只有店家與餐廳；手作價格偏高，有小吃區與乾淨廁所，可排半天。",ll:[18.806230,98.995325],oh:[[390, 1260], [1980, 2700], [3420, 4140], [4860, 5580], [6300, 7020], [7740, 8460], [9030, 9900]]},
+{id:"lung",n:"Lung Khajohn Wat Ket",c:"美食",sub:"街頭小吃",r:"夜市・濱河",a:"109 Charoenrat Rd, Wat Ket",h:"06:00–14:30，週日休",rt:"4.6",rv:"408",note:"米其林街邊小吃：椰奶蒸米皮捲、西米球",why:"米其林街邊小吃，週日公休",s:"D3",m:true,src:"清單",pid:"ChIJMb2sBrA62jAREBOddQOc-Mc",tip:"必吃椰奶蒸米皮捲，每份幾十銖；6:00 開、常 11 點就剩一種口味，越早越好；帶現金、無冷氣，週日休。",ll:[18.792303,99.002195],cd:[0],oh:[[1800, 2310], [3240, 3750], [4680, 5190], [6120, 6630], [7560, 8070], [9000, 9510]]},
+{id:"phrasingh",n:"Wat Phra Singh 帕辛寺",c:"景點",r:"古城",a:"2 Samlarn Rd, Old City",h:"05:30–19:30",rt:"4.7",rv:"17,662",note:"古城最大寺廟，需遮肩過膝",s:"D3",m:false,src:"建議",pid:"ChIJbyRKbps62jAR6VTNF-fZVpY",tip:"外國人進主殿 50 銖，需遮肩過膝；有臥佛殿與蘭納壁畫，約停留 40 分鐘。",ll:[18.788526,98.981995],oh:[[330, 1380], [1770, 2610], [3210, 4050], [4650, 5490], [6090, 6930], [7530, 8370], [8970, 9810]]},
+{id:"sp",n:"SP Chicken 東北烤雞",c:"美食",sub:"烤雞",r:"古城",a:"9/1 Samlarn Rd Soi 1, Old City",h:"10:00–17:00，只收現金",rt:"4.2",rv:"2,232",note:"必比登推薦；下午可能賣完",why:"必比登推薦",s:"D3",m:true,src:"清單",pid:"ChIJO4sKZ5s62jARyP3E8ZJoyDk",tip:"必點烤雞（小春雞，半隻一人份）和烤豬肋排，青木瓜偏鹹；只收現金、無冷氣，下午烤雞可能賣完。",ll:[18.787553,98.981196],oh:[[600, 1020], [2040, 2460], [3480, 3900], [4920, 5340], [6360, 6780], [7800, 8220], [9240, 9660]]},
+{id:"kalm",n:"Kalm Village",c:"景點",r:"古城",a:"14 Phra Pok Klao Rd Soi 4, Old City",h:"09:30–18:30，週三休",rt:"4.8",rv:"2,911",note:"藝術文化中心，有瑜伽與手作課可報名",s:"D3",m:false,src:"清單",pid:"ChIJLbX7JJI72jARhFaSmKv7fS0",tip:"免費參觀；頂樓可遠眺柴迪隆寺，咖啡館與 2 樓圖書館適合避暑；週三休。",ll:[18.783363,98.986467],cd:[3],oh:[[570, 1110], [2010, 2550], [3450, 3990], [6330, 6870], [7770, 8310], [9210, 9750]]},
+{id:"abby",n:"ABBY Society Old Town 瑜伽",c:"課程體驗",r:"古城",a:"10 Wiang Kaew Rd 2F, Old City",h:"09:00–19:00",rt:"4.9",rv:"79",note:"小班制，WhatsApp 預約",s:"D3",m:false,src:"清單",pid:"ChIJ-9JbEwA72jARMuSki1YvLak",tip:"小班 3–8 人英文授課，WhatsApp 預約；只收現金。",ll:[18.793217,98.986579],oh:[[540, 1140], [1980, 2580], [3420, 4020], [4860, 5460], [6300, 6900], [7740, 8340], [9180, 9780]]},
+{id:"moonim",n:"ร้านหมูนิ่มจิ้มจุ่ม",loc:"泰式炭火火鍋，清邁皇家大學前",c:"美食",sub:"火鍋",r:"北區",a:"243 Chang Phueak",h:"17:00–23:30",rt:"4.8",rv:"37",note:"林西想吃；開店就有人排隊，建議 17:00–17:30 到",why:"林西指名想吃",s:"D3",m:true,src:"清單",pid:"ChIJ6WCNCl072jARVHHy28ZBWac",tip:"牛肉厚切評價最好，湯頭清、綠色醬料較辣；多是在地客、開店就排隊；只收現金。",ll:[18.808910,98.984793],oh:[[1020, 1410], [2460, 2850], [3900, 4290], [5340, 5730], [6780, 7170], [8220, 8610], [9660, 10050]]},
+{id:"jazz",n:"The North Gate Jazz Co-Op",c:"景點",r:"古城",a:"91/1-2 Sri Poom Rd（北門）",h:"19:00–24:00",rt:"4.7",rv:"5,682",note:"現場爵士，想坐室內要 20:00 前到",s:"D3",m:false,src:"清單",pid:"ChIJVysZJZc62jARMcaDlAs-u4E",tip:"免門票、點飲料即可，酒類約 200–400 銖；座位很少，多數人站在門口聽，記得給樂手小費；對面船麵攤車評價很好。",ll:[18.795230,98.987072],oh:[[1140, 1440], [2580, 2880], [4020, 4320], [5460, 5760], [6900, 7200], [8340, 8640], [9780, 10080]]},
+{id:"porkleg",n:"凤飞飞猪脚饭 ขาหมูช้างเผือก",c:"美食",sub:"飯類",r:"古城",a:"北門 Chang Phueak Gate 旁",h:"17:00–24:00",rt:"4.2",rv:"1,915",note:"",s:"D3",m:false,src:"清單",tip:"就是北門有名的「牛仔帽阿姨」豬腳飯攤；17:00 開到半夜，晚餐時段要排隊；路邊攤請帶現金。",pid:"ChIJG9eEK5E62jARDb2Ukq5XTNM",ll:[18.795820,98.985515],oh:[[1020, 1440], [2460, 2880], [3900, 4320], [5340, 5760], [6780, 7200], [8220, 8640], [9660, 10080]]},
+{id:"graphx",n:"GRAPH X",c:"咖啡甜點",sub:"精品咖啡",r:"古城東・塔佩門",a:"198/2 Chang Moi Rd",h:"09:00–17:00",rt:"4.7",rv:"85",note:"GRAPH 的分店，日式倉庫風，離 THEE 走路 5 分鐘",s:"D4",m:false,src:"建議",pid:"ChIJt-JDvDA72jARNI5QrBewfaE",tip:"推 No.16、No.18 特調；空間明亮好拍，每杯約 100–150 銖。",ll:[18.790011,98.995857],oh:[[540, 1020], [1980, 2460], [3420, 3900], [4860, 5340], [6300, 6780], [7740, 8220], [9180, 9660]]},
+{id:"ekachan",n:"Ekachan The Wisdom of Ethnic Thai Cuisine",c:"美食",sub:"泰北料理",r:"夜市・濱河",a:"95 Changklan Rd",h:"11:00–15:00、17:00–22:00",rt:"4.4",rv:"1,221",note:"平河邊柚木屋，米其林推薦；建議訂位",why:"你特地加進清單的餐廳",s:"D4",m:true,src:"清單",pid:"ChIJp-fil2I72jAR9EpXSU6dJ3A",tip:"推涼拌牛肉、炸雞翅、軟殼蟹、冬陰功；要先在 Google 地圖訂位；份量精緻，每人約 400–1,000 銖。",ll:[18.783221,99.003534],oh:[[660, 900], [1020, 1320], [2100, 2340], [2460, 2760], [3540, 3780], [3900, 4200], [4980, 5220], [5340, 5640], [6420, 6660], [6780, 7080], [7860, 8100], [8220, 8520], [9300, 9540], [9660, 9960]]},
+{id:"ziri",n:"Ziri Massage and Spa",c:"按摩",r:"古城",a:"99/3 Ratchapakhinai Rd, Old City",h:"10:00–22:00",rt:"5.0",rv:"2,923",note:"非常熱門，評論建議提早一到兩週預約",s:"D4",m:false,src:"清單",pid:"ChIJ5bL-yFU72jAROyrLu4MsGOE",tip:"熱油＋泰式 2 小時約 990 銖（早上優惠約 890）；按前可畫圖標出要加強的部位；熱門時段要預約。",ll:[18.786742,98.990290],oh:[[600, 1320], [2040, 2760], [3480, 4200], [4920, 5640], [6360, 7080], [7800, 8520], [9240, 9960]]},
+{id:"chedi",n:"柴迪隆寺 Wat Chedi Luang",c:"景點",r:"古城",a:"103 Prapokklao Rd, Old City",h:"05:00–22:30",rt:"4.7",rv:"19,128",note:"清單備註「推推」；傍晚光線最好",why:"清單備註「推推」",s:"D4",m:true,src:"清單",pid:"ChIJFRQRM5k62jARuqhLBJpw91w",tip:"外國人需購票約 50 銖，需遮肩過膝；傍晚光線最好；週日傍晚門口就是週日夜市，可接著逛。",ll:[18.786969,98.986580],oh:[[300, 1350], [1740, 2790], [3180, 4230], [4620, 5670], [6060, 7110], [7500, 8550], [8940, 9990]]},
+{id:"sunday",n:"週日夜市／塔佩門步行街",c:"購物市集",r:"古城",a:"Ratchadamnoen Rd，塔佩門到帕辛寺",h:"只有週日 17:00–22:30",rt:"4.5",rv:"6,857",note:"清單裡的「塔佩門步行街」和「週日夜市」是同一個市集",why:"只有週日開，錯過就沒了",s:"D4",m:true,src:"清單",pid:"ChIJs_Isopg62jARSxmmZpK66tw",tip:"只有週日 17:00–22:30，人非常多，全逛約 2 小時；小吃便宜、沿路有按摩；嘟嘟車喊價偏高，用 Grab 較划算。",ll:[18.787796,98.992961],cd:[1, 2, 3, 4, 5, 6],oh:[[1020, 1350]]},
+{id:"rotipadae",n:"Roti Pa Dae",c:"咖啡甜點",sub:"羅提",r:"古城東・塔佩門",a:"Tha Phae Rd（塔佩門外）",h:"18:30–24:00",rt:"4.2",rv:"2,231",note:"必比登推薦羅提，要排隊、自己寫單",why:"必比登推薦",s:"D4",m:true,src:"清單",pid:"ChIJGcRIjKM62jARjr4cxW4C6TA",tip:"自己拿紙條寫單、插單，等叫號付款取餐，約等 20 分；每份 20–45 銖，起司口味最脆，加蛋會變軟。",ll:[18.788053,98.995894],oh:[[1110, 1440], [2550, 2880], [3990, 4320], [5430, 5760], [6870, 7200], [8310, 8640], [9750, 10080]]},
+{id:"bazaar",n:"清邁夜市 Night Bazaar",c:"購物市集",r:"夜市・濱河",a:"Changklan Rd",h:"17:00–24:00",rt:"4.3",rv:"27,472",note:"每天都開，伴手禮與小吃",s:"D4",m:false,src:"清單",pid:"ChIJW0qnDKY62jARHbAmfwD1Lgs",tip:"觀光取向、價格偏高要殺價；美食廣場有表演；旁邊 Big C 可順便採買。",ll:[18.785224,99.000299],oh:[[1020, 1440], [2460, 2880], [3900, 4320], [5340, 5760], [6780, 7200], [8220, 8640], [9660, 10080]]},
+{id:"magic",n:"Magic Brew Coffee",c:"咖啡甜點",sub:"精品咖啡",r:"北區",a:"1/4 Soi Sotsueksa, Chang Phueak",h:"07:00–15:30，週三休",rt:"4.9",rv:"465",note:"網友說夭壽好喝",why:"清單備註「網友說夭壽好喝」",s:"D5",m:true,src:"清單",pid:"ChIJ-7ZPy7I72jARYkhM3AgAkRM",tip:"必點現泡泰奶（約 40 銖），柳橙美式也推；店很小座位少，15:30 打烊、週三休。",ll:[18.804057,98.978887],cd:[3],oh:[[420, 930], [1860, 2370], [3300, 3810], [6180, 6690], [7620, 8130], [9060, 9570]]},
+{id:"onepct",n:"1% Pilates Chiangmai",c:"課程體驗",r:"北區",a:"10/16 Superhighway 5F, Chang Phueak",h:"08:00–20:00",rt:"5.0",rv:"98",note:"小班 5 人，可試上單堂，需先預約",s:"D5",m:false,src:"建議",pid:"ChIJ1zVfBQA72jAR2h43X4V1iS4",tip:"有中英雙語老師，初學者友善；小班要先預約。",ll:[18.805177,98.969510],oh:[[480, 1200], [1920, 2640], [3360, 4080], [4800, 5520], [6240, 6960], [7680, 8400], [9120, 9840]]},
+{id:"kaosoy",n:"Kao Soy Nimman 烤山尼曼",c:"美食",sub:"泰北咖哩麵",r:"尼曼",a:"22 Nimmanhaemin Soi 7",h:"10:00–21:00",rt:"4.2",rv:"5,713",note:"米其林推薦泰北咖哩麵",s:"D5",m:false,src:"清單",pid:"ChIJ9Vbj3Yk62jAR4R5XMgrf6ag",tip:"推泰北香腸咖哩麵、海鮮咖哩麵，雞腿炸雞偏乾可略；每人約 200–250 銖；避開用餐尖峰較能坐到冷氣區。",ll:[18.797924,98.969279],oh:[[600, 1260], [2040, 2700], [3480, 4140], [4920, 5580], [6360, 7020], [7800, 8460], [9240, 9900]]},
+{id:"hatthasin",n:"Hatthasin massage for health",c:"按摩",r:"尼曼",a:"15 Nimmanhaemin Soi 11",h:"09:00–24:00",rt:"4.6",rv:"533",note:"力道大，壯碩的人適合；Kung、Nine 兩位師傅好",why:"清單指名 Kung、Nine 兩位師傅",s:"D5",m:true,src:"清單",pid:"ChIJjQ0MdVg72jARI6Saf7Iiw7Q",tip:"評價兩極、師傅手法落差大，建議直接指定 Kung 或 Nine；一樓按摩區靠櫃檯較吵。",ll:[18.796985,98.968589],oh:[[540, 1440], [1980, 2880], [3420, 4320], [4860, 5760], [6300, 7200], [7740, 8640], [9180, 10080]]},
+{id:"maya",n:"瑪雅百貨 MAYA Lifestyle",c:"購物市集",r:"尼曼",a:"55/5 Huay Kaew Rd",h:"10:00–22:00",rt:"4.4",rv:"17,799",note:"頂樓可看夜景，地下樓有超市",s:"D5",m:false,src:"清單",pid:"ChIJC1o2yWE62jARfjKPh-dUjiQ",tip:"4 樓美食街平價乾淨，B1 有超市；頂樓可看夜景，走累了可來吹冷氣。",ll:[18.801893,98.967561],oh:[[600, 1320], [2040, 2760], [3480, 4200], [4920, 5640], [6360, 7080], [7800, 8520], [9240, 9960]]},
+{id:"pari",n:"PARI-",c:"美食",sub:"日式居酒屋",r:"尼曼",a:"17 Siri Mangkalajarn Rd Lane 9",h:"18:00–23:00",rt:"4.6",rv:"1,042",note:"米其林推薦，日式居酒屋 × 泰北食材，座位少需訂位",why:"米其林推薦，需訂位",s:"D5",m:true,src:"清單",pid:"ChIJeUR3m3s72jARlBChsU4pK10",tip:"晚上才有單點、中午只有 3 種定食；晚餐要訂位，生魚類開門後很快賣完；推炸豆腐、甜點，每人約 400–1,200 銖。",ll:[18.794258,98.972421],oh:[[1080, 1380], [2520, 2820], [3960, 4260], [5400, 5700], [6840, 7140], [8280, 8580], [9720, 10020]]},
+{id:"asiascenic",n:"Asia Scenic Thai Cooking School",c:"課程體驗",r:"古城",a:"31 Ratchadamnoen Rd Soi 5, Old City",h:"半日班約 4 小時，需線上預約",rt:"5.0",rv:"4,204",note:"含市場導覽與自己煮的午餐",s:"D6",m:false,src:"建議",pid:"ChIJx00YgaI62jARiP_kVGvSCqE",tip:"先逛市場再煮 5 道菜，份量很多，課前別吃早餐；Tommy、A 老師評價好，可刷卡。",ll:[18.789748,98.991170],oh:[[540, 1230], [1980, 2670], [3420, 4110], [4860, 5550], [6300, 6990], [7740, 8430], [9180, 9870]]},
+{id:"makkhanb",n:"Makkha Health & Spa（Night Bazaar）",c:"按摩",r:"夜市・濱河",a:"105 Loi Kroh Rd",h:"10:00–24:00",rt:"4.8",rv:"940",note:"做完送芒果糯米",s:"D6",m:false,src:"清單",pid:"ChIJp5aIjEw72jARZk9oGKq-8so",tip:"按完送芒果糯米，比古城店安靜；在 Klook 先買較便宜，建議預約。",ll:[18.784064,98.999341],oh:[[600, 1440], [2040, 2880], [3480, 4320], [4920, 5760], [6360, 7200], [7800, 8640], [9240, 10080]]},
+{id:"bigc",n:"Big C Market Pantip",c:"購物市集",r:"夜市・濱河",a:"152/1 Changklan Rd",h:"09:00–24:00",rt:"4.2",rv:"2,350",note:"零食、伴手禮一次買",s:"D6",m:false,src:"清單",pid:"ChIJ3X0LhTE72jARH80_k5oNIj4",tip:"開到 24:00、可退稅；但果乾、泰奶不一定便宜，果乾去瓦洛洛市場買較划算；塑膠袋收費。",ll:[18.782071,98.999662],oh:[[540, 1440], [1980, 2880], [3420, 4320], [4860, 5760], [6300, 7200], [7740, 8640], [9180, 10080]]},
+{id:"gex",n:"G Exchange 換匯",c:"其他",r:"古城東・塔佩門",a:"10/1 Loi Kroh Rd",h:"09:00–22:00",rt:"4.8",rv:"133",note:"匯率好，需帶護照",why:"換匯要用，匯率好",s:"備選",m:true,src:"清單",pid:"ChIJy1QnFzc72jARBOzC59qmuLE",tip:"帶護照（會影印）；匯率接近台銀、免排隊，每天開到 22:00。",ll:[18.784924,98.993854],oh:[[540, 1320], [1980, 2760], [3420, 4200], [4860, 5640], [6300, 7080], [7740, 8520], [9180, 9960]]},
+{id:"madam",n:"MADAM CNX",c:"購物市集",r:"古城東・塔佩門",a:"38 Tha Phae Rd",h:"10:30–16:30，週六日休",rt:"4.8",rv:"30",note:"Gini 送的包包；週末改在真心市集擺攤，熱門款早上就賣完",why:"Gini 送的包包店",s:"備選",m:true,src:"清單",pid:"ChIJP53Nc8g72jARqqWW8dMPzhs",tip:"週六日不開店（改到真心市集擺攤）；10:30 開門很快就擠滿，包包 S 約 190、M 約 290 銖起；老闆娘會說中文，可刷卡。",ll:[18.787801,99.001689],cd:[0, 6],oh:[[2070, 2430], [3510, 3870], [4950, 5310], [6390, 6750], [7830, 8190]]},
+{id:"graphcafe",n:"GRAPH Cafe",c:"咖啡甜點",sub:"精品咖啡",r:"古城",a:"25/1 Ratvithi Rd, Old City",h:"09:00–17:00",rt:"4.5",rv:"1,272",note:"Gini 推薦；本店座位很少，Day 4 排的是分店 GRAPH X",s:"備選",m:false,src:"清單",pid:"ChIJSyvmuqI62jAR8Zm8mwo5MXQ",tip:"推 MONOCHROME、Midtown、檸檬黑糖蘇打美式；店很小適合 4 人以內，只收現金。",ll:[18.791663,98.991544],oh:[[540, 1020], [1980, 2460], [3420, 3900], [4860, 5340], [6300, 6780], [7740, 8220], [9180, 9660]]},
+{id:"copenn",n:"Copenn Chiangmai",c:"購物市集",r:"尼曼",a:"24/9 Nimmanhaemin Soi 17, 2F（Roast8ry 樓上）",h:"10:00–18:00",rt:"4.2",rv:"31",note:"在地香氛品牌",s:"備選",m:false,src:"清單",pid:"ChIJK20H4Ro72jAR7TcUcCU5NnQ",tip:"號稱「泰國的 Aesop」，可慢慢試聞；店內不能飲食，飲料先喝完再進去；中高價位。",ll:[18.794873,98.968516],oh:[[600, 1080], [2040, 2520], [3480, 3960], [4920, 5400], [6360, 6840], [7800, 8280], [9240, 9720]]},
+{id:"kiewkai",n:"Kiew Kai Ka @One Nimman",c:"美食",sub:"泰式料理",r:"尼曼",a:"One Nimman D116 & D120",h:"11:00–22:00",rt:"3.8",rv:"942",note:"米其林推薦；Blackitch 的平價替代",s:"備選",m:false,src:"清單",pid:"ChIJVVVVVQU62jARfkU9ZMH8OaU",tip:"推炸魚佐魚露、豬頸肉、冬陰功；評價兩極、偏辣偏鹹，另收約 17% 服務費與稅；17:00 前通常不用訂位。",ll:[18.799810,98.968429],oh:[[660, 1320], [2100, 2760], [3540, 4200], [4980, 5640], [6420, 7080], [7860, 8520], [9300, 9960]]},
+{id:"joost",n:"Joost Smoothies",c:"咖啡甜點",sub:"果昔果汁",r:"尼曼",a:"23 Nimmanhaemin Soi 13",h:"08:00–23:00",rt:"4.6",rv:"416",note:"脆友說山竹優格很好吃",s:"備選",m:false,src:"清單",pid:"ChIJ8fMLkiw72jARpzKhBbX2Bk0",tip:"山竹冰沙約 150 銖、酪梨約 100 銖；中午水果可能缺貨，下午 3 點半後較穩；排隊叫號，座位少多外帶。",ll:[18.796513,98.968648],oh:[[480, 1380], [1920, 2820], [3360, 4260], [4800, 5700], [6240, 7140], [7680, 8580], [9120, 10020]]},
+{id:"rogu",n:"Rogu Roti",c:"咖啡甜點",sub:"羅提",r:"尼曼",a:"15/4 Nimmanhaemin Soi 3",h:"09:00–01:00",rt:"4.5",rv:"3,794",note:"甜鹹羅提都有，營業到很晚",s:"備選",m:false,src:"清單",pid:"ChIJQXJ8IWI62jAR4ihMz2nz3nY",tip:"白天去餅皮較脆；推鹹口味和香蕉煉乳，甜度偏高；室內油煙重，可坐室外。",ll:[18.799089,98.967252],oh:[[540, 1500], [1980, 2940], [3420, 4380], [4860, 5820], [6300, 7260], [7740, 8700], [9180, 10140]]},
+{id:"7senses",n:"7 Senses Gelato",c:"咖啡甜點",sub:"義式冰淇淋",r:"尼曼",a:"41/5 Nimmanhaemin Soi 11",h:"12:00–22:00",rt:"4.8",rv:"1,397",note:"義大利師傅手作",s:"備選",m:false,src:"清單",pid:"ChIJP4XeykA72jARZ3REyycrBns",tip:"可先試吃；推開心果、Ricotta 無花果，單球約 99 銖。",ll:[18.796894,98.969612],oh:[[720, 1320], [2160, 2760], [3600, 4200], [5040, 5640], [6480, 7080], [7920, 8520], [9360, 9960]]},
+{id:"klay",n:"KLĀY cafe",c:"咖啡甜點",sub:"早午餐",r:"尼曼",a:"16/1 Nimmanhaemin Soi 5",h:"08:30–18:00",rt:"4.7",rv:"1,229",note:"早午餐",s:"備選",m:false,src:"清單",pid:"ChIJIwdqWq472jARU53vPN57PVg",tip:"餐點與牛肉飯評價好、咖啡評價普通；可訂位，每人約 200–400 銖，店內也賣香氛。",ll:[18.798503,98.968605],oh:[[510, 1080], [1950, 2520], [3390, 3960], [4830, 5400], [6270, 6840], [7710, 8280], [9150, 9720]]},
+{id:"ristr8to",n:"Ristr8to Original",c:"咖啡甜點",sub:"精品咖啡",r:"尼曼",a:"15/3 Nimmanhaemin Rd",h:"07:00–17:30",rt:"4.6",rv:"1,300",note:"拉花冠軍咖啡店",s:"備選",m:false,src:"建議",pid:"ChIJIdQIQbc72jARb7Z3AF_aLSg",tip:"點熱的拉花奶咖（Flat White、拉花拿鐵）最值得，黑咖啡評價普通；每杯約 100–150 銖，17:30 打烊。",ll:[18.799098,98.967226],oh:[[420, 1050], [1860, 2490], [3300, 3930], [4740, 5370], [6180, 6810], [7620, 8250], [9060, 9690]]},
+{id:"roast8ry",n:"Roast8ry Coffee Flagship",c:"咖啡甜點",sub:"精品咖啡",r:"尼曼",a:"24/9 Nimmanhaemin Soi 17",h:"08:00–17:00",rt:"4.6",rv:"1,378",note:"自家烘豆，和 Copenn 同一棟",s:"備選",m:false,src:"建議",pid:"ChIJUwbvRP072jARfsOb81lnJFQ",tip:"有 5 種冠軍拉花可選，想拍拉花過程要先跟店員說；價格偏高、主打拉花，味道評價普通。",ll:[18.794878,98.968485],oh:[[480, 1020], [1920, 2460], [3360, 3900], [4800, 5340], [6240, 6780], [7680, 8220], [9120, 9660]]},
+{id:"cherngdoi",n:"Cherng Doi Roast Chicken",c:"美食",sub:"烤雞",r:"尼曼",a:"2/8 Suk Kasame Rd",h:"11:00–20:00，週一休",rt:"4.3",rv:"3,251",note:"烤雞、炸木瓜沙拉",s:"備選",m:false,src:"清單",pid:"ChIJs5TfLmI62jARMIq8IHLug_c",tip:"必點烤雞（約 105 銖）、炸青木瓜沙拉；有圖片菜單；尖峰要排，離峰去，週一休。",ll:[18.799259,98.966082],cd:[1],oh:[[660, 1200], [3540, 4080], [4980, 5520], [6420, 6960], [7860, 8400], [9300, 9840]]},
+{id:"warmup",n:"Warm Up Cafe",c:"景點",r:"尼曼",a:"40 Nimmanhaemin Rd",h:"19:00–03:00",rt:"4.3",rv:"2,996",note:"老牌夜店，每晚有現場樂團",s:"備選",m:false,src:"清單",pid:"ChIJMVzfImM62jARFvgBR2MjagI",tip:"本地夜店兼 Live house：外場吃喝聽歌、內場 DJ 很吵；啤酒便宜、調酒普通，想聊天不適合。",ll:[18.795249,98.965509],oh:[[1140, 1620], [2580, 3060], [4020, 4500], [5460, 5940], [6900, 7380], [8340, 8820], [9780, 10260]]},
+{id:"museforest",n:"Muse Forestias Massage and Spa",c:"按摩",r:"尼曼",a:"2 Nimmanhaemin Soi 9",h:"11:30–23:30",rt:"4.9",rv:"6,092",note:"Day 2 人多分兩組時的另一間",s:"備選",m:false,src:"清單",pid:"ChIJyb15dTk72jAR0t81tp6gJhM",tip:"肩頸＋足部 90 分約 600 銖，草藥熱敷評價好；有評論說師傅邊按邊聊天，可先請她們安靜。",ll:[18.797506,98.967248],oh:[[690, 1410], [2130, 2850], [3570, 4290], [5010, 5730], [6450, 7170], [7890, 8610], [9330, 10050]]},
+{id:"stayments",n:"Stayments Massage",c:"按摩",r:"尼曼",a:"7/2 Suk Kasame Rd",h:"09:00–21:00",rt:"4.9",rv:"127",note:"網友推薦；運動按摩，評論常指名 Kae Kae",s:"備選",m:false,src:"清單",pid:"ChIJyc_1V2E62jARe74ACYpWoP4",tip:"運動按摩指名 Kae Kae，很搶手要先預約；裝潢簡單但 CP 值高。",ll:[18.799899,98.963898],oh:[[540, 1260], [1980, 2700], [3420, 4140], [4860, 5580], [6300, 7020], [7740, 8460], [9180, 9900]]},
+{id:"sumbamboo",n:"sum bamboo massage（Nimman）",c:"按摩",r:"尼曼",a:"25/7 Nimmanhaemin Soi 15",h:"11:00–23:00",rt:"4.7",rv:"162",note:"網友推薦；力道重，會踩背，半開放空間",s:"備選",m:false,src:"清單",pid:"ChIJb4BqDw472jARaRXR6pGqUb0",tip:"只有 4 床的開放通鋪，力道重會踩背；預約要付 100 銖訂金；老闆娘會先確認痠痛部位。",ll:[18.795566,98.968501],oh:[[660, 1380], [2100, 2820], [3540, 4260], [4980, 5700], [6420, 7140], [7860, 8580], [9300, 10020]]},
+{id:"mooyim",n:"Mooyim JimJum Hotpot",c:"美食",sub:"火鍋",r:"北區",a:"5/2 Taewan Rd, Chang Phueak",h:"17:00–03:00",rt:"4.1",rv:"930",note:"Day 3 火鍋備案，露天炭火、較熱",s:"備選",m:false,src:"清單",pid:"ChIJKzyYsPQ62jARc6Nsb4ENJIc",tip:"每盤 19 銖起的香茅陶鍋，兩人約 200–250 銖；只收現金、炭火無冷氣，坐路邊較涼；客滿會被帶到二店。",ll:[18.805789,98.973227],oh:[[1020, 1620], [2460, 3060], [3900, 4500], [5340, 5940], [6780, 7380], [8220, 8820], [9660, 10260]]},
+{id:"chum",n:"CHUM Northern Kitchen @Old City",c:"美食",sub:"泰北料理",r:"古城",a:"24 Phra Singh Rd, Old City",h:"10:30–20:00",rt:"4.6",rv:"1,156",note:"網友說平價好吃，泰北菜",s:"備選",m:false,src:"清單",pid:"ChIJPZe2-aE72jARGFwpqLCzNdU",tip:"推炸雞翅、泰北香腸炒飯、咖哩燉豬肉；一定要訂位（只有一樓有冷氣、二樓油煙重）；每道約 100 銖，刷卡未滿 500 加 3%。",ll:[18.789662,98.983838],oh:[[630, 1200], [2070, 2640], [3510, 4080], [4950, 5520], [6390, 6960], [7830, 8400], [9270, 9840]]},
+{id:"malee",n:"Malee Noodle",c:"美食",sub:"麵食",r:"古城",a:"古城西側，近 Wat Phra Singh",h:"08:30–20:30",rt:"4.5",rv:"886",note:"冬蔭功酸辣麵、泰式炒河粉",s:"備選",m:false,src:"清單",pid:"ChIJRWCoISs72jARjr9coW96E3E",tip:"推冬陰功酸辣麵、豬血內臟粿條湯（約 60 銖）、椰奶布丁；份量大又便宜，點心評價普通。",ll:[18.790000,98.978489],oh:[[510, 1230], [1950, 2670], [3390, 4110], [4830, 5550], [6270, 6990], [7710, 8430], [9150, 9870]]},
+{id:"northlands",n:"Northlands Restaurant",c:"美食",sub:"泰式料理",r:"古城",a:"Old City（靠近 THE HOUSE）",h:"06:40–21:00",rt:"4.8",rv:"1,790",note:"家常泰菜，老闆娘會送水果",s:"備選",m:false,src:"清單",pid:"ChIJ050SMr062jARCOmushQcbqc",tip:"一盤約 50 銖、份量大，老闆娘常送水果；家常口味、出餐較慢，趕時間不適合。",ll:[18.792764,98.992822],oh:[[400, 1260], [1840, 2700], [3280, 4140], [4720, 5580], [6160, 7020], [7600, 8460], [9040, 9900]]},
+{id:"khunkae",n:"Khun Kae's Juice Bar",c:"咖啡甜點",sub:"果昔果汁",r:"古城",a:"19/3 Mun Mueang Rd, Old City",h:"09:00–19:30",rt:"4.6",rv:"2,701",note:"水果碗、果昔",s:"備選",m:false,src:"清單",pid:"ChIJURS_Tb062jARtnFTkoQaMgQ",tip:"果昔碗約 95 銖、果汁 50–60 銖；座位少常要等，一人點一樣就很飽。",ll:[18.792824,98.991620],oh:[[540, 1170], [1980, 2610], [3420, 4050], [4860, 5490], [6300, 6930], [7740, 8370], [9180, 9810]]},
+{id:"makkhaah",n:"Makkha Health & Spa（Ancient House）",c:"按摩",r:"古城",a:"38/1 Soi Ratchamanka 8, Old City",h:"10:00–23:00",rt:"4.6",rv:"807",note:"老房子裡的 Spa",s:"備選",m:false,src:"清單",pid:"ChIJGV4FvZw62jARNmHqRY-PPyQ",tip:"60 年柚木老屋，按完送芒果糯米；在 KKday 或 Klook 先買較便宜；問卷寫清楚要加強的部位。",ll:[18.786315,98.981016],oh:[[600, 1380], [2040, 2820], [3480, 4260], [4920, 5700], [6360, 7140], [7800, 8580], [9240, 10020]]},
+{id:"wildrose",n:"Wild Rose Yoga",c:"課程體驗",r:"古城",a:"Phra Pok Klao Rd Lane 4/1, Old City",h:"課表制，多為 09:45、14:00 場",rt:"4.7",rv:"346",note:"環境很好，需 WhatsApp 預約",s:"備選",m:false,src:"清單",pid:"ChIJ45vXtJ862jARwEmra4K7MxI",tip:"半開放教室蚊子多（有防蚊液），進門前要洗腳、手機包包不能帶進教室；需先 WhatsApp 預約，英文授課。",ll:[18.782663,98.988006],oh:[[585, 690], [735, 840], [2025, 2130], [2280, 2370], [2430, 2550], [3465, 3570], [3720, 3810], [4905, 5010], [5145, 5250], [5310, 5430], [6345, 6450], [6600, 6690], [6750, 6870], [7665, 7770], [7785, 7890], [8040, 8160], [9225, 9330], [9450, 9570]]},
+{id:"zabbelee",n:"Zabb E Lee Thai Cooking School",c:"課程體驗",r:"古城",a:"Somphet Market 集合（7 Mun Mueang Rd）",h:"07:00–22:00，分上午、晚上班",rt:"5.0",rv:"4,817",note:"Asia Scenic 客滿時的替代",s:"備選",m:false,src:"建議",pid:"ChIJ3x3B6ZA62jARvdzTBB6KPUg",tip:"會到古城 3 公里內住宿接送，先逛市場再到約 25 分車程外的教室；做 4 道菜加芒果糯米，英文授課、可選素食。",ll:[18.791625,98.993117],oh:[[420, 1320], [1860, 2760], [3300, 4200], [4740, 5640], [6180, 7080], [7620, 8520], [9060, 9960]]},
 {id:"thaifarm",n:"Thai Farm Cooking School",c:"課程體驗",r:"古城",a:"38 Mun Mueang Rd（辦公室，上課在郊區農場）",h:"含接送",rt:"5.0",rv:"1,728",note:"有機農場上課，需半天以上",s:"備選",m:false,src:"建議",pid:"ChIJhas1caI62jARgW8qRxPfJbk",tip:"半天含市場、自家農場與 4 道菜（含自製咖哩醬），約 1,000 銖含接送；辣椒自己控制用量。",ll:[18.794104,98.991980]},
-{id:"calm",n:"Calm Massage and Spa（Chiang Mai Gate）",c:"按摩",r:"城南",a:"48-50 Prapokklao Rd（清邁門）",h:"11:00–24:00",rt:"4.8",rv:"3,179",note:"Day 6 Makkha 約不到時的替代，順路去機場",s:"備選",m:false,src:"建議",pid:"ChIJUTcdnYU72jARbEy9DasVo8Q",tip:"獨立房間很安靜，可先填表選力道與加強部位；刷卡加 3%；出口有茶葉店可買伴手禮。",ll:[18.782265,98.988902]},
-{id:"powerhaus",n:"PowerHaus Pilates",c:"課程體驗",r:"城南",a:"The Backyard, 293 Mahidol Rd 2F",h:"08:00–20:00，週末到 17:00",rt:"5.0",rv:"46",note:"1% Pilates 約不到時的替代",s:"備選",m:false,src:"建議",pid:"ChIJ529C7fsx2jARXXU13iz9FAM",tip:"英文授課，Reformer 小班每班最多 6 人；課表從早到晚，週末 17:00 結束。",ll:[18.766885,98.988628]},
-{id:"pmassage",n:"P. Massage House",c:"按摩",r:"夜市・濱河",a:"30 Kampangdin Rd",h:"11:00–20:00",rt:"4.8",rv:"349",note:"網友推薦；做完送芒果糯米和椰子水",s:"備選",m:false,src:"清單",pid:"ChIJ3a15j6Y62jARiBg6wAe7zdo",tip:"泰式 90 分約 700 銖，按完送芒果糯米和椰子水；只收現金，20:00 就打烊，有店貓。",ll:[18.785495,98.998535]},
-{id:"maekha",n:"湄卡運河 Mae Kha Canal",c:"景點",r:"夜市・濱河",a:"118 Ragang Rd, Hai Ya",h:"攤位 16:00–22:00",rt:"4.2",rv:"6,262",note:"傍晚散步、拍照",s:"備選",m:false,src:"清單",pid:"ChIJJ9zZWLQ72jARL2kwVhxFiSk",tip:"週末傍晚較熱鬧、平日店家少；河水有時有異味，住附近順路散步就好，不必專程。",ll:[18.777066,98.995568]},
-{id:"sapa",n:"Sapa Coffee 786",c:"美食",sub:"早餐",r:"城南",a:"283 Changklan Rd",h:"05:30–11:00，週一二休",rt:"4.4",rv:"1,040",note:"網友推薦；早餐羅提配咖哩、奶茶",s:"備選",m:false,src:"清單",pid:"ChIJ65fFKxAw2jARjd--OA7BifI",tip:"必點瑪莎拉咖哩配煎餅、粥、鐵盤煎蛋，每人 50–100 銖；5:30 開、10 點熱門品項就賣完；只收現金，週一二休。",ll:[18.768309,98.999332]},
-{id:"padaeng",n:"Pa Daeng Jin Tup",c:"美食",sub:"燒烤",r:"郊區",a:"San Sai，距古城約 9 公里",h:"16:00–23:30",rt:"4.1",rv:"190",note:"Anthony Bourdain 介紹過的炭烤槌肉",s:"備選",m:false,src:"清單",pid:"ChIJcTTA9eMk2jARk3OC0ZLPjuY",tip:"招牌是炭烤槌打豬肉，多為在地客；評價兩極（份量小、上菜慢），每人約 200–400 銖，車程較遠。",ll:[18.830854,99.043570]},
-{id:"blackforest",n:"黑森林餐廳",loc:"Khaomao-Khaofang Imaginary Jungle（依評論數比對）",c:"美食",sub:"泰式料理",r:"郊區",a:"Ratchapruek Rd, Hang Dong，距古城約 10 公里",h:"11:00–15:00、17:00–21:00，週三休",rt:"4.4",rv:"4,216",note:"必比登推薦；叢林造景餐廳，請確認是不是這家",s:"備選",m:false,src:"清單",pid:"ChIJ7Y6p87SY3TAREA-cljHNXGI",tip:"叢林造景好拍、菜單有繁中；餐點評價兩極（炸物、烤蝦不推，哈密瓜冰沙好評）；室外又熱蚊子多，建議坐室內，每人約 500 銖內，可訂位。",ll:[18.729942,98.943583]},
-{id:"fleur",n:"Fleur Cafe & Eatery",c:"咖啡甜點",sub:"早午餐",r:"郊區",a:"Tung Lung Soi 4, Mae Rim，距古城約 15 公里",h:"09:00–18:00",rt:"4.7",rv:"1,905",note:"玫瑰花園餐廳",s:"備選",m:false,src:"清單",pid:"ChIJm4Iiwf8_2jARRmkHVH4pPPU",tip:"在 Mae Rim，離古城約 30 分車程；花園與池塘很好拍、早上人少；推玫瑰 Dirty Latte、烤玉米，可訂位。",ll:[18.907089,98.907243]},
-{id:"youyou",n:"佑佑住的地方",c:"其他",r:"郊區",a:"古城東邊約 4 公里（18°48'29.2\"N 99°01'52.6\"E）",h:"",rt:"",rv:"",note:"要拜訪或約吃飯，Day 4–6 住 THEE 時最近",s:"備選",m:false,src:"清單"},
-{id:"dantewada",n:"Dantewada Land of Angels",c:"景點",r:"郊區",a:"Mae Taeng，車程約 1 小時",h:"08:00–18:00，門票 THB 80",rt:"4.5",rv:"5,764",note:"已決定不去（太遠）",s:"不去",m:false,src:"清單",pid:"ChIJEf2-gm8R2jARBALXYKKmJUU",tip:"門票 80 銖不能折抵餐費；人造瀑布園區適合拍照，早上人少，停留 1–2 小時。",ll:[19.123202,98.942057]},
-{id:"doisuthep",n:"雙龍寺 Wat Phra That Doi Suthep",c:"景點",r:"西郊",a:"Doi Suthep 山上（古城車程約 30–40 分）",h:"05:00–21:00",rt:"4.7",rv:"12,125",note:"",s:"備選",m:false,src:"建議",pid:"ChIJtd3x37U52jARIX7FrlxMhp0",tip:"外國人門票 30 銖；306 階龍梯或搭纜車（約 20 銖）；主殿要脫鞋、遮肩過膝；傍晚去可看夕陽與夜景，包車來回約 800 銖。",ll:[18.804989,98.921634]},
-{id:"phalat",n:"Wat Pha Lat 森林寺",c:"景點",r:"西郊",a:"Ban Huai Pha Lat, Si Wichai Rd（上雙龍寺途中）",h:"06:00–17:30",rt:"4.8",rv:"8,488",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ66D0IBo62jARiGi7NFub710",tip:"不能穿無袖、短褲；慢慢走約 1–1.5 小時；可和雙龍寺排同一趟，也有健行步道（Monk's Trail）從山下上來。",ll:[18.799397,98.934147]},
-{id:"silver",n:"銀廟 Wat Sri Suphan",c:"景點",r:"城南",a:"100 Wua Lai Rd",h:"08:30–19:00，週六到 23:00",rt:"4.5",rv:"4,677",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ81yeUHYw2jARY_cUFjY3Yxk",tip:"外國人門票 50 銖，女性不能進主殿；週六開到 23:00、晚上點燈最美，可和 Wua Lai 夜市一起逛；旁邊銀器工坊可看師傅敲銀。",ll:[18.778723,98.983652]},
-{id:"wualai",n:"週六夜市 Wua Lai Walking Street",c:"購物市集",r:"城南",a:"69 Wua Lai Rd",h:"只有週六 17:00–23:00",rt:"4.5",rv:"8,150",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ_5-9gHUw2jARGOGQoIf_O4Q",tip:"從清邁門往外延伸的長條街，銀飾是特色；18:00–19:00 前到較不擠，中途可轉進銀廟。",ll:[18.780895,98.987768]},
-{id:"lokmoli",n:"羅摩利寺 Wat Lok Moli",c:"景點",r:"古城",a:"298/1 Manee Nopparat Rd（古城北護城河外）",h:"06:00–18:00",rt:"4.7",rv:"9,051",note:"",s:"備選",m:false,src:"建議",pid:"ChIJdQDDAJE62jARAEom00EUJDc",tip:"少見未貼金的紅磚古塔與柚木佛殿，遊客少、好拍照；在古城北護城河外，可順路吃 Khao Soi Khun Yai。",ll:[18.796024,98.982568]},
-{id:"chiangman",n:"清曼寺 Wat Chiang Man",c:"景點",r:"古城",a:"171 Ratchapakhinai Rd, Old City",h:"05:00–19:00",rt:"4.6",rv:"6,224",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ1zNhk5c62jAR3fJZxs2xM24",tip:"15 隻大象撐起的佛塔、側殿的水晶佛；遊客少很安靜；側殿約 18:00 關門，下午去較好。",ll:[18.793813,98.989270]},
-{id:"warorot",n:"瓦洛洛市場 Warorot Market",c:"購物市集",r:"古城東・塔佩門",a:"Wichayanon Rd, Chang Moi",h:"06:00–18:00",rt:"4.4",rv:"7,269",note:"",s:"備選",m:false,src:"建議",pid:"ChIJUXF8Lzo72jARQGy1_Bh_wCQ",tip:"果乾、腰果、炸豬皮、泰北香腸最划算，比 Big C 便宜；二樓美食區、廁所要投幣；對面是龍眼市場。",ll:[18.790145,99.000724]},
-{id:"khunyai",n:"Khao Soi Khun Yai",c:"美食",sub:"泰北咖哩麵",r:"古城",a:"Soi Sri Poom 8, Old City（北門附近）",h:"10:00–14:00，週日休",rt:"4.6",rv:"2,952",note:"",s:"備選",m:false,src:"建議",pid:"ChIJX4UC5ZA62jARc0S5-3rUIok",tip:"泰北咖哩麵（雞腿／豬／牛 60–70 銖）湯頭濃又偏辣，小碗份量少；10 點開門就去，常提早賣完；只收現金，週日休。",ll:[18.795328,98.983145]},
-{id:"kslam",n:"Khao Soi Islam",c:"美食",sub:"泰北咖哩麵",r:"夜市・濱河",a:"24 Charoen Prathet Rd",h:"07:30–17:00",rt:"4.4",rv:"1,863",note:"",s:"備選",m:false,src:"建議",pid:"ChIJbS_S9XQ72jARcnTlrzd0GWo",tip:"湯頭清、椰奶味少，牛肉口味像南洋版紅燒牛肉麵；雞油飯也推；店內只有電扇較熱。",ll:[18.786549,99.002033]},
-{id:"huenphen",n:"Huen Phen",c:"美食",sub:"泰北料理",r:"古城",a:"112 Old City（古城內）",h:"08:30–16:30、17:00–22:00",rt:"4.0",rv:"3,911",note:"",s:"備選",m:false,src:"建議",pid:"ChIJQ8w_oZ462jARl7wCt952UVI",tip:"推泰北咖哩雞麵、香茅炸豬，店內古董擺設很好看；份量小偏辣；有評論說只收現金且被多算，結帳記得對帳。",ll:[18.785823,98.985147]},
-{id:"tongtemtoh",n:"Tong Tem Toh",c:"美食",sub:"泰北料理",r:"尼曼",a:"11 Nimmanhaemin Soi 13",h:"08:00–23:00",rt:"4.2",rv:"6,725",note:"",s:"備選",m:false,src:"建議",pid:"ChIJCfx-imI62jAROS3ac08yq_U",tip:"推魚露炸雞翅、烤五花、炒龍鬚菜、泰北拼盤，牛肉類評價差；晚上 6 點後常客滿，早點去。",ll:[18.796651,98.967737]},
-{id:"joksomphet",n:"Jok Somphet 粥",c:"美食",sub:"早餐",r:"古城",a:"59/3 Sri Poom Rd, Old City",h:"24 小時營業",rt:"4.2",rv:"4,610",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ6_azLpc62jARUSS7W64SeQQ",tip:"豬肉粥加半熟蛋約 50 銖、點心每份約 35 銖；點心評價普通，吃粥就好；建議帶現金。",ll:[18.795076,98.989799]},
-{id:"neng",n:"Neng 甕烤豬",c:"美食",sub:"燒烤",r:"古城東・塔佩門",a:"2 Rattanakosin Rd, Chang Moi",h:"10:30–22:00",rt:"4.6",rv:"4,211",note:"",s:"備選",m:false,src:"建議",pid:"ChIJUzXN4qA72jARKYa1C7IEUeA",tip:"必點陶甕脆皮豬，配木瓜沙拉、烤雞；掃 QR 有圖片菜單、有冷氣區；木瓜沙拉含蝦，過敏要注意。",ll:[18.799823,99.004801]},
-{id:"cmgate",n:"清邁門市場 Chiang Mai Gate Market",c:"美食",sub:"街頭小吃",r:"城南",a:"Bumrung Buri Rd（清邁門旁）",h:"市場全天；晚上才有夜間小吃攤",rt:"4.5",rv:"10,260",note:"",s:"備選",m:false,src:"建議",pid:"ChIJczgL0Z862jARSHxf7Vv4QMk",tip:"晚上攤位沒有內用座位，多外帶；豬肉粥約 25 銖、泰式甜點便宜；早市也好逛；衛生普通。",ll:[18.781536,98.988485]},
-{id:"akhaama",n:"Akha Ama Coffee（Phra Singh）",c:"咖啡甜點",sub:"精品咖啡",r:"古城",a:"175/2 Ratchadamnoen Rd（帕辛寺旁）",h:"08:00–18:00",rt:"4.6",rv:"3,371",note:"",s:"備選",m:false,src:"建議",pid:"ChIJkZyVmJs62jARav_dgGLEBr0",tip:"推 Dirty 和冰滴、香蕉蛋糕；二樓座位舒服；自家烘焙的咖啡豆價格實在，可當伴手禮。",ll:[18.788370,98.983192]},
+{id:"calm",n:"Calm Massage and Spa（Chiang Mai Gate）",c:"按摩",r:"城南",a:"48-50 Prapokklao Rd（清邁門）",h:"11:00–24:00",rt:"4.8",rv:"3,179",note:"Day 6 Makkha 約不到時的替代，順路去機場",s:"備選",m:false,src:"建議",pid:"ChIJUTcdnYU72jARbEy9DasVo8Q",tip:"獨立房間很安靜，可先填表選力道與加強部位；刷卡加 3%；出口有茶葉店可買伴手禮。",ll:[18.782265,98.988902],oh:[[660, 1440], [2100, 2880], [3540, 4320], [4980, 5760], [6420, 7200], [7860, 8640], [9300, 10080]]},
+{id:"powerhaus",n:"PowerHaus Pilates",c:"課程體驗",r:"城南",a:"The Backyard, 293 Mahidol Rd 2F",h:"08:00–20:00，週末到 17:00",rt:"5.0",rv:"46",note:"1% Pilates 約不到時的替代",s:"備選",m:false,src:"建議",pid:"ChIJ529C7fsx2jARXXU13iz9FAM",tip:"英文授課，Reformer 小班每班最多 6 人；課表從早到晚，週末 17:00 結束。",ll:[18.766885,98.988628],oh:[[480, 1020], [1920, 2640], [3360, 4080], [4800, 5520], [6240, 6960], [7680, 8400], [9120, 9660]]},
+{id:"pmassage",n:"P. Massage House",c:"按摩",r:"夜市・濱河",a:"30 Kampangdin Rd",h:"11:00–20:00",rt:"4.8",rv:"349",note:"網友推薦；做完送芒果糯米和椰子水",s:"備選",m:false,src:"清單",pid:"ChIJ3a15j6Y62jARiBg6wAe7zdo",tip:"泰式 90 分約 700 銖，按完送芒果糯米和椰子水；只收現金，20:00 就打烊，有店貓。",ll:[18.785495,98.998535],oh:[[660, 1200], [2100, 2640], [3540, 4080], [4980, 5520], [6420, 6960], [7860, 8400], [9300, 9840]]},
+{id:"maekha",n:"湄卡運河 Mae Kha Canal",c:"景點",r:"夜市・濱河",a:"118 Ragang Rd, Hai Ya",h:"攤位 16:00–22:00",rt:"4.2",rv:"6,262",note:"傍晚散步、拍照",s:"備選",m:false,src:"清單",pid:"ChIJJ9zZWLQ72jARL2kwVhxFiSk",tip:"週末傍晚較熱鬧、平日店家少；河水有時有異味，住附近順路散步就好，不必專程。",ll:[18.777066,98.995568],oh:[[960, 1320], [2400, 2760], [3840, 4200], [5280, 5640], [6720, 7080], [8160, 8520], [9600, 9960]]},
+{id:"sapa",n:"Sapa Coffee 786",c:"美食",sub:"早餐",r:"城南",a:"283 Changklan Rd",h:"05:30–11:00，週一二休",rt:"4.4",rv:"1,040",note:"網友推薦；早餐羅提配咖哩、奶茶",s:"備選",m:false,src:"清單",pid:"ChIJ65fFKxAw2jARjd--OA7BifI",tip:"必點瑪莎拉咖哩配煎餅、粥、鐵盤煎蛋，每人 50–100 銖；5:30 開、10 點熱門品項就賣完；只收現金，週一二休。",ll:[18.768309,98.999332],cd:[1, 2],oh:[[330, 660], [4650, 4980], [6090, 6420], [7530, 7860], [8970, 9300]]},
+{id:"padaeng",n:"Pa Daeng Jin Tup",c:"美食",sub:"燒烤",r:"郊區",a:"San Sai，距古城約 9 公里",h:"16:00–23:30",rt:"4.1",rv:"190",note:"Anthony Bourdain 介紹過的炭烤槌肉",s:"備選",m:false,src:"清單",pid:"ChIJcTTA9eMk2jARk3OC0ZLPjuY",tip:"招牌是炭烤槌打豬肉，多為在地客；評價兩極（份量小、上菜慢），每人約 200–400 銖，車程較遠。",ll:[18.830854,99.043570],oh:[[960, 1410], [2400, 2850], [3840, 4290], [5280, 5730], [6720, 7170], [8160, 8610], [9600, 10050]]},
+{id:"blackforest",n:"黑森林餐廳",loc:"Khaomao-Khaofang Imaginary Jungle（依評論數比對）",c:"美食",sub:"泰式料理",r:"郊區",a:"Ratchapruek Rd, Hang Dong，距古城約 10 公里",h:"11:00–15:00、17:00–21:00，週三休",rt:"4.4",rv:"4,216",note:"必比登推薦；叢林造景餐廳",s:"備選",m:false,src:"清單",pid:"ChIJ7Y6p87SY3TAREA-cljHNXGI",tip:"叢林造景好拍、菜單有繁中；餐點評價兩極（炸物、烤蝦不推，哈密瓜冰沙好評）；室外又熱蚊子多，建議坐室內，每人約 500 銖內，可訂位。",ll:[18.729942,98.943583],cd:[3],oh:[[660, 900], [1020, 1260], [2100, 2340], [2460, 2700], [3540, 3780], [3900, 4140], [6420, 6660], [6780, 7020], [7860, 8100], [8220, 8460], [9300, 9540], [9660, 9900]]},
+{id:"fleur",n:"Fleur Cafe & Eatery",c:"咖啡甜點",sub:"早午餐",r:"郊區",a:"Tung Lung Soi 4, Mae Rim，距古城約 15 公里",h:"09:00–18:00",rt:"4.7",rv:"1,905",note:"玫瑰花園餐廳",s:"備選",m:false,src:"清單",pid:"ChIJm4Iiwf8_2jARRmkHVH4pPPU",tip:"在 Mae Rim，離古城約 30 分車程；花園與池塘很好拍、早上人少；推玫瑰 Dirty Latte、烤玉米，可訂位。",ll:[18.907089,98.907243],oh:[[540, 1080], [1980, 2520], [3420, 3960], [4860, 5400], [6300, 6840], [7740, 8280], [9180, 9720]]},
+{id:"youyou",n:"佑佑住的地方",c:"其他",r:"郊區",a:"古城東邊約 4 公里",h:"",rt:"",rv:"",note:"要拜訪或約吃飯，Day 4–6 住 THEE 時最近",s:"備選",m:false,src:"清單"},
+{id:"dantewada",n:"Dantewada Land of Angels",c:"景點",r:"郊區",a:"Mae Taeng，車程約 1 小時",h:"08:00–18:00，門票 THB 80",rt:"4.5",rv:"5,764",note:"已決定不去（太遠）",s:"不去",m:false,src:"清單",pid:"ChIJEf2-gm8R2jARBALXYKKmJUU",tip:"門票 80 銖不能折抵餐費；人造瀑布園區適合拍照，早上人少，停留 1–2 小時。",ll:[19.123202,98.942057],oh:[[480, 1080], [1920, 2520], [3360, 3960], [4800, 5400], [6240, 6840], [7680, 8280], [9120, 9720]]},
+{id:"doisuthep",n:"雙龍寺 Wat Phra That Doi Suthep",c:"景點",r:"西郊",a:"Doi Suthep 山上（古城車程約 30–40 分）",h:"05:00–21:00",rt:"4.7",rv:"12,125",note:"",s:"備選",m:false,src:"建議",pid:"ChIJtd3x37U52jARIX7FrlxMhp0",tip:"外國人門票 30 銖；306 階龍梯或搭纜車（約 20 銖）；主殿要脫鞋、遮肩過膝；傍晚去可看夕陽與夜景，包車來回約 800 銖。",ll:[18.804989,98.921634],oh:[[300, 1260], [1740, 2700], [3180, 4140], [4620, 5580], [6060, 7020], [7500, 8460], [8940, 9900]]},
+{id:"phalat",n:"Wat Pha Lat 森林寺",c:"景點",r:"西郊",a:"Ban Huai Pha Lat, Si Wichai Rd（上雙龍寺途中）",h:"06:00–17:30",rt:"4.8",rv:"8,488",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ66D0IBo62jARiGi7NFub710",tip:"不能穿無袖、短褲；慢慢走約 1–1.5 小時；可和雙龍寺排同一趟，也有健行步道（Monk's Trail）從山下上來。",ll:[18.799397,98.934147],oh:[[360, 1050], [1800, 2490], [3240, 3930], [4680, 5370], [6120, 6810], [7560, 8250], [9000, 9690]]},
+{id:"silver",n:"銀廟 Wat Sri Suphan",c:"景點",r:"城南",a:"100 Wua Lai Rd",h:"08:30–19:00，週六到 23:00",rt:"4.5",rv:"4,677",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ81yeUHYw2jARY_cUFjY3Yxk",tip:"外國人門票 50 銖，女性不能進主殿；週六開到 23:00、晚上點燈最美，可和 Wua Lai 夜市一起逛；旁邊銀器工坊可看師傅敲銀。",ll:[18.778723,98.983652],oh:[[510, 1140], [1950, 2580], [3390, 4020], [4830, 5460], [6270, 6900], [7710, 8340], [9150, 10020]]},
+{id:"wualai",n:"週六夜市 Wua Lai Walking Street",c:"購物市集",r:"城南",a:"69 Wua Lai Rd",h:"只有週六 17:00–23:00",rt:"4.5",rv:"8,150",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ_5-9gHUw2jARGOGQoIf_O4Q",tip:"從清邁門往外延伸的長條街，銀飾是特色；18:00–19:00 前到較不擠，中途可轉進銀廟。",ll:[18.780895,98.987768],cd:[0, 1, 2, 3, 4, 5],oh:[[9660, 10020]]},
+{id:"lokmoli",n:"羅摩利寺 Wat Lok Moli",c:"景點",r:"古城",a:"298/1 Manee Nopparat Rd（古城北護城河外）",h:"06:00–18:00",rt:"4.7",rv:"9,051",note:"",s:"備選",m:false,src:"建議",pid:"ChIJdQDDAJE62jARAEom00EUJDc",tip:"少見未貼金的紅磚古塔與柚木佛殿，遊客少、好拍照；在古城北護城河外，可順路吃 Khao Soi Khun Yai。",ll:[18.796024,98.982568],oh:[[360, 1080], [1800, 2520], [3240, 3960], [4680, 5400], [6120, 6840], [7560, 8280], [9000, 9720]]},
+{id:"chiangman",n:"清曼寺 Wat Chiang Man",c:"景點",r:"古城",a:"171 Ratchapakhinai Rd, Old City",h:"05:00–19:00",rt:"4.6",rv:"6,224",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ1zNhk5c62jAR3fJZxs2xM24",tip:"15 隻大象撐起的佛塔、側殿的水晶佛；遊客少很安靜；側殿約 18:00 關門，下午去較好。",ll:[18.793813,98.989270],oh:[[300, 1140], [1740, 2580], [3180, 4020], [4620, 5460], [6060, 6900], [7500, 8340], [8940, 9780]]},
+{id:"warorot",n:"瓦洛洛市場 Warorot Market",c:"購物市集",r:"古城東・塔佩門",a:"Wichayanon Rd, Chang Moi",h:"06:00–18:00",rt:"4.4",rv:"7,269",note:"",s:"備選",m:false,src:"建議",pid:"ChIJUXF8Lzo72jARQGy1_Bh_wCQ",tip:"果乾、腰果、炸豬皮、泰北香腸最划算，比 Big C 便宜；二樓美食區、廁所要投幣；對面是龍眼市場。",ll:[18.790145,99.000724],oh:[[360, 1080], [1800, 2520], [3240, 3960], [4680, 5400], [6120, 6840], [7560, 8280], [9000, 9720]]},
+{id:"khunyai",n:"Khao Soi Khun Yai",c:"美食",sub:"泰北咖哩麵",r:"古城",a:"Soi Sri Poom 8, Old City（北門附近）",h:"10:00–14:00，週日休",rt:"4.6",rv:"2,952",note:"",s:"備選",m:false,src:"建議",pid:"ChIJX4UC5ZA62jARc0S5-3rUIok",tip:"泰北咖哩麵（雞腿／豬／牛 60–70 銖）湯頭濃又偏辣，小碗份量少；10 點開門就去，常提早賣完；只收現金，週日休。",ll:[18.795328,98.983145],cd:[0],oh:[[2040, 2280], [3480, 3720], [4920, 5160], [6360, 6600], [7800, 8040], [9240, 9480]]},
+{id:"kslam",n:"Khao Soi Islam",c:"美食",sub:"泰北咖哩麵",r:"夜市・濱河",a:"24 Charoen Prathet Rd",h:"07:30–17:00",rt:"4.4",rv:"1,863",note:"",s:"備選",m:false,src:"建議",pid:"ChIJbS_S9XQ72jARcnTlrzd0GWo",tip:"湯頭清、椰奶味少，牛肉口味像南洋版紅燒牛肉麵；雞油飯也推；店內只有電扇較熱。",ll:[18.786549,99.002033],oh:[[450, 1020], [1890, 2460], [3330, 3900], [4770, 5340], [6210, 6780], [7650, 8220], [9090, 9660]]},
+{id:"huenphen",n:"Huen Phen",c:"美食",sub:"泰北料理",r:"古城",a:"112 Old City（古城內）",h:"08:30–16:30、17:00–22:00",rt:"4.0",rv:"3,911",note:"",s:"備選",m:false,src:"建議",pid:"ChIJQ8w_oZ462jARl7wCt952UVI",tip:"推泰北咖哩雞麵、香茅炸豬，店內古董擺設很好看；份量小偏辣；有評論說只收現金且被多算，結帳記得對帳。",ll:[18.785823,98.985147],oh:[[510, 990], [1020, 1320], [1950, 2430], [2460, 2760], [3390, 3870], [3900, 4200], [4830, 5310], [5340, 5640], [6270, 6750], [6780, 7080], [7710, 8190], [8220, 8520], [9150, 9630], [9660, 9960]]},
+{id:"tongtemtoh",n:"Tong Tem Toh",c:"美食",sub:"泰北料理",r:"尼曼",a:"11 Nimmanhaemin Soi 13",h:"08:00–23:00",rt:"4.2",rv:"6,725",note:"",s:"備選",m:false,src:"建議",pid:"ChIJCfx-imI62jAROS3ac08yq_U",tip:"推魚露炸雞翅、烤五花、炒龍鬚菜、泰北拼盤，牛肉類評價差；晚上 6 點後常客滿，早點去。",ll:[18.796651,98.967737],oh:[[480, 1380], [1920, 2820], [3360, 4260], [4800, 5700], [6240, 7140], [7680, 8580], [9120, 10020]]},
+{id:"joksomphet",n:"Jok Somphet 粥",c:"美食",sub:"早餐",r:"古城",a:"59/3 Sri Poom Rd, Old City",h:"24 小時營業",rt:"4.2",rv:"4,610",note:"",s:"備選",m:false,src:"建議",pid:"ChIJ6_azLpc62jARUSS7W64SeQQ",tip:"豬肉粥加半熟蛋約 50 銖、點心每份約 35 銖；點心評價普通，吃粥就好；建議帶現金。",ll:[18.795076,98.989799],oh:"24h"},
+{id:"neng",n:"Neng 甕烤豬",c:"美食",sub:"燒烤",r:"古城東・塔佩門",a:"2 Rattanakosin Rd, Chang Moi",h:"10:30–22:00",rt:"4.6",rv:"4,211",note:"",s:"備選",m:false,src:"建議",pid:"ChIJUzXN4qA72jARKYa1C7IEUeA",tip:"必點陶甕脆皮豬，配木瓜沙拉、烤雞；掃 QR 有圖片菜單、有冷氣區；木瓜沙拉含蝦，過敏要注意。",ll:[18.799823,99.004801],oh:[[630, 1320], [2070, 2760], [3510, 4200], [4950, 5640], [6390, 7080], [7830, 8520], [9270, 9960]]},
+{id:"cmgate",n:"清邁門市場 Chiang Mai Gate Market",c:"美食",sub:"街頭小吃",r:"城南",a:"Bumrung Buri Rd（清邁門旁）",h:"市場全天；晚上才有夜間小吃攤",rt:"4.5",rv:"10,260",note:"",s:"備選",m:false,src:"建議",pid:"ChIJczgL0Z862jARSHxf7Vv4QMk",tip:"晚上攤位沒有內用座位，多外帶；豬肉粥約 25 銖、泰式甜點便宜；早市也好逛；衛生普通。",ll:[18.781536,98.988485],oh:"24h"},
+{id:"akhaama",n:"Akha Ama Coffee（Phra Singh）",c:"咖啡甜點",sub:"精品咖啡",r:"古城",a:"175/2 Ratchadamnoen Rd（帕辛寺旁）",h:"08:00–18:00",rt:"4.6",rv:"3,371",note:"",s:"備選",m:false,src:"建議",pid:"ChIJkZyVmJs62jARav_dgGLEBr0",tip:"推 Dirty 和冰滴、香蕉蛋糕；二樓座位舒服；自家烘焙的咖啡豆價格實在，可當伴手禮。",ll:[18.788370,98.983192],oh:[[480, 1080], [1920, 2520], [3360, 3960], [4800, 5400], [6240, 6840], [7680, 8280], [9120, 9720]]},
 ];
 const IMG={};
 const STATUS=["全部","備選","不去"];
@@ -520,7 +549,7 @@ const LODGING=[
   {id:"jhaban",n:"Jhaban Home",r:"古城",a:"17/1 Jhaban Rd, Old City",in:"2026-10-15",out:"2026-10-18",rt:"",rv:"",note:"Google 地圖位置在古城正中間，比行程表先前推估的東北角更靠中心",pid:"ChIJK5Xqm0872jARw61a71nET9U",ll:[18.791161,98.986093]},
   {id:"thee",n:"THEE Vijit Lanna",r:"古城東・塔佩門",a:"82/1 Soi 2, Chang Moi",in:"2026-10-18",out:"2026-10-20",rt:"4.7",rv:"714",note:"有泳池，下午有免費飲料",pid:"ChIJJde5dQo72jARyQ3vQlxWk9o",ll:[18.792089,98.993925]}
 ];
-const state={sub:"全部",cat:"全部",region:"全部",status:"全部",heartF:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
+const state={sub:"全部",cat:"全部",region:"全部",status:"全部",heartF:"",day:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
 // Each person's hearts live at their own Firebase path. Charlie keeps the original /must data.
 const PEOPLE=[{key:"charlie",name:"Charlie",path:"must"},{key:"howard",name:"Howard",path:"hearts/howard"},{key:"lindsay",name:"Lindsay",path:"hearts/lindsay"}];
 const WHO=Object.fromEntries(PEOPLE.map(x=>[x.key,x]));
@@ -535,8 +564,8 @@ let toastTimer=null;
 function showToast(msg,onUndo){
   const t=$("#toast"), m=$("#toastMsg"), u=$("#toastUndo");
   if(toastTimer) clearTimeout(toastTimer);
-  m.textContent=msg; t.hidden=false;
-  u.onclick=()=>{onUndo(); t.hidden=true; if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}};
+  m.textContent=msg; t.hidden=false; u.hidden=!onUndo;
+  u.onclick=()=>{onUndo&&onUndo(); t.hidden=true; if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}};
   const arm=()=>{if(toastTimer) clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.hidden=true;toastTimer=null;},UNDO_MS);};
   const hold=()=>{if(toastTimer){clearTimeout(toastTimer);toastTimer=null;}};
   t.onmouseenter=hold; t.onfocusin=hold; t.onmouseleave=arm; t.onfocusout=arm;
@@ -604,6 +633,8 @@ function buildControls(){
   $("#region").onchange=e=>{state.region=e.target.value;render();};
   $("#status").onchange=e=>{state.status=e.target.value;render();};
   $("#heartF").onchange=e=>{state.heartF=e.target.value;render();};
+  $("#dayF").innerHTML=`<option value="">哪天去：不限</option><option value="now">現在營業中（清邁時間）</option>`+TRIP_DAYS.map((d,i)=>`<option value="${d}">Day ${i+1} · ${md(d)}</option>`).join("");
+  $("#dayF").onchange=e=>{state.day=e.target.value;render();};
   $("#me").innerHTML=PEOPLE.map(x=>`<button type="button" data-me="${x.key}" aria-pressed="${me===x.key}">${x.name}</button>`).join("");
   syncMe();
   $("#filterBtn").onclick=()=>{const r=$("#rail"), o=!r.classList.contains("open"); r.classList.toggle("open",o); $("#filterBtn").setAttribute("aria-expanded",String(o));};
@@ -615,7 +646,7 @@ function buildControls(){
   $("#sortKey").onchange=e=>setSort(e.target.value,"asc");
   $("#sortDir").onclick=()=>{if(state.sortKey) setSort(state.sortKey,state.sortDir==="asc"?"desc":"asc");};
   syncSort();
-  let t;$("#q").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{state.q=e.target.value.trim().toLowerCase();render();},120);};
+  let t;$("#q").oninput=e=>{clearTimeout(t);t=setTimeout(()=>{state.q=e.target.value.trim();render();},120);};
   $("#vCards").onclick=()=>setView("cards"); $("#vTable").onclick=()=>setView("table");
   setView(state.view,true);
 }
@@ -628,19 +659,43 @@ function syncMe(){
   $("#heartF").value=state.heartF;
 }
 function setMe(k){me=WHO[k]?k:null; try{me?localStorage.setItem("cnxMe",me):localStorage.removeItem("cnxMe");}catch(e){} syncMe(); note(""); render();}
+// Trip days: 10/15 (Day 1) to 10/20 (Day 6). Closed weekdays (p.cd, 0 = Sunday) come from Google opening hours.
+const TRIP_DAYS=["2026-10-15","2026-10-16","2026-10-17","2026-10-18","2026-10-19","2026-10-20"];
+const WDN="日一二三四五六";
+const weekday=iso=>new Date(iso+"T00:00:00").getDay();
+const openOn=(p,iso)=>!(p.cd||[]).includes(weekday(iso));
+const closedLabel=p=>{const cd=p.cd||[]; if(!cd.length) return "";
+  if(cd.length>=4){const open=[0,1,2,3,4,5,6].filter(d=>!cd.includes(d)); return "只有週"+open.map(d=>WDN[d]).join("、");}
+  return "週"+cd.map(d=>WDN[d]).join("、")+"休";};
+// Night's hotel for a date; the departure day uses the last hotel.
+const hotelFor=iso=>LODGING.find(h=>h.in<=iso&&iso<h.out)||LODGING[LODGING.length-1];
+const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r,x=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
+const distFrom=p=>{if(!p.ll) return null; const hs=planDate()?[hotelFor(planDate())]:LODGING; return Math.min(...hs.filter(h=>h.ll).map(h=>km(p.ll,h.ll)));};
+const fmtKm=d=>d<1?`${Math.round(d*1000/50)*50} 公尺`:`${d.toFixed(1)} 公里`;
+// "離 Jhaban Home 1.2 公里" for the chosen day's hotel, otherwise the nearer of the two.
+const distLine=p=>{const hs=(planDate()?[hotelFor(planDate())]:LODGING).filter(h=>h.ll); let best=null;
+  hs.forEach(h=>{const d=km(p.ll,h.ll); if(!best||d<best.d) best={h,d};}); return `離 ${esc(best.h.n)} ${fmtKm(best.d)}`;};
+// "Open now" uses Chiang Mai time (UTC+7) whatever the phone's timezone; p.oh holds weekly minute ranges from Google.
+const cmNow=()=>new Date(Date.now()+7*36e5);
+const cmMinuteOfWeek=()=>{const d=cmNow(); return d.getUTCDay()*1440+d.getUTCHours()*60+d.getUTCMinutes();};
+const cmToday=()=>cmNow().toISOString().slice(0,10);
+const openNow=p=>{if(!p.oh) return null; if(p.oh==="24h") return true; const t=cmMinuteOfWeek(); return p.oh.some(([a,b])=>(t>=a&&t<b)||(t+10080>=a&&t+10080<b));};
+// The trip date that drives distances: the chosen day, or today when "open now" is used during the trip.
+const planDate=()=>state.day==="now"?(TRIP_DAYS.includes(cmToday())?cmToday():""):state.day;
+const dayPass=p=>!state.day||(state.day==="now"?openNow(p)!==false:openOn(p,state.day));
 const heartPass=p=>!state.heartF||(state.heartF==="mine"?(me&&hearted(p,me)):state.heartF==="any"?isMust(p):allHearted(p));
-function activeFilters(){return (state.region!=="全部")+(state.status!=="全部")+(!!state.heartF);}
+function activeFilters(){return (state.region!=="全部")+(state.status!=="全部")+(!!state.heartF)+(!!state.day);}
 function clearFilters(){
-  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",status:"全部",heartF:"",q:""});
-  $("#q").value=""; $("#region").value="全部"; $("#status").value="全部"; $("#heartF").value="";
+  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",status:"全部",heartF:"",day:"",q:""});
+  $("#q").value=""; $("#region").value="全部"; $("#status").value="全部"; $("#heartF").value=""; $("#dayF").value="";
   syncChips(); render();
 }
 function setView(v,quiet){state.view=v;$("#vCards").setAttribute("aria-pressed",String(v==="cards"));$("#vTable").setAttribute("aria-pressed",String(v==="table"));try{localStorage.setItem("cnxView",v);}catch(e){} if(!quiet)render();}
 
 function filtered(){
   return P.filter(p=>(state.cat==="全部"||p.c===state.cat)&&(state.sub==="全部"||p.sub===state.sub)&&(state.region==="全部"||p.r===state.region)
-    &&(state.status==="全部"||statusGroup(p.s)===state.status)&&heartPass(p)
-    &&(!state.q||[p.n,p.loc,p.a,p.note,p.tip,p.c,p.r,p.sub].join(" ").toLowerCase().includes(state.q)))
+    &&(state.status==="全部"||statusGroup(p.s)===state.status)&&heartPass(p)&&dayPass(p)
+    &&(!state.q||[p.n,p.loc,p.a,p.note,p.tip,p.c,p.r,p.sub].join(" ").toLowerCase().includes(state.q.toLowerCase())))
    .sort((a,b)=>sortCmp(a,b)||(order(a.s)-order(b.s))||CATS.indexOf(a.c)-CATS.indexOf(b.c));
 }
 
@@ -658,6 +713,7 @@ const SORT_COLS=[
   {key:"status",label:"狀態",get:p=>statusGroup(p.s)==="不去"?2:p.src==="建議"?1:0},
   {key:"hours",label:"營業",get:p=>firstTime(p.h)},
   {key:"rating",label:"評分",get:p=>num(p.rt),tie:p=>num(p.rv)},
+  {key:"dist",label:"距住宿",get:p=>distFrom(p)},
   {key:"",label:"連結"}
 ];
 const SORT_BY=Object.fromEntries(SORT_COLS.filter(c=>c.key).map(c=>[c.key,c]));
@@ -702,6 +758,7 @@ const order=s=>s==="不去"?1:0;
 function tags(p){
   let t=`<span class="tag cat">${catIcon(p.c)}${esc(p.c)}${p.sub?" · "+esc(p.sub):""}</span><span class="tag">${esc(p.r)}</span>`;
   if(p.s==="不去") t+=`<span class="tag skip">不去</span>`;
+  if(closedLabel(p)) t+=`<span class="tag closed">${closedLabel(p)}</span>`;
   if(p.src==="建議") t+=`<span class="tag rec">建議</span>`;
   return t;
 }
@@ -724,7 +781,7 @@ function card(p){
     <div class="body">
       <div><h3 class="name">${esc(p.n)}</h3>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}</div>
       <div class="tags">${tags(p)}</div>
-      <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}</dl>
+      <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}${distFrom(p)!=null?`<dt>${ICON_HOME}住宿</dt><dd>${distLine(p)}</dd>`:""}</dl>
       ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}
       ${notesBlock(p)}
     </div>
@@ -734,7 +791,7 @@ function table(list){
   const cols=SORT_COLS.length;
   return `<div class="tablebox"><table><thead><tr>${SORT_COLS.map(th).join("")}</tr></thead><tbody>${
     list.map(p=>{const open=openRows.has(p.id);
-      return `<tr class="${[isMust(p)?"must":"",p.s==="不去"?"skip":"",open?"open":""].join(" ").trim()}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${phList(p)[0]?`<img class="thumb" src="${phList(p)[0].thumb}" alt="" loading="lazy"${phList(p)[0].by?` title="Google 地圖 · ${esc(phList(p)[0].by.displayName||"")}"`:""}>`:""}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<button type="button" class="exp" data-exp="${p.id}" aria-expanded="${open}">${open?"收起詳情":`地址、備註與留言${commentCount(p.id)?`（${commentCount(p.id)}）`:""}`}</button></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span></td><td class="tsub">${esc(p.sub)}</td><td>${esc(p.r)}</td><td class="tstat">${statusGroup(p.s)}${p.src==="建議"?" · 建議":""}</td><td>${esc(p.h)}</td><td class="rating">${p.rt?p.rt+" ("+p.rv+")":""}</td><td class="tlinks"><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a><a class="mini" href="${imgUrl(p)}" target="_blank" rel="noopener">更多照片</a></td></tr>`
+      return `<tr class="${[isMust(p)?"must":"",p.s==="不去"?"skip":"",open?"open":""].join(" ").trim()}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${phList(p)[0]?`<img class="thumb" src="${phList(p)[0].thumb}" alt="" loading="lazy"${phList(p)[0].by?` title="Google 地圖 · ${esc(phList(p)[0].by.displayName||"")}"`:""}>`:""}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<button type="button" class="exp" data-exp="${p.id}" aria-expanded="${open}">${open?"收起詳情":`地址、備註與留言${commentCount(p.id)?`（${commentCount(p.id)}）`:""}`}</button></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span></td><td class="tsub">${esc(p.sub)}</td><td>${esc(p.r)}</td><td class="tstat">${statusGroup(p.s)}${p.src==="建議"?" · 建議":""}</td><td>${esc(p.h)}${closedLabel(p)?`<div class="local">${closedLabel(p)}</div>`:""}</td><td class="rating">${p.rt?p.rt+" ("+p.rv+")":""}</td><td class="rating">${distFrom(p)!=null?fmtKm(distFrom(p)):""}</td><td class="tlinks"><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a><a class="mini" href="${imgUrl(p)}" target="_blank" rel="noopener">更多照片</a></td></tr>`
         +(open?`<tr class="detail"><td></td><td colspan="${cols-1}"><dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.tip?`<dt>小提醒</dt><dd>${esc(p.tip)}</dd>`:""}</dl>${notesBlock(p)}</td></tr>`:"");}).join("")
   }</tbody></table></div>`;
 }
@@ -743,6 +800,28 @@ function renderSubs(){
   box.hidden=!subs.length; if(!subs.length){box.innerHTML="";return;}
   box.innerHTML=`<span class="sublabel">${esc(state.cat)}小分類</span>`+["全部",...subs].map(x=>`<button type="button" class="chip small" data-sub="${esc(x)}" aria-pressed="${x===state.sub}">${esc(x)}<span class="n">${P.filter(p=>p.c===state.cat&&(x==="全部"||p.sub===x)).length}</span></button>`).join("");
 }
+// Shareable views: filters live in the query string (?cat=美食&day=2026-10-17 …); the tab stays in the hash.
+const URL_KEYS={cat:"全部",sub:"全部",region:"全部",status:"全部",heartF:"",day:"",q:"",sortKey:"",sortDir:"asc",view:""};
+function readUrlState(){
+  const u=new URLSearchParams(location.search); let any=false;
+  Object.keys(URL_KEYS).forEach(k=>{if(u.has(k)){state[k]=u.get(k); any=true;}});
+  if(!any) return;
+  if(state.cat!=="全部"&&!CATS.includes(state.cat)) state.cat="全部";
+  if(state.region!=="全部"&&!REGIONS.includes(state.region)) state.region="全部";
+  if(!STATUS.includes(state.status)) state.status="全部";
+  if(!["","mine","any","all"].includes(state.heartF)||(state.heartF==="mine"&&!me)) state.heartF="";
+  if(state.day&&state.day!=="now"&&!TRIP_DAYS.includes(state.day)) state.day="";
+  if(!SORT_BY[state.sortKey]) state.sortKey=""; if(state.sortDir!=="desc") state.sortDir="asc";
+  if(state.view==="table"||state.view==="cards") setView(state.view,true);
+  $("#region").value=state.region; $("#status").value=state.status; $("#heartF").value=state.heartF; $("#dayF").value=state.day; $("#q").value=state.q;
+  syncChips(); syncSort();
+}
+function writeUrlState(){
+  const u=new URLSearchParams();
+  Object.entries(URL_KEYS).forEach(([k,d])=>{const v=k==="view"?(state.view==="table"?"table":""):state[k]; if(v&&v!==d) u.set(k,v);});
+  const qs=u.toString(), url=location.pathname+(qs?"?"+qs:"")+location.hash;
+  if(url!==location.pathname+location.search+location.hash) history.replaceState(null,"",url);
+}
 function render(){
   const ae=document.activeElement, keep=ae&&ae.dataset&&ae.dataset.draft?{id:ae.dataset.draft,pos:ae.selectionStart}:null;
   renderSubs();
@@ -750,7 +829,11 @@ function render(){
   $("#sTotal").textContent=P.length; $("#nPlaces").textContent=P.length;
   $("#sMust").textContent=P.filter(isMust).length;
   $("#sAll").textContent=P.filter(allHearted).length;
-  $("#count").textContent=`顯示 ${list.length} 個地點`+(list.length!==P.length?`（共 ${P.length}）`:"");
+  const hiddenByDay=state.day?P.filter(p=>!dayPass(p)).length:0;
+  const t=cmNow(), hhmm=`${String(t.getUTCHours()).padStart(2,"0")}:${String(t.getUTCMinutes()).padStart(2,"0")}`;
+  const dayNote=state.day==="now"?`・清邁現在 ${hhmm}`+(hiddenByDay?`，已隱藏 ${hiddenByDay} 個目前沒開的地點`:""):state.day?`・${md(state.day)} 住 ${hotelFor(state.day).n}`+(hiddenByDay?`，已隱藏 ${hiddenByDay} 個當天沒開的地點`:""):"";
+  writeUrlState();
+  $("#count").textContent=`顯示 ${list.length} 個地點`+(list.length!==P.length?`（共 ${P.length}）`:"")+dayNote;
   $("#clearTop").hidden=list.length===P.length||!list.length;
   const nf=activeFilters(); $("#filterBtn").textContent=nf?`篩選 (${nf})`:"篩選";
   $("#out").innerHTML=!list.length?`<div class="empty">${EMPTY_ART}<span>這個條件下沒有地點，換個條件試試。</span><button type="button" class="chip" data-clear>清除所有篩選</button></div>`:state.view==="table"?table(list):`<div class="grid">${list.map(card).join("")}</div>`;
@@ -796,7 +879,19 @@ function renderStay(){
           ${h.note?`<p class="note">${esc(h.note)}</p>`:""}
         </div>
         <div class="foot"><a class="mini" href="${mapsUrl(h)}" target="_blank" rel="noopener">Google 地圖</a></div>
-      </article>`;}).join("")}</div>`;
+      </article>`;}).join("")}</div>
+    <section class="cheat" aria-labelledby="cheatH">
+      <h2 id="cheatH">出發前小抄</h2>
+      <dl>
+        <dt>緊急電話</dt><dd>觀光警察 1155（有英文）、報警 191、救護車 1669</dd>
+        <dt>交通</dt><dd>Grab、Bolt 叫車最方便，先講好價錢再上嘟嘟車或雙條車；市區車程多在 10–20 分鐘</dd>
+        <dt>錢</dt><dd>泰銖現金很常用，路邊攤、按摩小店多只收現金；換匯帶護照，G Exchange 匯率好</dd>
+        <dt>寺廟</dt><dd>遮肩、過膝，進殿脫鞋；可帶一件薄外套或圍巾隨時套上</dd>
+        <dt>電壓</dt><dd>220V（台灣 110V）：手機、筆電充電器通常可直接用，吹風機、電熱用品要看標示</dd>
+        <dt>天氣</dt><dd>10 月中是雨季尾聲，白天約 30°C、偶有午後陣雨，帶把小傘；室內冷氣常很強</dd>
+        <dt>小費</dt><dd>不強制；按摩常給 50–100 銖，餐廳若已收服務費就不用再給</dd>
+      </dl>
+    </section>`;
 }
 const TABS=[["places","tabPlaces","placesPanel",""],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"]];
 function setTab(t,focus){
@@ -807,7 +902,7 @@ function setTab(t,focus){
   const h=TABS.find(x=>x[0]===t)[3]; if(location.hash!==h) history.replaceState(null,"",location.pathname+location.search+h);
 }
 // Our notes: the list's own note, plus comments people add (signed with 我是誰, stored at /comments/{place}/{id}).
-let COMMENTS={};                 // place -> {cid: {who,text,ts}}
+let COMMENTS={}, commentsBlocked=false;   // true while the Firebase rule for /comments isn't in place                 // place -> {cid: {who,text,ts}}
 const composing=new Set();       // places whose comment box is open
 const drafts={};                 // place -> unsent text
 const commentCount=id=>Object.keys(COMMENTS[id]||{}).length;
@@ -832,7 +927,7 @@ function refreshComments(id){
 }
 async function sendComment(id){
   const ta=document.querySelector(`[data-draft="${id}"]`), text=(ta?ta.value:"").trim();
-  if(!me){note("先在上方選「我是誰」再留言。"); return;}
+  if(!me){showToast("先在上方選「我是誰」再留言。"); return;}
   if(!text){ta&&ta.focus(); return;}
   const c={who:me,text,ts:Date.now()};
   try{
@@ -841,23 +936,56 @@ async function sendComment(id){
     const {name}=await r.json();
     (COMMENTS[id]=COMMENTS[id]||{})[name]=c;
     delete drafts[id]; composing.delete(id); render();
-  }catch(e){note(e===401||e===403?"留言功能還沒開放（資料庫權限），請先更新 Firebase 規則。":"留言沒有送出，請檢查網路後再試一次。");}
+  }catch(e){showToast(e===401||e===403?"留言功能還沒開放（資料庫權限），請先更新 Firebase 規則。":"留言沒有送出，請檢查網路後再試一次。");}
 }
 async function deleteComment(id,cid){
   const c=(COMMENTS[id]||{})[cid]; if(!c||c.who!==me) return;
   if(!confirm("刪除這則留言？")) return;
   try{const r=await fetch(FB+"/comments/"+encodeURIComponent(id)+"/"+encodeURIComponent(cid)+".json",{method:"DELETE"}); if(!r.ok) throw r.status;
     delete COMMENTS[id][cid]; refreshComments(id);}
-  catch(e){note("留言沒有刪除，請稍後再試。");}
+  catch(e){showToast("留言沒有刪除，請稍後再試。");}
 }
 // Map tab: every place with coordinates, colored by category; hotels as black houses.
+// Route ideas: nearby places in a sensible order, checked against opening hours and closed days.
+const ROUTES=[
+  {id:"oldtemples",name:"古城寺廟散步",when:"上午・約 4 小時（週日 Khun Yai 休）",stops:[["chiangman","08:30 最古老的大象佛塔寺"],["lokmoli","09:15 護城河外的紅磚古塔"],["khunyai","10:00 開門就吃泰北咖哩麵"],["chedi","11:00 古城中心的大佛塔"],["akhaama","12:00 帕辛寺旁喝咖啡"],["phrasingh","12:45 古城最大的寺廟"]]},
+  {id:"suthep",name:"素帖山半日",when:"下午到傍晚・約 5 小時，包車最方便",stops:[["phalat","14:00 森林裡的古寺（17:30 關）"],["doisuthep","16:00 雙龍寺看夕陽與夜景"],["tongtemtoh","19:00 下山到尼曼吃泰北菜"]]},
+  {id:"west",name:"西郊藝術村",when:"上午・約 4 小時（週一 Baan Kang Wat 休、週日 Maesai 休）",stops:[["umong","09:00 林間古寺與地下隧道"],["bkw","10:00 藝術家村，早上人少"],["maesai","12:00 必比登泰北咖哩麵"],["ristr8to","13:00 尼曼的冠軍拉花咖啡"]]},
+  {id:"sat",name:"週六夜：銀廟＋夜市",when:"只有週六（10/17）・17:30 起",stops:[["silver","17:30 銀廟點燈"],["wualai","18:30 Wua Lai 週六夜市"],["cmgate","20:00 清邁門夜間小吃"],["calm","21:00 清邁門旁按摩"]]},
+  {id:"sun",name:"週日夜：步行街",when:"只有週日（10/18）・17:00 起",stops:[["chedi","17:00 傍晚的柴迪隆寺"],["sunday","17:30 週日夜市，逛約 2 小時"],["rotipadae","20:00 塔佩門附近的香蕉煎餅"],["ziri","20:30 古城按摩（10:00–22:00，要先約）"]]},
+  {id:"river",name:"濱河晚餐＋夜市",when:"任一天晚上・17:00 起",stops:[["ekachan","17:30 河邊柚木屋晚餐（要訂位）"],["bazaar","19:30 清邁夜市"],["makkhanb","21:00 夜市旁按摩，送芒果糯米"]]}
+];
+let activeRoute=null;
+function renderRoutes(){
+  $("#routeChips").innerHTML=ROUTES.map(r=>`<button type="button" class="chip small" data-route="${r.id}" aria-pressed="${activeRoute===r.id}">${esc(r.name)}</button>`).join("");
+  const r=ROUTES.find(x=>x.id===activeRoute), ol=$("#routeSteps");
+  ol.hidden=!r; if(!r){ol.innerHTML="";return;}
+  ol.innerHTML=`<li class="route-when">${esc(r.when)}</li>`+r.stops.map(([id,t],i)=>{const p=placeById(id); return p?`<li><span class="rn">${i+1}</span><div><button type="button" class="linkbtn" data-gocard="${id}">${esc(p.n)}</button><span class="local">${esc(t)}</span></div></li>`:"";}).join("");
+}
 const CAT_COLOR={"景點":"#1f6f5c","美食":"#b0281c","咖啡甜點":"#8a5d00","按摩":"#7b4fa0","課程體驗":"#1f5fa8","購物市集":"#c2570c","其他":"#5c564c"};
 const mapState={cats:new Set(CATS),hearts:false};
-let gmap=null, mapReady=false, mapMarkers=[], infoWin=null;
+let gmap=null, mapReady=false, mapMarkers=[], infoWin=null, mapEngine="google", lmap=null, lLayer=null;
+// If Google Maps can't load (API not enabled, key or network problem), fall back to OpenStreetMap via Leaflet.
+function loadLeaflet(){
+  if(mapEngine==="leaflet") return;
+  mapEngine="leaflet"; mapReady=false; gmap=null;
+  $("#map").innerHTML=`<p class="map-msg">地圖載入中…</p>`;
+  const css=document.createElement("link"); css.rel="stylesheet"; css.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"; document.head.appendChild(css);
+  const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+  sc.onload=()=>{
+    $("#map").innerHTML="";
+    lmap=L.map("map",{scrollWheelZoom:!matchMedia("(pointer:coarse)").matches}).setView([18.7883,98.9853],13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(lmap);
+    lLayer=L.layerGroup().addTo(lmap); mapReady=true; drawMarkers(true);
+  };
+  sc.onerror=()=>{$("#map").innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;};
+  document.head.appendChild(sc);
+}
 function openMap(){
   if(!$("#mapCats").innerHTML){
     $("#mapCats").innerHTML=CATS.map(c=>`<button type="button" class="chip" data-mapcat="${esc(c)}" aria-pressed="true"><span class="dot" style="background:${CAT_COLOR[c]}"></span>${esc(c)}</button>`).join("");
     $("#mapHearts").onchange=e=>{mapState.hearts=e.target.checked; drawMarkers();};
+    renderRoutes();
   }
   if(gmap||window.__mapsLoading) return;
   window.__mapsLoading=true;
@@ -865,22 +993,52 @@ function openMap(){
     gmap=new google.maps.Map($("#map"),{center:{lat:18.7883,lng:98.9853},zoom:13,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,clickableIcons:false,gestureHandling:matchMedia("(pointer:coarse)").matches?"cooperative":"greedy"});
     infoWin=new google.maps.InfoWindow(); mapReady=true; drawMarkers(true);
   };
-  window.gm_authFailure=()=>{$("#map").innerHTML=`<p class="map-msg">地圖無法載入：請確認 Google 金鑰已啟用「Maps JavaScript API」。</p>`;};
+  window.gm_authFailure=()=>loadLeaflet();
   const sc=document.createElement("script");
   sc.src=`https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&callback=__initMap&loading=async&language=zh-TW&region=TW`;
-  sc.async=true; sc.onerror=()=>{$("#map").innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;};
+  sc.async=true; sc.onerror=()=>loadLeaflet();
   document.head.appendChild(sc);
 }
 const pinIcon=(color,ring)=>({path:google.maps.SymbolPath.CIRCLE,scale:ring?9:7,fillColor:color,fillOpacity:1,strokeColor:ring?"#f0b628":"#ffffff",strokeWeight:ring?3:2});
 const HOUSE_PATH="M-8 1 0-7 8 1M-6 -1V8H6V-1";
+// Initial view frames the city (within 8 km of the old city); far-out places stay reachable by zooming out.
+const CITY=[18.7883,98.9853];
+const nearCity=ll=>km(ll,CITY)<=8;
+const mapPlaces=()=>P.filter(p=>p.ll&&p.id!=="youyou"&&mapState.cats.has(p.c)&&(!mapState.hearts||isMust(p))&&dayPass(p));
+const HOUSE_SVG='<svg viewBox="-10 -9 20 19" width="26" height="25" aria-hidden="true"><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="#231f1c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="none" stroke="#231f1c" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+const routeStops=()=>{const r=ROUTES.find(x=>x.id===activeRoute); return r?r.stops.map(([id])=>placeById(id)).filter(p=>p&&p.ll):null;};
+function drawLeaflet(fit){
+  lLayer.clearLayers(); const pts=[];
+  const rs=routeStops();
+  if(rs){
+    rs.forEach((p,i)=>{L.marker(p.ll,{icon:L.divIcon({html:`<span>${i+1}</span>`,className:"route-pin",iconSize:[26,26],iconAnchor:[13,13]}),title:p.n}).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); pts.push(p.ll);});
+    L.polyline(rs.map(p=>p.ll),{color:"#f0b628",weight:3,dashArray:"6 6",opacity:.9}).addTo(lLayer);
+    if(pts.length) lmap.fitBounds(pts,{padding:[40,40],maxZoom:16}); return;
+  }
+  mapPlaces().forEach(p=>{const ring=isMust(p);
+    L.circleMarker(p.ll,{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1}).bindTooltip(p.n).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
+  LODGING.filter(h=>h.ll).forEach(h=>{
+    L.marker(h.ll,{icon:L.divIcon({html:HOUSE_SVG,className:"house-pin",iconSize:[26,25],iconAnchor:[13,13]}),zIndexOffset:1000,title:h.n})
+      .bindPopup(`<div class="mc"><b>${esc(h.n)}</b><div class="mc-m">住宿・${md(h.in)} 入住 → ${md(h.out)} 退房</div><a href="${mapsUrl(h)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`).addTo(lLayer); pts.push(h.ll);});
+  if(fit&&pts.length) lmap.fitBounds(pts,{padding:[30,30]});
+}
 function drawMarkers(fit){
+  const md0=$("#mapDay"); if(md0) md0.textContent=state.day==="now"?"目前只顯示現在營業中的地點（依地點頁的「哪天去」）。":state.day?`目前只顯示 ${md(state.day)} 有開的地點（依地點頁的「哪天去」）。`:"";
   if(!mapReady) return;
+  if(mapEngine==="leaflet"){drawLeaflet(fit); return;}
   mapMarkers.forEach(m=>m.setMap(null)); mapMarkers=[];
   const bounds=new google.maps.LatLngBounds();
-  P.filter(p=>p.ll&&p.id!=="youyou"&&mapState.cats.has(p.c)&&(!mapState.hearts||isMust(p))).forEach(p=>{
+  const rs=routeStops();
+  if(rs){
+    rs.forEach((p,i)=>{const m=new google.maps.Marker({map:gmap,position:{lat:p.ll[0],lng:p.ll[1]},title:p.n,label:{text:String(i+1),color:"#231f1c",fontWeight:"700"},icon:{path:google.maps.SymbolPath.CIRCLE,scale:12,fillColor:"#f0b628",fillOpacity:1,strokeColor:"#231f1c",strokeWeight:2}});
+      m.addListener("click",()=>{infoWin.setContent(mapCard(p)); infoWin.open({map:gmap,anchor:m});}); mapMarkers.push(m); bounds.extend(m.getPosition());});
+    mapMarkers.push(new google.maps.Polyline({map:gmap,path:rs.map(p=>({lat:p.ll[0],lng:p.ll[1]})),strokeColor:"#f0b628",strokeWeight:3,strokeOpacity:.9}));
+    gmap.fitBounds(bounds,60); return;
+  }
+  mapPlaces().forEach(p=>{
     const m=new google.maps.Marker({map:gmap,position:{lat:p.ll[0],lng:p.ll[1]},title:p.n,icon:pinIcon(CAT_COLOR[p.c]||"#5c564c",isMust(p)),zIndex:isMust(p)?2:1});
     m.addListener("click",()=>{infoWin.setContent(mapCard(p)); infoWin.open({map:gmap,anchor:m});});
-    mapMarkers.push(m); bounds.extend(m.getPosition());
+    mapMarkers.push(m); if(nearCity(p.ll)) bounds.extend(m.getPosition());
   });
   LODGING.filter(h=>h.ll).forEach(h=>{
     const m=new google.maps.Marker({map:gmap,position:{lat:h.ll[0],lng:h.ll[1]},title:h.n,zIndex:3,icon:{path:HOUSE_PATH,scale:1.4,strokeColor:"#ffffff",strokeWeight:4,fillColor:"#231f1c",fillOpacity:1}});
@@ -891,19 +1049,21 @@ function drawMarkers(fit){
   if(fit&&!bounds.isEmpty()) gmap.fitBounds(bounds,40);
 }
 function mapCard(p){
-  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}<div class="mc-a"><button type="button" data-gocard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
+  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}<div class="mc-a"><button type="button" data-gocard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
 }
 function note(msg){const n=$("#notice");n.textContent=msg;n.hidden=!msg;}
 
 document.addEventListener("click",async e=>{
   const ca=e.target.closest("[data-cadd]");
-  if(ca){const id=ca.dataset.cadd; if(!me){note("先在上方選「我是誰」再留言。"); return;} composing.add(id); render(); const t=document.querySelector(`[data-draft="${id}"]`); if(t) t.focus(); return;}
+  if(ca){const id=ca.dataset.cadd; if(commentsBlocked){showToast("留言功能還沒開放，資料庫權限設定好之後就能使用。"); return;} if(!me){showToast("先在上方選「我是誰」再留言。"); return;} composing.add(id); render(); const t=document.querySelector(`[data-draft="${id}"]`); if(t) t.focus(); return;}
   const cc=e.target.closest("[data-ccancel]");
   if(cc){composing.delete(cc.dataset.ccancel); delete drafts[cc.dataset.ccancel]; render(); return;}
   const cs=e.target.closest("[data-csend]");
   if(cs){sendComment(cs.dataset.csend); return;}
   const cd=e.target.closest("[data-cdel]");
   if(cd){deleteComment(cd.dataset.cdel,cd.dataset.cid); return;}
+  const rt=e.target.closest("[data-route]");
+  if(rt){activeRoute=activeRoute===rt.dataset.route?null:rt.dataset.route; renderRoutes(); drawMarkers(!activeRoute); return;}
   const mc=e.target.closest("[data-mapcat]");
   if(mc){const c=mc.dataset.mapcat, on=!mapState.cats.has(c); on?mapState.cats.add(c):mapState.cats.delete(c); mc.setAttribute("aria-pressed",String(on)); drawMarkers(); return;}
   const gc=e.target.closest("[data-gocard]");
@@ -944,7 +1104,8 @@ document.addEventListener("click",async e=>{
     card.querySelectorAll(".sw").forEach(b=>b.classList.toggle("on",b===sw)); return;}
 });
 
-buildControls(); render();
+buildControls(); readUrlState(); render();
+setInterval(()=>{if(state.day==="now") render();},60000);   // keep "open now" current
 document.addEventListener("input",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id) drafts[id]=e.target.value;});
 document.addEventListener("keydown",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id&&e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault(); sendComment(id);}});
 TABS.forEach(([k,tb])=>{$("#"+tb).onclick=()=>setTab(k);});
@@ -982,7 +1143,7 @@ const validComment=c=>c&&typeof c==="object"&&typeof c.text==="string"&&typeof c
 const cleanComments=cs=>Object.fromEntries(Object.entries(cs&&typeof cs==="object"?cs:{}).filter(([,c])=>validComment(c)));
 function applyComments(obj){COMMENTS={}; Object.entries(obj||{}).forEach(([pid,cs])=>{if(placeById(pid)) COMMENTS[pid]=cleanComments(cs);}); Object.keys(COMMENTS).forEach(refreshComments); document.querySelectorAll("[data-cmts]").forEach(ul=>refreshComments(ul.dataset.cmts));}
 (async()=>{
-  try{const r=await fetch(FB+"/comments.json"); if(!r.ok) return; applyComments(await r.json());
+  try{const r=await fetch(FB+"/comments.json"); if(r.status===401||r.status===403){commentsBlocked=true; return;} if(!r.ok) return; applyComments(await r.json());
     const es=new EventSource(FB+"/comments.json");
     es.addEventListener("put",ev=>{try{const d=JSON.parse(ev.data), parts=d.path.split("/").filter(Boolean);
       if(!parts.length){applyComments(d.data); return;}
