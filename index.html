@@ -454,6 +454,24 @@ img.img-fail{visibility:hidden}
   .hero-art .lanterns g{animation:none}
   .card{transition:none}
 }
+/* 新增地點 */
+.addbox{margin-top:16px;max-width:640px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.addbox h2{font-family:var(--f-display);font-size:20px;margin:0 0 4px}
+.add-lead{color:var(--muted);font-size:13px;margin:0 0 12px}
+#addForm{display:flex;flex-direction:column;gap:10px}
+.add-f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.add-f input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+.add-f input:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
+#addSend{align-self:flex-start}
+.add-h{font-family:var(--f-display);font-size:16px;margin:24px 0 8px}
+.inbox{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-width:640px}
+.inbox-i{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.inbox-main{display:flex;flex-direction:column;gap:2px;min-width:0}
+.inbox-main b{overflow-wrap:anywhere}
+.inbox-msg{font-size:12px;color:var(--heart)}
+.inbox-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none}
+.inbox-empty{color:var(--muted);font-size:13px;padding:8px 0}
+.tag.new{color:var(--on-heart);background:var(--heart);border-color:transparent}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -542,6 +560,7 @@ header.top>.side{order:2}
   <div class="tabs" role="tablist" aria-label="頁面">
     <button type="button" role="tab" id="tabPlaces" aria-controls="placesPanel" aria-selected="true">地點<span class="n" id="nPlaces"></span></button>
     <button type="button" role="tab" id="tabStay" aria-controls="stayPanel" aria-selected="false" tabindex="-1">住宿<span class="n">已訂</span></button>
+    <button type="button" role="tab" id="tabAdd" aria-controls="addPanel" aria-selected="false" tabindex="-1">新增地點</button>
     <button type="button" role="tab" id="tabMap" aria-controls="mapPanel" aria-selected="false" tabindex="-1">地圖</button>
   </div>
 
@@ -575,6 +594,19 @@ header.top>.side{order:2}
   </div>
 
   <section id="stayPanel" role="tabpanel" aria-labelledby="tabStay" hidden></section>
+  <section id="addPanel" role="tabpanel" aria-labelledby="tabAdd" hidden>
+    <div class="addbox">
+      <h2>新增地點</h2>
+      <p class="add-lead">貼上地點名稱或 Google 地圖連結，AI 會自動查好地址、營業時間、評分、照片並寫小提醒，大約 30 分鐘內出現在地點庫。</p>
+      <form id="addForm" autocomplete="off">
+        <label class="add-f"><span>地點名稱或 Google 地圖連結</span><input id="addText" type="text" maxlength="300" required placeholder="例如：Khao Soi Khun Yai，或貼上 maps.app.goo.gl 連結"></label>
+        <label class="add-f"><span>想說的話（選填）</span><input id="addNote" type="text" maxlength="200" placeholder="例如：朋友推薦、想吃這家的咖哩麵"></label>
+        <button type="submit" class="qpb-btn" id="addSend">送出</button>
+      </form>
+    </div>
+    <h3 class="add-h">最近送出的</h3>
+    <ol class="inbox" id="inboxList"></ol>
+  </section>
   <section id="mapPanel" role="tabpanel" aria-labelledby="tabMap" hidden>
     <div class="maptools">
       <div class="chips" id="mapCats" role="group" aria-label="地圖顯示的分類"></div>
@@ -989,6 +1021,7 @@ function tags(p){
   let t=`<span class="tag cat">${catIcon(p.c)}${esc(p.c)}${p.sub?" · "+esc(p.sub):""}</span><span class="tag">${esc(p.r)}</span>`;
   if(closedLabel(p)) t+=`<span class="tag closed">${closedLabel(p)}</span>`;
   if(p.src==="建議") t+=`<span class="tag rec">AI 建議</span>`;
+  if(p.added) t+=`<span class="tag new">新加入</span>`;
   if(bookingOf(p)){const b=bookingOf(p); t+=`<span class="tag booked">已訂 ${md(b.date)} ${esc(b.time)}</span>`;}
   return t;
 }
@@ -1167,11 +1200,12 @@ function renderStay(){
       </dl>
     </section>`;
 }
-const TABS=[["places","tabPlaces","placesPanel",""],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"]];
+const TABS=[["places","tabPlaces","placesPanel",""],["add","tabAdd","addPanel","#add"],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"]];
 function setTab(t,focus){
   TABS.forEach(([k,tb,pn])=>{const on=k===t; $("#"+tb).setAttribute("aria-selected",String(on)); $("#"+tb).tabIndex=on?0:-1; $("#"+pn).hidden=!on;});
   if(t==="stay"&&!$("#stayPanel").innerHTML){renderStay(); watchPhotos();}
   if(t==="map"){openMap(); renderTrip();}
+  if(t==="add") renderInbox();
   if(focus) $("#"+TABS.find(x=>x[0]===t)[1]).focus();
   const h=TABS.find(x=>x[0]===t)[3]; if(location.hash!==h) history.replaceState(null,"",location.pathname+location.search+h);
 }
@@ -1405,6 +1439,48 @@ document.addEventListener("touchstart",e=>{const ph=e.target.closest(".card .ph"
 document.addEventListener("touchend",e=>{if(!swipe) return; const t=e.changedTouches[0], dx=t.clientX-swipe.x, dy=t.clientY-swipe.y;
   if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.5){const c=swipe.ph.closest("[data-card]"); if(c){stepPhoto(c,dx<0?1:-1); swiped=true; setTimeout(()=>swiped=false,350);}}
   swipe=null;},{passive:true});
+// Places the inbox agent added (Firebase /places/{id}); /removed/{id}=true hides one again.
+let ADDED={}, REMOVED={}, INBOX={}, inboxBlocked=false;
+const validAdded=p=>p&&typeof p==="object"&&typeof p.n==="string"&&typeof p.c==="string"&&typeof p.id==="string";
+function mergeAdded(){
+  for(let i=P.length-1;i>=0;i--) if(P[i].added) P.splice(i,1);
+  for(let i=UTIL.length-1;i>=0;i--) if(UTIL[i].added) UTIL.splice(i,1);
+  Object.values(ADDED).forEach(p=>{
+    if(!validAdded(p)||REMOVED[p.id]||P.some(x=>x.id===p.id)) return;
+    const q={...p,added:true,m:false};
+    (q.c==="其他"?UTIL:P).push(q);
+  });
+  render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
+}
+function liveJSON(path,apply){
+  (async()=>{try{const r=await fetch(FB+"/"+path+".json"); if(r.status===401||r.status===403){if(path==="inbox") inboxBlocked=true; return;} if(!r.ok) return; apply(await r.json()||{});
+    const es=new EventSource(FB+"/"+path+".json");
+    es.addEventListener("put",()=>{fetch(FB+"/"+path+".json").then(r=>r.ok?r.json():null).then(d=>{if(d!==undefined) apply(d||{});}).catch(()=>{});});
+    es.addEventListener("patch",()=>{fetch(FB+"/"+path+".json").then(r=>r.ok?r.json():null).then(d=>{if(d!==undefined) apply(d||{});}).catch(()=>{});});
+  }catch(e){}})();
+}
+const INBOX_STATUS={new:["待處理","wait"],processing:["處理中","wait"],added:["已加入","ok"],duplicate:["已在地點庫","ok"],failed:["找不到","off"]};
+function renderInbox(){
+  const el=$("#inboxList"); if(!el) return;
+  const items=Object.entries(INBOX).filter(([,x])=>x&&typeof x.text==="string").sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,40);
+  if(inboxBlocked){el.innerHTML=`<li class="inbox-empty">收件匣還沒開放（資料庫權限），設定好之後就能使用。</li>`; return;}
+  if(!items.length){el.innerHTML=`<li class="inbox-empty">還沒有人送出地點。</li>`; return;}
+  el.innerHTML=items.map(([iid,x])=>{const st=INBOX_STATUS[x.status]||INBOX_STATUS.new, p=x.placeId?(P.find(q=>q.id===x.placeId)||UTIL.find(q=>q.id===x.placeId)):null, rm=x.placeId&&REMOVED[x.placeId];
+    return `<li class="inbox-i"><div class="inbox-main"><b>${esc(x.text)}</b>${x.note?`<span class="local">${esc(x.note)}</span>`:""}<span class="local">${esc((WHO[x.who]||{name:x.who||"?"}).name)}・${ago(x.ts||0)}</span>${x.msg?`<span class="inbox-msg">${esc(x.msg)}</span>`:""}</div>
+      <div class="inbox-side"><span class="opennow ${rm?"off":st[1]==="ok"?"on":"off"}">${rm?"已移除":st[0]}</span>
+      ${x.placeId&&x.status==="added"?(rm?`<button type="button" class="linkbtn" data-restore="${esc(x.placeId)}">恢復</button>`:`${p&&P.includes(p)?`<button type="button" class="linkbtn" data-gocard="${esc(x.placeId)}">看卡片</button>`:""}<button type="button" class="linkbtn" data-remove="${esc(x.placeId)}">移除</button>`):""}</div></li>`;}).join("");
+}
+async function submitInbox(text,noteTxt){
+  if(!me){askWho(()=>submitInbox(text,noteTxt)); return;}
+  if(inboxBlocked){showToast("收件匣還沒開放，資料庫權限設定好之後就能使用。"); return;}
+  try{const r=await fetch(FB+"/inbox.json",{method:"POST",body:JSON.stringify({text,note:noteTxt||"",who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
+    $("#addText").value=""; $("#addNote").value=""; showToast("已送出，AI 處理好之後會自動出現在地點庫。");}
+  catch(e){showToast(e===401||e===403?"收件匣還沒開放，資料庫權限設定好之後就能使用。":"沒有送出，請檢查網路後再試一次。");}
+}
+async function setRemoved(id,val){
+  try{const r=await fetch(FB+"/removed/"+encodeURIComponent(id)+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status; REMOVED[id]=val; mergeAdded(); showToast(val?"已從地點庫移除，可以在這裡恢復。":"已恢復到地點庫。");}
+  catch(e){showToast("沒有存到雲端，請稍後再試。");}
+}
 function note(msg){const n=$("#notice");n.textContent=msg;n.hidden=!msg;}
 function showWhoHint(){const n=$("#notice"); n.innerHTML=`<span>你是誰？選好就能按愛心、留言：</span>${PEOPLE.map(x=>`<button type="button" class="chip small" data-me="${x.key}">${x.name}</button>`).join("")}`; n.hidden=false;}
 
@@ -1416,6 +1492,10 @@ document.addEventListener("click",async e=>{
   if(phImg){const c=phImg.closest("[data-card]"); const id=c?c.dataset.card:qpCurrent()&&qpCurrent().id; if(id){openLightbox(id,+(phImg.dataset.i||0)); return;}}
   const qa=e.target.closest("[data-qp]");
   if(qa){if(!qa.disabled) qpAct(qa.dataset.qp); return;}
+  const rmv=e.target.closest("[data-remove]");
+  if(rmv){if(confirm("把這個地點從地點庫移除？之後可以恢復。")) setRemoved(rmv.dataset.remove,true); return;}
+  const rst=e.target.closest("[data-restore]");
+  if(rst){setRemoved(rst.dataset.restore,false); return;}
   const pw=e.target.closest("[data-pickwho]");
   if(pw){const d=$("#whoDlg"); d.close?d.close():d.removeAttribute("open"); setMe(pw.dataset.pickwho); showToast(`嗨 ${WHO[me].name}！之後按愛心、留言都會用這個名字`); const f=whoThen; whoThen=null; if(f) f(); return;}
   const ca=e.target.closest("[data-cadd]");
@@ -1475,6 +1555,7 @@ document.addEventListener("click",async e=>{
 });
 
 buildControls(); readUrlState(); render();
+$("#addForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#addText").value.trim(); if(t) submitInbox(t,$("#addNote").value.trim());});
 setInterval(()=>{if(tripState.now) render();},60000);
 $("#tq").oninput=e=>{tripState.q=e.target.value.trim(); renderTrip(); if(mapReady) drawMarkers();};
 $("#openNowT").onchange=e=>{tripState.now=e.target.checked; renderTrip(); if(mapReady) drawMarkers();};   // keep "open now" current
@@ -1529,6 +1610,9 @@ function listen(x){
   }catch(e){}
 }
 pull().then(()=>PEOPLE.forEach(x=>{if(reachable[x.key]) listen(x);}));
+liveJSON("places",d=>{ADDED=d; mergeAdded();});
+liveJSON("removed",d=>{REMOVED=Object.fromEntries(Object.entries(d).filter(([,v])=>v===true)); mergeAdded();});
+liveJSON("inbox",d=>{INBOX=d; renderInbox();});
 const validComment=c=>c&&typeof c==="object"&&typeof c.text==="string"&&typeof c.ts==="number"&&typeof c.who==="string";
 const cleanComments=cs=>Object.fromEntries(Object.entries(cs&&typeof cs==="object"?cs:{}).filter(([,c])=>validComment(c)));
 function applyComments(obj){COMMENTS={}; Object.entries(obj||{}).forEach(([pid,cs])=>{if(placeById(pid)) COMMENTS[pid]=cleanComments(cs);}); Object.keys(COMMENTS).forEach(refreshComments); document.querySelectorAll("[data-cmts]").forEach(ul=>refreshComments(ul.dataset.cmts));}
