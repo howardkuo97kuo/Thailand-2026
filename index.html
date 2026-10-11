@@ -582,11 +582,9 @@ button.ps-name:hover{text-decoration:underline}
 .map-legend{display:flex;flex-wrap:wrap;gap:4px 12px;padding:8px 12px;font-size:11.5px;color:var(--muted);background:var(--card);border-top:1px solid var(--line)}
 #mapLegend .map-legend{border:1px solid var(--line);border-radius:8px;margin-top:6px}
 .map-legend span{display:inline-flex;align-items:center;gap:5px}
-.lg-dot{display:inline-block;border-radius:50%;background:#8a8378}
-.lg-dot.h0{width:8px;height:8px;border:1.5px solid #fff;box-shadow:0 0 0 1px #8a8378}
-.lg-dot.h1{width:11px;height:11px;border:2.5px solid #f0b628}
-.lg-dot.h2{width:15px;height:15px;border:4px solid #f0b628}
-.lg-dot.h3{width:19px;height:19px;border:4px solid #b0281c}
+.lg-dot{display:inline-block;width:11px;height:11px;border-radius:50%;background:#8a8378}
+.lg-dot.h0{border:1.5px solid #fff;box-shadow:0 0 0 1px #8a8378}
+.lg-dot.h1{border:2.5px solid #f0b628}
 .lg-bk{font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 3px;border-radius:4px;color:#fff;background:#1f6f5c}
 .lg-pin{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1.5px dashed #6b6358;font:700 9px/1 var(--f-mono);font-style:normal;color:#6b6358;background:#fff}
 .booked-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:13px}
@@ -760,7 +758,7 @@ header.top>.side{order:2}
     </div>
     <div id="map" role="region" aria-label="清邁地點地圖"><p class="map-msg">地圖載入中…</p></div>
     <div id="mapLegend"></div>
-    <p class="map-note"><span id="mapDay"></span>黑色房子是住宿；點越大、外框越粗代表越多人按愛心。點標記看簡介與 Google 地圖連結。</p>
+    <p class="map-note"><span id="mapDay"></span>黑色房子是住宿，金色外框是有人按愛心的地點；點標記看簡介與 Google 地圖連結。</p>
     <h2 class="trip-h">速查表</h2>
     <p class="trip-lead">跟上方地圖同一批地點：營業時間、評分、離住宿多遠，一鍵開 Google 地圖。點欄位標題可排序。</p>
     <p class="count" id="tripCount"></p>
@@ -1920,14 +1918,14 @@ function drawPlanMap(box){
     addOthers(others,di,d.stops); planMaps[di]={m,others,route};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
-// Map dots grow with hearts: none (small, white edge), ♥1 (gold edge), ♥2 (bigger, thick gold), ♥3 (biggest, red edge).
-const HEART_DOT=[{r:5,c:"#ffffff",w:1.5},{r:7,c:"#f0b628",w:2.5},{r:9.5,c:"#f0b628",w:4},{r:12,c:"#b0281c",w:4}];
-function dotStyle(p,dim){const n=heartable(p)?Math.min(3,heartCount(p)):0, h=HEART_DOT[n];
-  return {radius:dim?Math.max(4,h.r-1.5):h.r,color:h.c,weight:h.w,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:dim?.5:1,opacity:dim?.75:1};}
+// Map dots: one size; a gold ring marks places someone hearted. Dimmed under a day's route.
+function dotStyle(p,dim){const ring=isMust(p);
+  return dim?{radius:ring?7:5,color:ring?"#f0b628":"#ffffff",weight:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:.45,opacity:.6}
+    :{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1};}
 const heartLevel=p=>p&&heartable(p)?Math.min(3,heartCount(p)):0;
 const heartMarks=p=>{const n=heartLevel(p); return n?`<span class="ps-hearts h${n}" title="${n} 個人按愛心">${"♥".repeat(n)}</span>`:"";};
 const heartBadge=p=>{if(!p||!heartable(p)) return ""; const n=Math.min(3,heartCount(p)); return n?`<i class="rp-h h${n}">♥${n}</i>`:"";};
-const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span class="lg-k">行程編號</span><span><i class="lg-n h0">1</i>沒人愛心</span><span><i class="lg-n h1">1</i>♥1</span><span><i class="lg-n h2">1</i>♥2</span><span><i class="lg-n h3">1</i>♥3</span><span class="lg-k">其他地點</span><span><i class="lg-dot h0"></i>沒人愛心</span><span><i class="lg-dot h1"></i>♥1</span><span><i class="lg-dot h2"></i>♥2</span><span><i class="lg-dot h3"></i>♥3 三人都愛</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-pin">O</i>彈性</span></div>`;
+const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span class="lg-k">行程編號</span><span><i class="lg-n h0">1</i>沒人愛心</span><span><i class="lg-n h1">1</i>♥1</span><span><i class="lg-n h2">1</i>♥2</span><span><i class="lg-n h3">1</i>♥3</span><span class="lg-k">其他地點</span><span><i class="lg-dot h0"></i>沒人愛心</span><span><i class="lg-dot h1"></i>有人愛心</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-pin">O</i>彈性</span></div>`;
 // The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
 function addOthers(target,di,stops){
   const onRoute=new Set(stops.map(st=>st.id).filter(Boolean)), pts=[];
