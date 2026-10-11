@@ -630,6 +630,11 @@ button.ps-name:hover{text-decoration:underline}
 .spa-a{display:flex;gap:8px;margin-top:4px}
 .spa-pin span{color:#fff;border-color:#fff}
 @media (max-width:760px){.spa-wrap{grid-template-columns:1fr}.spa-map{position:static;height:300px}}
+/* 意見 */
+#ideaText{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;resize:vertical}
+.idea-p{margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--paper);font-size:13px;white-space:pre-wrap}
+.idea-p .tip-k{display:block;margin-bottom:2px}
+.idea-a{display:flex;gap:8px;margin-top:8px}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -721,6 +726,7 @@ header.top>.side{order:2}
     <button type="button" role="tab" id="tabPlaces" aria-controls="placesPanel" aria-selected="true">挑地點<span class="n" id="nPlaces"></span></button>
     <button type="button" role="tab" id="tabStay" aria-controls="stayPanel" aria-selected="false" tabindex="-1">已訂<span class="n">住宿・訂位</span></button>
     <button type="button" role="tab" id="tabAdd" aria-controls="addPanel" aria-selected="false" tabindex="-1">推薦<span class="n">交給 AI</span></button>
+    <button type="button" role="tab" id="tabIdea" aria-controls="ideaPanel" aria-selected="false" tabindex="-1">意見<span class="n">每晚整理</span></button>
     <button type="button" role="tab" id="tabMap" aria-controls="mapPanel" aria-selected="false" tabindex="-1">地圖</button>
     <button type="button" role="tab" id="tabSpa" aria-controls="spaPanel" aria-selected="false" tabindex="-1">按摩<span class="n">排名</span></button>
     <button type="button" role="tab" id="tabPlan" aria-controls="planPanel" aria-selected="false" tabindex="-1">行程<span class="n">可編輯</span></button>
@@ -758,6 +764,18 @@ header.top>.side{order:2}
   <section id="spaPanel" role="tabpanel" aria-labelledby="tabSpa" hidden></section>
   <section id="planPanel" role="tabpanel" aria-labelledby="tabPlan" hidden></section>
   <section id="stayPanel" role="tabpanel" aria-labelledby="tabStay" hidden></section>
+  <section id="ideaPanel" role="tabpanel" aria-labelledby="tabIdea" hidden>
+    <p class="tab-lead">想改行程、網站或地點，直接寫在這裡。每天晚上 11 點 AI 會整理成具體建議放在下面，Howard 按「同意執行」之後，隔天晚上 11 點才會真的修改；沒按就不會動。</p>
+    <div class="addbox">
+      <h2>給建議</h2>
+      <form id="ideaForm" autocomplete="off">
+        <label class="add-f"><span>你的建議</span><textarea id="ideaText" rows="3" maxlength="1000" required placeholder="例如：10/18 下午太空了，想加一個咖啡廳；或：行程頁字太小"></textarea></label>
+        <button type="submit" class="qpb-btn" id="ideaSend">送出</button>
+      </form>
+    </div>
+    <h3 class="add-h">大家的建議</h3>
+    <ol class="inbox" id="ideaList"></ol>
+  </section>
   <section id="addPanel" role="tabpanel" aria-labelledby="tabAdd" hidden>
     <p class="tab-lead">想到新地點？貼上名稱或 Google 地圖連結，AI 會查好資料，約 30 分鐘後加進「挑地點」。</p>
     <div class="addbox">
@@ -1473,12 +1491,13 @@ function renderStay(){
       </dl>
     </section>`;
 }
-const TABS=[["places","tabPlaces","placesPanel",""],["add","tabAdd","addPanel","#add"],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"],["spa","tabSpa","spaPanel","#spa"],["plan","tabPlan","planPanel","#plan"]];
+const TABS=[["places","tabPlaces","placesPanel",""],["add","tabAdd","addPanel","#add"],["idea","tabIdea","ideaPanel","#idea"],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"],["spa","tabSpa","spaPanel","#spa"],["plan","tabPlan","planPanel","#plan"]];
 function setTab(t,focus){
   TABS.forEach(([k,tb,pn])=>{const on=k===t; $("#"+tb).setAttribute("aria-selected",String(on)); $("#"+tb).tabIndex=on?0:-1; $("#"+pn).hidden=!on;});
   if(t==="stay"&&!$("#stayPanel").innerHTML){renderStay(); watchPhotos();}
   if(t==="map"){openMap(); renderTrip();}
   if(t==="add") renderInbox();
+  if(t==="idea") renderIdeas();
   if(t==="plan") renderPlan();
   if(t==="spa") renderSpa();
   if(focus) $("#"+TABS.find(x=>x[0]===t)[1]).focus();
@@ -1656,6 +1675,33 @@ function liveJSON(path,apply){
     const txt=await r.text(); if(polled[path]===txt) return; polled[path]=txt; apply(JSON.parse(txt)||{});}catch(e){}};
   tick(); setInterval(()=>{if(path==="inbox"&&$("#addPanel").hidden) return; tick();},path==="inbox"?8000:30000);
   if(path==="inbox") setInterval(()=>{if($("#addPanel").hidden) tick();},60000);
+}
+// 意見: suggestions people write; a nightly AI run turns new ones into a proposal, Howard approves, the next run carries it out.
+let IDEAS={};
+const IDEA_STATUS={new:["待整理（今晚 11 點）","wait"],proposed:["建議待確認","wait"],approved:["已同意，今晚 11 點執行","ok"],done:["已完成","ok"],rejected:["不採用","off"],failed:["沒有完成","off"]};
+function renderIdeas(){
+  const el=$("#ideaList"); if(!el) return;
+  const items=Object.entries(IDEAS).filter(([,x])=>x&&typeof x.text==="string").sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
+  if(!items.length){el.innerHTML=`<li class="inbox-empty">還沒有人提建議。</li>`; return;}
+  el.innerHTML=items.map(([id,x])=>{const st=IDEA_STATUS[x.status]||IDEA_STATUS.new, canDecide=x.status==="proposed"&&me==="howard";
+    return `<li class="inbox-i idea"><div class="inbox-main"><b>${esc(x.text)}</b><span class="local">${esc((WHO[x.who]||{name:x.who||"?"}).name)}・${ago(x.ts||0)}</span>
+      ${x.proposal?`<div class="idea-p"><span class="tip-k">AI 建議</span>${esc(x.proposal)}</div>`:""}
+      ${x.result?`<div class="idea-p done"><span class="tip-k">結果</span>${esc(x.result)}</div>`:""}
+      ${canDecide?`<div class="idea-a"><button type="button" class="chip small send" data-idea="${id}" data-decide="approved">同意執行</button><button type="button" class="chip small" data-idea="${id}" data-decide="rejected">不採用</button></div>`:""}
+      ${x.status==="proposed"&&me!=="howard"?`<span class="local">等 Howard 確認</span>`:""}</div>
+      <div class="inbox-side"><span class="opennow ${st[1]==="ok"?"on":"off"}">${st[0]}</span></div></li>`;}).join("");
+}
+async function submitIdea(text){
+  if(!me){askWho(()=>submitIdea(text)); return;}
+  try{const r=await fetch(FB+"/feedback.json",{method:"POST",body:JSON.stringify({text,who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
+    $("#ideaText").value=""; showToast("已送出，今晚 11 點會整理成建議。"); const d=await (await fetch(FB+"/feedback.json")).json(); IDEAS=d||{}; renderIdeas();}
+  catch(e){showToast(e===401||e===403?"意見箱還沒開放（資料庫權限），設定好之後就能使用。":"沒有送出，請檢查網路後再試一次。");}
+}
+async function decideIdea(id,status){
+  if(me!=="howard") return;
+  try{const r=await fetch(FB+"/feedback/"+id+".json",{method:"PATCH",body:JSON.stringify({status,decidedBy:me,decidedAt:Date.now()})}); if(!r.ok) throw r.status;
+    IDEAS[id]={...IDEAS[id],status}; renderIdeas(); showToast(status==="approved"?"已同意，今晚 11 點會執行。":"已標記為不採用。");}
+  catch(e){showToast("沒有存到雲端，請稍後再試。");}
 }
 const INBOX_STATUS={new:["待處理","wait"],processing:["處理中","wait"],added:["已加入","ok"],duplicate:["已在地點庫","ok"],failed:["找不到","off"]};
 function renderInbox(){
@@ -2050,6 +2096,8 @@ document.addEventListener("click",async e=>{
   if(pjd){setTab("plan"); const d=$("#pday"+(+pjd.dataset.pjumpday+1)); if(d) d.scrollIntoView(); return;}
   const add=e.target.closest("[data-addday]");
   if(add){const di=add.dataset.day!==undefined?+add.dataset.day:mapState.planDay; if(di==null||!PLAN[di]) return; if(lmap) lmap.closePopup(); Object.values(planMaps).forEach(x=>x.m.closePopup()); addStop(di,add.dataset.addday); return;}
+  const dc=e.target.closest("[data-decide]");
+  if(dc){decideIdea(dc.dataset.idea,dc.dataset.decide); return;}
   const pe=e.target.closest("[data-pedit]");
   if(pe){const di=+pe.dataset.pedit; if(planEditing.has(di)) planEditing.delete(di); else{if(!me){askWho(()=>pe.click()); return;} planEditing.add(di);} renderDay(di); return;}
   const pmv=e.target.closest("[data-pmv]");
@@ -2148,6 +2196,7 @@ document.addEventListener("change",e=>{
 });
 document.addEventListener("input",e=>{if(e.target.id==="pkQ") renderPicker(e.target.value);});
 document.addEventListener("change",e=>{if(e.target.id==="pkOpt") PK.opt=e.target.checked;});
+$("#ideaForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#ideaText").value.trim(); if(t) submitIdea(t);});
 $("#addForm").addEventListener("submit",async e=>{e.preventDefault(); const t=$("#addText").value.trim(), b=$("#addSend"); if(!t||b.disabled) return;
   b.disabled=true; b.textContent="送出中…"; try{await submitInbox(t,$("#addNote").value.trim());} finally{b.disabled=false; b.textContent="送出";}});
 setInterval(()=>{if(tripState.now) render();},60000);
@@ -2207,6 +2256,7 @@ pull().then(()=>PEOPLE.forEach(x=>{if(reachable[x.key]) listen(x);}));
 liveJSON("places",d=>{ADDED=d; mergeAdded();});
 liveJSON("removed",d=>{REMOVED=Object.fromEntries(Object.entries(d).filter(([,v])=>v===true)); mergeAdded();});
 liveJSON("inbox",d=>{INBOX=d; renderInbox();});
+liveJSON("feedback",d=>{IDEAS=d; renderIdeas();});
 startPlanLive();
 setInterval(pull,30000);
 </script>
