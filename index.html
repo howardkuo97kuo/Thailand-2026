@@ -594,6 +594,17 @@ button.ps-name:hover{text-decoration:underline}
 .booked-sum span{padding:2px 8px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
 .booked-sum .linkbtn{font-size:13px;margin-left:auto}
 @media (max-width:760px){.pday-mapcol{order:-1;border-left:0;border-bottom:1px solid var(--line)}.pday-mapcol .pday-map{min-height:260px}}
+/* 行程 numbers coloured by hearts (list and map pins share the scheme) */
+.ps.h0 .ps-n,.route-pin.h0 span,.lg-n.h0{background:#fff;color:#231f1c;border:1.5px solid #8a8378}
+.ps.h1 .ps-n,.route-pin.h1 span,.lg-n.h1{background:#fbe7a1;color:#231f1c;border:2px solid #c98a00}
+.ps.h2 .ps-n,.route-pin.h2 span,.lg-n.h2{background:#f0b628;color:#231f1c;border:2.5px solid #231f1c}
+.ps.h3 .ps-n,.route-pin.h3 span,.lg-n.h3{background:#b0281c;color:#fff;border:2.5px solid #f0b628}
+.ps-nm{min-width:0}
+.ps-hearts{margin-left:6px;font-size:12px;letter-spacing:1px;color:#d97a6c;white-space:nowrap}
+.ps-hearts.h2{color:#b0281c}
+.ps-hearts.h3{color:#7a1308}
+.lg-n{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;font:700 10px/1 var(--f-mono);font-style:normal}
+.map-legend .lg-k{font-weight:700;color:var(--ink)}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -898,7 +909,7 @@ const PLAN_ASOF="2026-10-11";  // the hearts the itinerary was planned from
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
 const AIRPORT={n:"清邁國際機場 CNX",ll:[18.766847,98.962638]};
 const PLAN=[
- {date:"2026-10-15",title:"抵達・古城果昔、THE HOUSE、北門爵士",stops:[
+ {date:"2026-10-15",title:"抵達・古城",stops:[
   {t:"10:25",at:AIRPORT,d:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
   {t:"11:30",hotel:"jhaban",d:"先寄放行李（下午入住）"},
   {t:"12:00",id:"khunyai",d:"午餐：泰北咖哩麵，14:00 收、會賣完"},
@@ -908,7 +919,7 @@ const PLAN=[
   {t:"18:30",id:"house",d:"已訂位 3 人；必點炸魚、椰奶咖哩蝦、西瓜涼拌"},
   {t:"20:30",id:"riflesso",d:"開心果口味，開到 22:00"},
   {t:"21:30",hotel:"jhaban",d:"回住宿，早點休息"}]},
- {date:"2026-10-16",title:"料理課、尼曼咖啡與晚餐、學生夜市",stops:[
+ {date:"2026-10-16",title:"料理課・尼曼",stops:[
   {t:"08:30",hotel:"jhaban",d:"出發（料理課通常會到住宿接送）"},
   {t:"09:00",id:"asiascenic",d:"09:00 開始，約 5 小時到 14:00；市場導覽＋做菜，含午餐"},
   {t:"14:30",id:"ristr8to",d:"拉花咖啡（開到 17:30）；也可改 Roast8ry"},
@@ -918,7 +929,7 @@ const PLAN=[
   {t:"19:45",id:"kiewkai",d:"One Nimman 的泰北菜；同一棟也有 GINGER FARM"},
   {t:"21:30",id:"warmup",d:"老牌 Live 夜店",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
- {date:"2026-10-17",title:"週六：真心市集、古城寺廟、Wua Lai 夜市",stops:[
+ {date:"2026-10-17",title:"真心市集・古城寺廟",stops:[
   {t:"07:00",hotel:"jhaban",d:"出發"},
   {t:"07:30",id:"jingjai",d:"週末手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤"},
   {t:"10:30",id:"lokmoli",d:"紅磚古塔"},
@@ -933,7 +944,7 @@ const PLAN=[
   {t:"21:00",id:"jazz",d:"想坐室內 20:00 前到",opt:true},
   {t:"21:30",id:"mooyim",d:"宵夜香茅陶鍋，開到 03:00",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
- {date:"2026-10-18",title:"換住宿、市場採買、河邊午餐、週日夜市",stops:[
+ {date:"2026-10-18",title:"換住宿・週日夜市",stops:[
   {t:"07:30",id:"sapa",d:"瑪莎拉咖哩配煎餅；只收現金，週日有開"},
   {t:"09:00",hotel:"jhaban",d:"退房"},
   {t:"09:30",hotel:"thee",d:"寄放行李（下午入住）"},
@@ -946,7 +957,7 @@ const PLAN=[
   {t:"17:30",id:"sunday",d:"週日限定，逛約 2 小時"},
   {t:"20:00",id:"rotipadae",d:"自己寫單、等叫號"},
   {t:"21:00",hotel:"thee",d:"回新住宿"}]},
- {date:"2026-10-19",title:"塔佩門早餐、北區咖啡、尼曼、陶鍋晚餐",stops:[
+ {date:"2026-10-19",title:"北區・尼曼",stops:[
   {t:"07:30",hotel:"thee",d:"出發"},
   {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完；週日休所以排今天"},
   {t:"09:00",id:"magic",d:"泰奶、手沖；週三休，15:30 關"},
@@ -957,7 +968,7 @@ const PLAN=[
   {t:"19:00",id:"ekachan",d:"河邊柚木屋晚餐，Google 地圖訂位"},
   {t:"20:30",id:"bazaar",d:"清邁夜市"},
   {t:"22:00",hotel:"thee",d:"回住宿"}]},
- {date:"2026-10-20",title:"咖哩麵、按摩、烤雞、回程",stops:[
+ {date:"2026-10-20",title:"按摩・回程",stops:[
   {t:"09:00",hotel:"thee",d:"退房、寄放行李"},
   {t:"09:30",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
   {t:"11:00",id:"makkhaah",d:"回程前按摩 90 分鐘，記得先預約；就在 SP Chicken 旁"},
@@ -1055,6 +1066,8 @@ async function loadLive(id){
 // change can move places in or out of the list or reorder it (heart filter or heart sort active).
 function updatePlaces(ids){
   ids=[...new Set(ids)].filter(Boolean); if(!ids.length) return;
+  // 行程 numbers are coloured by hearts: redraw the days that include a changed place
+  if($("#planPanel").dataset.done==="1") PLAN.forEach((d,i)=>{if(dayStops(i).some(st=>ids.includes(st.id))) renderDay(i);});
   if(pcId()&&ids.includes(pcId())) renderPopup();
   if(state.heartF||state.sortKey==="must"){render(); return;}
   ids.forEach(id=>{
@@ -1696,16 +1709,17 @@ function daySection(di){
   const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"彈性":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
-    const name=pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`;
-    if(ed&&bk) return `<li class="ps edit fixed" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
+    const hl=pt.p&&!st.opt?` h${heartLevel(pt.p)}`:"";
+    const name=`<span class="ps-nm">${pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`}${heartMarks(pt.p)}</span>`;
+    if(ed&&bk) return `<li class="ps edit fixed${hl}" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・${bk.flight?"航班時間固定":"已預訂，時間固定"}；要改請看「已訂」分頁</span></div></li>`;
-    if(ed) return `<li class="ps edit${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}" data-i="${i}"><span class="ps-drag" title="按住拖拉調整順序" aria-hidden="true">⠿</span><span class="ps-n">${num}</span>
+    if(ed) return `<li class="ps edit${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${hl}" data-i="${i}"><span class="ps-drag" title="按住拖拉調整順序" aria-hidden="true">⠿</span><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}<span class="ps-ed">
         <button type="button" data-pmv="${di}:${i}:-1" aria-label="上移 ${esc(pt.n)}"${i===0?" disabled":""}>↑</button>
         <button type="button" data-pmv="${di}:${i}:1" aria-label="下移 ${esc(pt.n)}"${i===stops.length-1?" disabled":""}>↓</button>
         ${pt.p?`<button type="button" class="popt" data-popt="${di}:${i}" aria-pressed="${!!st.opt}" title="${st.opt?"改回必去":"設為彈性（時間夠再去，不算進主要路線）"}">彈性</button>`:""}<button type="button" data-pdel="${di}:${i}" aria-label="移除 ${esc(pt.n)}">✕</button></span></div>
         <div class="ps-in"><select data-pt="${di}:${i}" aria-label="${esc(pt.n)} 的時間">${timeOptions(st.t)}</select><input type="text" value="${esc(st.d||"")}" data-pn="${di}:${i}" maxlength="120" placeholder="備註" aria-label="${esc(pt.n)} 的備註"></div>${wl}</div></li>`;
-    return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${bk?" fixed":""}"><span class="ps-n">${num}</span><span class="ps-t">${esc(time)}</span>
+    return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${bk?" fixed":""}${hl}"><span class="ps-n">${num}</span><span class="ps-t">${esc(time)}</span>
       <div class="ps-b"><div class="ps-top">${name}${lock}</div>${wl}<span class="local">${esc(st.d||"")}</span></div>
       <a class="mini" href="${pt.url}" target="_blank" rel="noopener">地圖</a></li>`+gap(i);}).join("");
   const main=stops.filter(st=>!st.opt).map(planPoint).filter(Boolean), links=dayRouteLinks(main);
@@ -1910,8 +1924,10 @@ function drawPlanMap(box){
 const HEART_DOT=[{r:5,c:"#ffffff",w:1.5},{r:7,c:"#f0b628",w:2.5},{r:9.5,c:"#f0b628",w:4},{r:12,c:"#b0281c",w:4}];
 function dotStyle(p,dim){const n=heartable(p)?Math.min(3,heartCount(p)):0, h=HEART_DOT[n];
   return {radius:dim?Math.max(4,h.r-1.5):h.r,color:h.c,weight:h.w,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:dim?.5:1,opacity:dim?.75:1};}
+const heartLevel=p=>p&&heartable(p)?Math.min(3,heartCount(p)):0;
+const heartMarks=p=>{const n=heartLevel(p); return n?`<span class="ps-hearts h${n}" title="${n} 個人按愛心">${"♥".repeat(n)}</span>`:"";};
 const heartBadge=p=>{if(!p||!heartable(p)) return ""; const n=Math.min(3,heartCount(p)); return n?`<i class="rp-h h${n}">♥${n}</i>`:"";};
-const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span><i class="lg-dot h0"></i>沒人愛心</span><span><i class="lg-dot h1"></i>♥1</span><span><i class="lg-dot h2"></i>♥2</span><span><i class="lg-dot h3"></i>♥3 三人都愛</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-pin">O</i>彈性</span></div>`;
+const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span class="lg-k">行程編號</span><span><i class="lg-n h0">1</i>沒人愛心</span><span><i class="lg-n h1">1</i>♥1</span><span><i class="lg-n h2">1</i>♥2</span><span><i class="lg-n h3">1</i>♥3</span><span class="lg-k">其他地點</span><span><i class="lg-dot h0"></i>沒人愛心</span><span><i class="lg-dot h1"></i>♥1</span><span><i class="lg-dot h2"></i>♥2</span><span><i class="lg-dot h3"></i>♥3 三人都愛</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-pin">O</i>彈性</span></div>`;
 // The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
 function addOthers(target,di,stops){
   const onRoute=new Set(stops.map(st=>st.id).filter(Boolean)), pts=[];
@@ -1926,7 +1942,7 @@ function addRoute(target,stops,di){
   const line=[], all=[]; let k=0;
   stops.forEach(st=>{const pt=planPoint(st); if(!pt||!pt.ll) return; all.push(pt.ll);
     const label=st.opt?"O":pt.hotel?"宿":pt.airport?"機":String(++k);
-    const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
+    const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"")+(pt.p&&!st.opt?` h${heartLevel(pt.p)}`:"");
     const bk=di!=null&&PLAN[di]&&bookedOn(st,PLAN[di].date);
     L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>${heartBadge(pt.p)}${bk?`<i class="rp-b">訂</i>`:""}`,className:cls+(bk?" booked":""),iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
       .bindPopup(pt.p?()=>mapCard(pt.p,di):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
