@@ -874,12 +874,16 @@ const PLAN_ASOF="2026-10-11";  // the hearts the itinerary was planned from
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
 const AIRPORT={n:"清邁國際機場 CNX",ll:[18.766847,98.962638]};
 const PLAN=[
- {date:"2026-10-15",title:"抵達・古城散步＋THE HOUSE",stops:[
-  {t:"16:00",at:AIRPORT,d:"抵達，Grab 到住宿約 15 分鐘"},
-  {t:"16:45",hotel:"jhaban",d:"入住、梳洗"},
+ {date:"2026-10-15",title:"抵達・咖哩麵、古城咖啡＋THE HOUSE",stops:[
+  {t:"10:25",at:AIRPORT,d:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
+  {t:"11:30",hotel:"jhaban",d:"先寄放行李（下午入住）"},
+  {t:"12:00",id:"khunyai",d:"午餐：泰北咖哩麵，14:00 收、會賣完"},
+  {t:"13:30",id:"fernforest",d:"森林花園咖啡廳，坐下來休息"},
+  {t:"15:00",hotel:"jhaban",d:"入住、梳洗、休息"},
+  {t:"17:30",id:"chiangman",d:"遊客少很安靜；側殿約 18:00 關門",opt:true},
   {t:"18:30",id:"house",d:"已訂位 3 人；必點炸魚、椰奶咖哩蝦、西瓜涼拌"},
   {t:"20:30",id:"riflesso",d:"開心果口味，開到 22:00"},
-  {t:"21:15",hotel:"jhaban",d:"回住宿，早點休息"}]},
+  {t:"21:00",hotel:"jhaban",d:"回住宿，早點休息"}]},
  {date:"2026-10-16",title:"料理課＋尼曼午後",stops:[
   {t:"08:30",hotel:"jhaban",d:"出發（料理課通常會到住宿接送）"},
   {t:"09:00",id:"asiascenic",d:"09:00 開始，約 5 小時到 14:00；市場導覽＋做菜，含午餐"},
@@ -930,12 +934,12 @@ const PLAN=[
   {t:"20:30",id:"bazaar",d:"清邁夜市"},
   {t:"22:00",hotel:"thee",d:"回住宿"}]},
  {date:"2026-10-20",title:"咖哩麵、按摩、烤雞、回程",stops:[
-  {t:"09:30",hotel:"thee",d:"睡飽、退房、寄放行李"},
-  {t:"10:30",id:"madam",d:"手工包包，週二有開（週六日休）"},
-  {t:"12:00",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
-  {t:"13:30",id:"bigc",d:"最後採買；或回瓦洛洛市場較便宜"},
-  {t:"15:00",hotel:"thee",d:"泳池、下午免費飲料，整理行李、取行李"},
-  {t:"17:00",at:AIRPORT,d:"到機場，19:00 起飛"}]}
+  {t:"09:00",hotel:"thee",d:"退房、寄放行李"},
+  {t:"09:30",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
+  {t:"11:00",id:"makkhaah",d:"回程前按摩 90 分鐘，記得先預約；就在 SP Chicken 旁"},
+  {t:"12:30",id:"sp",d:"烤雞、烤豬肋排；只收現金"},
+  {t:"13:30",hotel:"thee",d:"取行李"},
+  {t:"14:30",at:AIRPORT,d:"17:20 起飛；國際線建議 2.5 小時前到機場"}]}
 ];
 // Bookings already made (restaurants, classes): listed on the 住宿 tab, badged on the place, and locked in 行程.
 const BOOKINGS=[
@@ -943,6 +947,14 @@ const BOOKINGS=[
   {id:"asiascenic",kind:"課程",date:"2026-10-16",time:"09:00",end:"14:00",note:"約 5 小時，含午餐"}
 ];
 const bkTime=b=>b.time+(b.end?"–"+b.end:"");
+// Flights. The arrival stop shows the landing time; the next stop starts after immigration and the ride (ready).
+// The departure stop is when to be at the airport: 2.5 hours before take-off, on the half hour.
+const FLIGHTS=[
+  {date:"2026-10-15",kind:"arrive",time:"10:25",ready:"11:00",note:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
+  {date:"2026-10-20",kind:"depart",time:"17:20",note:"17:20 起飛；國際線建議 2.5 小時前到機場"}
+];
+const flightOn=date=>FLIGHTS.find(f=>f.date===date);
+const toAirport=f=>{const [h,m]=f.time.split(":").map(Number), t=Math.floor((h*60+m-150)/30)*30; return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");};
 const bookingOf=p=>BOOKINGS.find(b=>b.id===p.id);
 // Lodging is booked, so it lives on its own tab as a fixed itinerary, not a choice.
 const LODGING=[
@@ -1341,7 +1353,7 @@ function renderStay(){
   const first=LODGING[0].in, last=LODGING[LODGING.length-1].out, total=nights(first,last);
   $("#stayPanel").innerHTML=`
     <p class="tab-lead">已經訂好、不用再選的：住宿、餐廳訂位、課程，加上換匯所和出發前小抄。</p>
-    <p class="stay-lead">共 ${total} 晚、${LODGING.length} 間住宿${BOOKINGS.length?`；${BOOKINGS.length} 個餐廳、課程已預訂，行程會照這些時間排`:""}。</p>
+    <p class="stay-lead">共 ${total} 晚、${LODGING.length} 間住宿；${md(FLIGHTS[0].date)} ${FLIGHTS[0].time} 抵達、${md(FLIGHTS[1].date)} ${FLIGHTS[1].time} 起飛${BOOKINGS.length?`；${BOOKINGS.length} 個餐廳、課程已預訂，行程會照這些時間排`:""}。</p>
     <div class="stay-line" role="img" aria-label="${LODGING.map(h=>`${h.n} ${md(h.in)} 入住、${md(h.out)} 退房`).join("；")}">
       ${LODGING.map(h=>`<div class="seg-night" style="flex:${nights(h.in,h.out)}"><span class="seg-name">${esc(h.n)}</span><span class="seg-n">${nights(h.in,h.out)} 晚</span></div>`).join("")}
     </div>
@@ -1363,6 +1375,10 @@ function renderStay(){
         </div>
         <div class="foot"><a class="mini" href="${mapsUrl(h)}" target="_blank" rel="noopener">Google 地圖</a></div>
       </article>`;}).join("")}</div>
+    <section class="booked" aria-labelledby="flightH">
+      <h2 id="flightH">航班</h2>
+      <ol class="booked-list">${FLIGHTS.map(f=>`<li><div class="bk-when"><b>${md(f.date)}</b><span>${esc(f.time)}</span></div><div class="bk-what"><b>${f.kind==="arrive"?"抵達清邁":"從清邁起飛"}</b><span class="tag">${f.kind==="arrive"?"抵達":"回程"}</span><div class="local">${esc(AIRPORT.n)}${f.kind==="depart"?`・${toAirport(f)} 前到機場`:""}</div><p class="tip"><span class="tip-k">小提醒</span>${esc(f.note)}</p></div></li>`).join("")}</ol>
+    </section>
     ${BOOKINGS.length?`<section class="booked" aria-labelledby="bookedH">
       <h2 id="bookedH">已訂餐廳與課程</h2>
       <ol class="booked-list">${BOOKINGS.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(b=>{const p=placeById(b.id); if(!p) return "";
@@ -1615,7 +1631,10 @@ function savePlanCache(){try{localStorage.setItem(PLAN_KEY,JSON.stringify(PLAN_L
 const planEditing=new Set();
 const fromFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at==="airport") o.at=AIRPORT; return o;};
 const toFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at) o.at="airport"; return o;};
-const bookedOn=(st,date)=>!!st.id&&BOOKINGS.find(b=>b.id===st.id&&b.date===date);
+const bookedOn=(st,date)=>{
+  if(st.at){const f=flightOn(date); return f?(f.kind==="arrive"?{time:f.time,ready:f.ready,flight:f}:{time:toAirport(f),flight:f}):null;}
+  return !!st.id&&BOOKINGS.find(b=>b.id===st.id&&b.date===date);
+};
 const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 function dayStops(di){
   const date=PLAN[di].date, live=PLAN_LIVE[date];
@@ -1624,6 +1643,8 @@ function dayStops(di){
   BOOKINGS.filter(b=>b.date===date&&!stops.some(st=>st.id===b.id)).forEach(b=>{
     let at=stops.findIndex(st=>st.t&&st.t>b.time); if(at<0) at=stops.length&&(stops[stops.length-1].hotel||stops[stops.length-1].at)?stops.length-1:stops.length;
     stops.splice(at,0,{t:b.time,d:"",id:b.id});});
+  const f=flightOn(date);
+  if(f&&!stops.some(st=>st.at)) f.kind==="arrive"?stops.unshift({t:f.time,d:f.note,at:AIRPORT}):stops.push({t:toAirport(f),d:f.note,at:AIRPORT});
   return stops;
 }
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
@@ -1652,7 +1673,7 @@ function daySection(di){
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
     const name=pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`;
     if(ed&&bk) return `<li class="ps edit fixed" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
-      <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・已預訂，時間固定；要改請看「已訂」分頁</span></div></li>`;
+      <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・${bk.flight?"航班時間固定":"已預訂，時間固定"}；要改請看「已訂」分頁</span></div></li>`;
     if(ed) return `<li class="ps edit${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}" data-i="${i}"><span class="ps-drag" title="按住拖拉調整順序" aria-hidden="true">⠿</span><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}<span class="ps-ed">
         <button type="button" data-pmv="${di}:${i}:-1" aria-label="上移 ${esc(pt.n)}"${i===0?" disabled":""}>↑</button>
@@ -1694,7 +1715,7 @@ const toMin=t=>{const m=/^(\d{1,2}):(\d{2})$/.exec(t||""); return m?+m[1]*60+ +m
 const fromMin=m=>{m=Math.max(300,Math.min(1440,m)); return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");};
 const up30=m=>Math.ceil(m/30)*30, down30=m=>Math.floor(m/30)*30;
 function retime(di,stops,at){
-  const date=PLAN[di].date, bk=st=>bookedOn(st,date), ready=st=>{const b=bk(st); return b?toMin(b.end||b.time):toMin(st.t);};
+  const date=PLAN[di].date, bk=st=>bookedOn(st,date), ready=st=>{const b=bk(st); return b?toMin(b.ready||b.end||b.time):toMin(st.t);};
   let pushed=0, clash=null;
   stops.forEach(st=>{const b=bk(st); if(b) st.t=b.time;});
   const s=stops[at];
@@ -1706,7 +1727,7 @@ function retime(di,stops,at){
   let prev=null;
   stops.forEach((st,i)=>{
     const b=bk(st);
-    if(b){if(prev!=null&&toMin(b.time)<prev+30&&!clash) clash=st; prev=toMin(b.end||b.time); return;}
+    if(b){if(prev!=null&&toMin(b.time)<prev+30&&!clash) clash=st; prev=toMin(b.ready||b.end||b.time); return;}
     const t=toMin(st.t);
     if(prev!=null&&(t==null||t<prev+30)){const nt=fromMin(up30(prev+30)); if(nt!==st.t){st.t=nt; if(i!==at) pushed++;}}
     else if(t==null&&i===at&&prev==null) return;
