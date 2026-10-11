@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6f5c'/%3E%3Cg fill='none' stroke='%23f0b628' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 26h18M9 26v-3h14v3M11 23v-2.5h10V23M13 20.5c0-4 1.4-6.5 3-7.5 1.6 1 3 3.5 3 7.5M14.5 12.5h3M16 12.5V5'/%3E%3C/g%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="清邁員旅地點庫 · เชียงใหม่ 10/15–10/20">
-<meta property="og:description" content="清邁員旅的候選地點，附照片；每個人按自己的愛心，大家即時同步。住宿另有分頁。">
+<meta property="og:description" content="清邁員旅的候選地點，附照片；每個人按自己的愛心，大家即時同步。另有已訂、地圖、每日行程分頁。">
 <meta property="og:url" content="https://howardkuo97kuo.github.io/Thailand-2026/">
 <meta property="og:image" content="https://howardkuo97kuo.github.io/Thailand-2026/og.png">
 <meta property="og:image:width" content="1200">
@@ -181,15 +181,10 @@ td.thearts .whos{margin-top:6px;display:flex}
 .tname{min-width:220px}
 .tname .tn{display:flex;gap:10px;align-items:flex-start}
 .thumb{width:72px;height:48px;object-fit:cover;border-radius:4px;flex:none}
-.exp{font:inherit;font-size:12px;color:var(--primary);background:none;border:0;padding:2px 0;margin-top:4px;cursor:pointer;display:flex;align-items:center;gap:4px}
-.exp::before{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s ease}
-.exp[aria-expanded="true"]::before{transform:rotate(45deg)}
 tr.must td:first-child{box-shadow:inset 2px 0 0 var(--heart)}
 tr.skip td{color:var(--muted)}
 tr.open td{border-bottom-color:transparent}
-tr.detail td{background:var(--paper);padding-top:4px}
-tr.detail dl{max-width:760px}
-td.tcat,td.tstat,td.tlinks,td.tsub{white-space:nowrap}
+td.tcat,td.tlinks{white-space:nowrap}
 td.tlinks{display:table-cell}
 td.tlinks .mini+.mini{margin-left:4px}
 
@@ -218,7 +213,7 @@ footer b{color:var(--ink);font-weight:500}
 @media (pointer:coarse){
   .chip,.heart,.mini,.seg button,.sortdir,select,input[type=search],.filterbtn,.toast button{min-height:44px}
   .heart.icon{min-width:44px;justify-content:center}
-  .exp,.linkbtn{min-height:44px}
+  .linkbtn{min-height:44px}
 }
 /* Tabs: 地點 (choose) vs 住宿 (already booked) */
 .tabs{display:flex;gap:4px;margin-top:16px;border-bottom:1px solid var(--line)}
@@ -249,33 +244,19 @@ footer b{color:var(--ink);font-weight:500}
 .credit{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 110px);font-size:11px;line-height:1.3;color:#fff;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:4px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .credit:hover{text-decoration:underline}
 .stay-card .strip{padding:6px 8px 0}
-/* Tips (researched) vs our notes + comments */
+/* Tips (researched) vs our notes */
 .tip{margin:0;font-size:12.5px;line-height:1.55;padding:8px 10px;border-radius:8px;background:var(--primary-soft);color:var(--ink)}
 .tip-k{display:inline-block;font-size:11px;font-weight:700;color:var(--primary);margin-right:6px;letter-spacing:.04em}
 .notes{display:flex;flex-direction:column;gap:6px;padding-top:8px;border-top:1px dashed var(--line)}
 .notes .note{border:0;padding:0}
 .notes-k{margin:0;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em}
-.cmts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.cmts:empty{display:none}
-.cmt{display:flex;gap:8px;align-items:flex-start;font-size:12.5px}
-.cmt>div{flex:1;min-width:0}
-.cmt b{font-weight:700;margin-right:6px}
-.cmt-t{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
-.cmt p{margin:2px 0 0;overflow-wrap:anywhere;white-space:pre-wrap}
-.cmt-del{font-size:11px;padding:0 2px}
-.addcmt{align-self:flex-start;text-decoration:none;padding:2px 0}
-.compose textarea{width:100%;font:inherit;font-size:13px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px 8px;resize:vertical;min-height:52px}
-.compose textarea:focus-visible{outline:2px solid var(--primary);outline-offset:1px}
-.compose-a{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:6px}
 .chip.send{background:var(--primary);border-color:var(--primary);color:var(--card)}
-tr.detail .notes{border-top:0;max-width:760px}
 .card.flash{box-shadow:0 0 0 3px var(--saffron),0 10px 24px -8px rgba(0,0,0,.3)}
 /* Map tab */
 .maptools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:16px 0 10px}
 .maptools .chip .dot{width:10px;height:10px;border-radius:50%;flex:none}
 .maptools .chip[aria-pressed="false"]{opacity:.45;background:var(--card);color:var(--ink);border-color:var(--line)}
 .maptools .chip[aria-pressed="true"]{background:var(--card);color:var(--ink);border-color:var(--primary)}
-.maptoggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
 #map{height:min(72vh,720px);min-height:420px;border-radius:10px;border:1px solid var(--line);background:var(--card);overflow:hidden}
 .map-msg{margin:0;padding:40px 16px;text-align:center;color:var(--muted)}
 .map-note{font-size:12px;color:var(--muted);margin:8px 0 0}
@@ -305,7 +286,6 @@ tr.detail .notes{border-top:0;max-width:760px}
 .whobtn .who{width:28px;height:28px;font-size:13px}
 .whocancel{display:block;margin:12px auto 0;color:var(--muted)}
 .trip-lead{color:var(--muted);margin:16px 0 10px;font-size:13px}
-.triptools{margin-bottom:4px}
 table.pick{min-width:960px}
 td.treg,td.tsrc{white-space:nowrap}
 td.ttip{min-width:300px;max-width:400px;font-size:12.5px;line-height:1.6}
@@ -446,7 +426,6 @@ img.img-fail{visibility:hidden}
 /* 新增地點 */
 .addbox{margin-top:16px;max-width:640px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
 .addbox h2{font-family:var(--f-display);font-size:20px;margin:0 0 4px}
-.add-lead{color:var(--muted);font-size:13px;margin:0 0 12px}
 #addForm{display:flex;flex-direction:column;gap:10px}
 .add-f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 .add-f input{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
@@ -565,6 +544,16 @@ button.ps-name:hover{text-decoration:underline}
   .maptools .maprow{display:flex;gap:8px;flex-wrap:wrap;width:100%}
   .maptools #tq{flex:1;min-width:0}
 }
+.mc-plan{margin-top:6px;font-size:12px;font-weight:700;color:#b0281c}
+.pc-plan{padding:8px 14px;font-size:13px;font-weight:700;color:var(--heart);background:var(--heart-soft);border-bottom:1px solid var(--line)}
+.ps-ed .popt{width:auto;padding:0 8px;font-size:12px}
+.ps-ed .popt[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.pk-opt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);cursor:pointer}
+.pk-opt input{width:18px;height:18px}
+.tab-lead{margin:16px 0 4px;font-size:14px;line-height:1.6;color:var(--ink);max-width:72ch}
+#stayPanel .tab-lead+.stay-lead{margin-top:4px}
+#addPanel .tab-lead+.addbox{margin-top:12px}
+.tab-lead+.plan-lead{margin-top:2px}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -604,7 +593,7 @@ header.top>.side{order:2}
 <dialog id="whoDlg" class="whodlg" aria-labelledby="whoTitle">
   <form method="dialog">
     <h2 id="whoTitle">你是誰？</h2>
-    <p>選一次就好，之後按愛心、留言都會用這個名字（只記在這台裝置，之後可在上方更改）。</p>
+    <p>選一次就好，之後按愛心、編輯行程都會用這個名字（只記在這台裝置，之後可在上方更改）。</p>
     <div class="whopick" id="whoPick"></div>
     <button type="submit" class="linkbtn whocancel" value="cancel">先不要</button>
   </form>
@@ -653,14 +642,15 @@ header.top>.side{order:2}
   <div class="band" aria-hidden="true"></div>
 
   <div class="tabs" role="tablist" aria-label="頁面">
-    <button type="button" role="tab" id="tabPlaces" aria-controls="placesPanel" aria-selected="true">地點<span class="n" id="nPlaces"></span></button>
-    <button type="button" role="tab" id="tabStay" aria-controls="stayPanel" aria-selected="false" tabindex="-1">住宿<span class="n">已訂</span></button>
-    <button type="button" role="tab" id="tabAdd" aria-controls="addPanel" aria-selected="false" tabindex="-1">新增地點</button>
+    <button type="button" role="tab" id="tabPlaces" aria-controls="placesPanel" aria-selected="true">挑地點<span class="n" id="nPlaces"></span></button>
+    <button type="button" role="tab" id="tabStay" aria-controls="stayPanel" aria-selected="false" tabindex="-1">已訂<span class="n">住宿・訂位</span></button>
+    <button type="button" role="tab" id="tabAdd" aria-controls="addPanel" aria-selected="false" tabindex="-1">推薦<span class="n">交給 AI</span></button>
     <button type="button" role="tab" id="tabMap" aria-controls="mapPanel" aria-selected="false" tabindex="-1">地圖</button>
-    <button type="button" role="tab" id="tabPlan" aria-controls="planPanel" aria-selected="false" tabindex="-1">行程<span class="n">建議</span></button>
+    <button type="button" role="tab" id="tabPlan" aria-controls="planPanel" aria-selected="false" tabindex="-1">行程<span class="n">可編輯</span></button>
   </div>
 
   <div id="placesPanel" role="tabpanel" aria-labelledby="tabPlaces">
+  <p class="tab-lead">所有候選地點都在這裡。想去就按愛心，三個人即時同步；不知道從哪開始，就用「快速挑選」一次看一個。</p>
   <div class="rail" id="rail">
     <div class="row">
       <input id="q" type="search" placeholder="搜尋地點或關鍵字" aria-label="搜尋" aria-keyshortcuts="/" title="按 / 可直接開始搜尋">
@@ -691,9 +681,9 @@ header.top>.side{order:2}
   <section id="planPanel" role="tabpanel" aria-labelledby="tabPlan" hidden></section>
   <section id="stayPanel" role="tabpanel" aria-labelledby="tabStay" hidden></section>
   <section id="addPanel" role="tabpanel" aria-labelledby="tabAdd" hidden>
+    <p class="tab-lead">想到新地點？貼上名稱或 Google 地圖連結，AI 會查好資料，約 30 分鐘後加進「挑地點」。</p>
     <div class="addbox">
-      <h2>新增地點</h2>
-      <p class="add-lead">貼上地點名稱或 Google 地圖連結，AI 會自動查好地址、營業時間、評分、照片並寫小提醒，大約 30 分鐘內出現在地點庫。</p>
+      <h2>推薦地點</h2>
       <form id="addForm" autocomplete="off">
         <label class="add-f"><span>地點名稱或 Google 地圖連結</span><input id="addText" type="text" maxlength="300" required placeholder="例如：Khao Soi Khun Yai，或貼上 maps.app.goo.gl 連結"></label>
         <label class="add-f"><span>想說的話（選填）</span><input id="addNote" type="text" maxlength="200" placeholder="例如：朋友推薦、想吃這家的咖哩麵"></label>
@@ -704,6 +694,7 @@ header.top>.side{order:2}
     <ol class="inbox" id="inboxList"></ol>
   </section>
   <section id="mapPanel" role="tabpanel" aria-labelledby="tabMap" hidden>
+    <p class="tab-lead">所有地點在地圖上一目了然。可以疊上某一天的行程，看看順路還能去哪，點一下就加進去。</p>
     <div class="mapplan"><span class="sublabel">疊上行程</span><div class="chips" id="mapPlan" role="group" aria-label="在地圖上疊上某一天的行程"></div></div>
     <p class="mapplan-hint" id="mapPlanHint" hidden></p>
     <div class="maptools">
@@ -718,8 +709,8 @@ header.top>.side{order:2}
     </div>
     <div id="map" role="region" aria-label="清邁地點地圖"><p class="map-msg">地圖載入中…</p></div>
     <p class="map-note"><span id="mapDay"></span>黑色房子是住宿，金色外框是有人按愛心的地點；點標記看簡介與 Google 地圖連結。</p>
-    <h2 class="trip-h">行程資訊</h2>
-    <p class="trip-lead">旅途中用的速查表，跟上方地圖顯示同一批地點：營業時間、評分、離住宿多遠，一鍵開 Google 地圖。點欄位標題可排序。</p>
+    <h2 class="trip-h">速查表</h2>
+    <p class="trip-lead">跟上方地圖同一批地點：營業時間、評分、離住宿多遠，一鍵開 Google 地圖。點欄位標題可排序。</p>
     <p class="count" id="tripCount"></p>
     <div id="tripOut"></div>
   </section>
@@ -751,7 +742,6 @@ const ICON_LANTERN='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path
 const EMPTY_ART='<svg class="empty-art" viewBox="0 0 200 110" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 96h180" opacity=".4"/><path d="M40 88V62a12 12 0 0 1 12-12h40l14 18h12a8 8 0 0 1 8 8v12M46 50V38h42v12M86 50v18h20M62 88h28"/><circle cx="52" cy="88" r="8"/><circle cx="118" cy="88" r="8"/><path d="M128 52a24 20 0 0 1 48 0q-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0-4 4-8 0zM152 32v20M152 52v36" opacity=".8"/><path d="M168 18c2-3 6-3 8 0M178 10c1.5-2 4.5-2 6 0" opacity=".45"/></g></svg>';
 const CHEV_L='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const CHEV_R='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const ICON_X='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 4.2l7.6 7.6M11.8 4.2l-7.6 7.6"/></svg>';
 const ICON_HEART='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6S2.4 10.2 2.4 6.3A2.9 2.9 0 0 1 8 5a2.9 2.9 0 0 1 5.6 1.3c0 3.9-5.6 7.3-5.6 7.3z"/></svg>';
 const ICON_PIN='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 1.5c-2.2 0-4 1.8-4 4 0 3 4 8 4 8s4-5 4-8c0-2.2-1.8-4-4-4z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="8" cy="5.5" r="1.4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
 const ICON_CLOCK='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.8V8l2.3 1.4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -994,7 +984,6 @@ const SKIP_PHOTOS={reliever:[[0,"Reliever Health massage"]],gex:[[4,"chloe mo"]]
 const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id);
 const mediaUrl=(name,w)=>`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${w}&key=${GMAPS_KEY}`;
 const phList=p=>LIVE[p.id]||(IMG[p.id]||[]).map(u=>({src:u,thumb:u,by:null}));
-const photosOf=p=>phList(p).map(x=>x.src);
 const credit=x=>x&&x.by?`<a class="credit" href="${esc(x.by.uri||"#")}" target="_blank" rel="noopener">Google 地圖 · ${esc(x.by.displayName||"")}</a>`:"";
 async function loadLive(id){
   if(!GMAPS_KEY||liveTried.has(id)) return;
@@ -1027,10 +1016,11 @@ function updatePlaces(ids){
 }
 // 行程: tapping a place opens its card in a pop-up instead of jumping to the 地點 tab.
 const pcId=()=>$("#pc").open?$("#pc").dataset.id:null;
-function renderPopup(){const id=pcId(), p=id&&placeById(id); if(!p) return; const sc=$("#pcIn").scrollTop; $("#pcIn").innerHTML=card(p); $("#pcIn").scrollTop=sc;}
+const popupHTML=p=>{const pl=plannedLine(p.id); return (pl?`<div class="pc-plan">${pl}</div>`:"")+card(p);};
+function renderPopup(){const id=pcId(), p=id&&placeById(id); if(!p) return; const sc=$("#pcIn").scrollTop; $("#pcIn").innerHTML=popupHTML(p); $("#pcIn").scrollTop=sc;}
 function openPopup(id){
   const p=placeById(id); if(!p) return; const d=$("#pc");
-  d.dataset.id=id; $("#pcIn").innerHTML=card(p); $("#pcIn").scrollTop=0;
+  d.dataset.id=id; $("#pcIn").innerHTML=popupHTML(p); $("#pcIn").scrollTop=0;
   if(!d.open) d.showModal?d.showModal():d.setAttribute("open","");
   loadLive(id);
 }
@@ -1067,7 +1057,7 @@ function buildControls(){
   $("#clearTop").onclick=clearFilters;
   document.addEventListener("keydown",e=>{if(e.key==="/"&&!/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)){e.preventDefault();$("#q").focus();}});
   new ResizeObserver(()=>document.documentElement.style.setProperty("--rail-h",$("#rail").offsetHeight+"px")).observe($("#rail"));
-  $("#sortKey").innerHTML=`<option value="">預設排序</option>`+SORT_COLS.filter(c=>c.key).map(c=>`<option value="${c.key}">依${c.label}</option>`).join("");
+  $("#sortKey").innerHTML=`<option value="">預設排序</option>`+SORT_COLS.filter(c=>c.key&&c.key!=="sub"&&c.key!=="src").map(c=>`<option value="${c.key}">依${c.label}</option>`).join("");
   if(!SORT_BY[state.sortKey]) state.sortKey="";
   $("#sortKey").onchange=e=>setSort(e.target.value,"asc");
   $("#sortDir").onclick=()=>{if(state.sortKey) setSort(state.sortKey,state.sortDir==="asc"?"desc":"asc");};
@@ -1090,7 +1080,6 @@ function setMe(k){me=WHO[k]?k:null; try{me?localStorage.setItem("cnxMe",me):loca
 const TRIP_DAYS=["2026-10-15","2026-10-16","2026-10-17","2026-10-18","2026-10-19","2026-10-20"];
 const WDN="日一二三四五六";
 const weekday=iso=>new Date(iso+"T00:00:00").getDay();
-const openOn=(p,iso)=>!(p.cd||[]).includes(weekday(iso));
 const closedLabel=p=>{const cd=p.cd||[]; if(!cd.length) return "";
   if(cd.length>=4){const open=[0,1,2,3,4,5,6].filter(d=>!cd.includes(d)); return "只有週"+open.map(d=>WDN[d]).join("、");}
   return "週"+cd.map(d=>WDN[d]).join("、")+"休";};
@@ -1143,7 +1132,7 @@ const SORT_COLS=[
   {key:"src",label:"來源",get:p=>p.src==="建議"?1:0}
 ];
 const PICK_COLS=[SORT_COLS[0],SORT_COLS[1],SORT_COLS[2],SORT_COLS[4],SORT_COLS[5],{key:"",label:"小提醒"},{key:"",label:"我們的備註"}];
-// 行程資訊 tab: practical columns for during the trip.
+// 速查表 (地圖 tab): practical columns for during the trip.
 const TRIP_COLS=[
   {key:"must",label:"愛心",get:p=>-heartCount(p)},
   {key:"name",label:"名稱",get:p=>txt(p.n)},
@@ -1294,7 +1283,6 @@ function renderProgress(){
   el.innerHTML=`<span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(n/HP.length*100)}%"></span></span><span>${WHO[me].name} 已看過 <b>${n}</b>／${HP.length}・想去 ${h}</span>`;
 }
 function render(){
-  const ae=document.activeElement, keep=ae&&ae.dataset&&ae.dataset.draft?{id:ae.dataset.draft,pos:ae.selectionStart}:null;
   renderSubs();
   const list=filtered();
   $("#sTotal").textContent=P.length; $("#nPlaces").textContent=P.length;
@@ -1309,7 +1297,6 @@ function render(){
   releaseLanterns();
   watchPhotos();
   renderProgress(); renderBanner();
-  if(keep){const t=document.querySelector(`[data-draft="${keep.id}"]`); if(t){t.focus({preventScroll:true}); t.setSelectionRange(keep.pos,keep.pos);}}
   if(mapReady) drawMarkers(); else refreshPlanOthers();
   if(!$("#mapPanel").hidden) renderTrip();
 }
@@ -1335,7 +1322,8 @@ const utilCard=p=>`<article class="util-card">
 function renderStay(){
   const first=LODGING[0].in, last=LODGING[LODGING.length-1].out, total=nights(first,last);
   $("#stayPanel").innerHTML=`
-    <p class="stay-lead">住宿已經訂好，不用選。共 ${total} 晚、${LODGING.length} 間${BOOKINGS.length?`；另有 ${BOOKINGS.length} 個餐廳、課程已預訂，時間固定，行程會照這些排`:""}。</p>
+    <p class="tab-lead">已經訂好、不用再選的：住宿、餐廳訂位、課程，加上換匯所和出發前小抄。</p>
+    <p class="stay-lead">共 ${total} 晚、${LODGING.length} 間住宿${BOOKINGS.length?`；${BOOKINGS.length} 個餐廳、課程已預訂，行程會照這些時間排`:""}。</p>
     <div class="stay-line" role="img" aria-label="${LODGING.map(h=>`${h.n} ${md(h.in)} 入住、${md(h.out)} 退房`).join("；")}">
       ${LODGING.map(h=>`<div class="seg-night" style="flex:${nights(h.in,h.out)}"><span class="seg-name">${esc(h.n)}</span><span class="seg-n">${nights(h.in,h.out)} 晚</span></div>`).join("")}
     </div>
@@ -1390,49 +1378,9 @@ function setTab(t,focus){
   if(focus) $("#"+TABS.find(x=>x[0]===t)[1]).focus();
   const h=TABS.find(x=>x[0]===t)[3]; if(location.hash!==h) history.replaceState(null,"",location.pathname+location.search+h);
 }
-// Our notes: the list's own note, plus comments people add (signed with 我是誰, stored at /comments/{place}/{id}).
-let COMMENTS={}, commentsBlocked=false;   // true while the Firebase rule for /comments isn't in place                 // place -> {cid: {who,text,ts}}
-const composing=new Set();       // places whose comment box is open
-const drafts={};                 // place -> unsent text
-const commentCount=id=>Object.keys(COMMENTS[id]||{}).length;
-const ago=ts=>{const d=new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;};
-function commentList(id){
-  const cs=Object.entries(COMMENTS[id]||{}).sort((a,b)=>a[1].ts-b[1].ts);
-  return cs.map(([cid,c])=>`<li class="cmt"><span class="who on" aria-hidden="true">${esc((WHO[c.who]||{name:"?"}).name[0])}</span><div><b>${esc((WHO[c.who]||{name:c.who}).name)}</b><span class="cmt-t">${ago(c.ts)}</span><p>${esc(c.text)}</p></div>${c.who===me?`<button type="button" class="linkbtn cmt-del" data-cdel="${esc(id)}" data-cid="${esc(cid)}" aria-label="刪除我的留言">刪除</button>`:""}</li>`).join("");
-}
+// The list's own note for a place ("我們的備註").
 function notesBlock(p){
-  const n=commentCount(p.id), open=composing.has(p.id);
-  return `<div class="notes" data-notes="${p.id}">
-    ${p.note?`<p class="notes-k">我們的備註</p><p class="note">${esc(p.note)}</p>`:""}
-    <ul class="cmts" data-cmts="${p.id}">${commentList(p.id)}</ul>
-    ${open?`<div class="compose"><textarea data-draft="${p.id}" maxlength="500" rows="2" placeholder="${me?WHO[me].name+" 的留言…":"先在上方選我是誰"}" aria-label="留言內容">${esc(drafts[p.id]||"")}</textarea><div class="compose-a"><button type="button" class="linkbtn" data-ccancel="${p.id}">取消</button><button type="button" class="chip send" data-csend="${p.id}">送出</button></div></div>`
-      :`<button type="button" class="linkbtn addcmt" data-cadd="${p.id}">＋ 留言${n?`（${n}）`:""}</button>`}
-  </div>`;
-}
-function refreshComments(id){
-  if(pcId()===id){renderPopup(); if(!document.querySelector(`#out [data-cmts="${CSS.escape(id)}"]`)) return;}
-  const ul=document.querySelector(`[data-cmts="${CSS.escape(id)}"]`); if(ul) ul.innerHTML=commentList(id);
-  const add=document.querySelector(`[data-cadd="${CSS.escape(id)}"]`); if(add) add.textContent=`＋ 留言${commentCount(id)?`（${commentCount(id)}）`:""}`;
-}
-async function sendComment(id){
-  const ta=document.querySelector(`[data-draft="${id}"]`), text=(ta?ta.value:"").trim();
-  if(!me){showToast("先在上方選「我是誰」再留言。"); return;}
-  if(!text){ta&&ta.focus(); return;}
-  const c={who:me,text,ts:Date.now()};
-  try{
-    const r=await fetch(FB+"/comments/"+encodeURIComponent(id)+".json",{method:"POST",body:JSON.stringify(c)});
-    if(!r.ok) throw r.status;
-    const {name}=await r.json();
-    (COMMENTS[id]=COMMENTS[id]||{})[name]=c;
-    delete drafts[id]; composing.delete(id); render();
-  }catch(e){showToast(e===401||e===403?"留言功能還沒開放（資料庫權限），請先更新 Firebase 規則。":"留言沒有送出，請檢查網路後再試一次。");}
-}
-async function deleteComment(id,cid){
-  const c=(COMMENTS[id]||{})[cid]; if(!c||c.who!==me) return;
-  if(!confirm("刪除這則留言？")) return;
-  try{const r=await fetch(FB+"/comments/"+encodeURIComponent(id)+"/"+encodeURIComponent(cid)+".json",{method:"DELETE"}); if(!r.ok) throw r.status;
-    delete COMMENTS[id][cid]; refreshComments(id);}
-  catch(e){showToast("留言沒有刪除，請稍後再試。");}
+  return p.note?`<div class="notes"><p class="notes-k">我們的備註</p><p class="note">${esc(p.note)}</p></div>`:"";
 }
 // Map tab: every place with coordinates, colored by category; hotels as black houses.
 const CAT_COLOR={"景點":"#1f6f5c","美食":"#b0281c","咖啡甜點":"#8a5d00","按摩":"#7b4fa0","課程體驗":"#1f5fa8","購物市集":"#c2570c","其他":"#5c564c"};
@@ -1486,7 +1434,7 @@ function drawLeaflet(fit){
   LODGING.filter(h=>h.ll).forEach(h=>{
     L.marker(h.ll,{icon:L.divIcon({html:HOUSE_SVG,className:"house-pin",iconSize:[26,25],iconAnchor:[13,13]}),zIndexOffset:1000,title:h.n})
       .bindPopup(`<div class="mc"><b>${esc(h.n)}</b><div class="mc-m">住宿・${md(h.in)} 入住 → ${md(h.out)} 退房</div><a href="${mapsUrl(h)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`).addTo(lLayer); pts.push(h.ll);});
-  if(stops){const rp=addRoute(lLayer,stops); if(fit&&rp.length){lmap.fitBounds(rp,{padding:[40,40],maxZoom:15}); return;}}
+  if(stops){const rp=addRoute(lLayer,stops,di); if(fit&&rp.length){lmap.fitBounds(rp,{padding:[40,40],maxZoom:15}); return;}}
   if(fit&&pts.length) lmap.fitBounds(pts,{padding:[30,30]});
 }
 function drawMarkers(fit){
@@ -1495,11 +1443,15 @@ function drawMarkers(fit){
   if(!mapReady) return;
   drawLeaflet(fit);
 }
+// Days whose itinerary includes this place (optionally leaving one day out).
+const plannedDays=(id,skip)=>PLAN.map((d,i)=>i).filter(i=>i!==skip&&dayStops(i).some(st=>st.id===id));
+const plannedLine=(id,skip)=>{const ds=plannedDays(id,skip); return ds.length?`已規劃於 ${ds.map(i=>md(PLAN[i].date)).join("、")}`:"";};
 function mapCard(p,di){
+  const pl=plannedLine(p.id,di);
   const add=di==null?"":dayStops(di).some(st=>st.id===p.id)?`<span class="mc-in">已在 ${md(PLAN[di].date)} 行程</span>`:`<button type="button" class="mc-add" data-addday="${p.id}" data-day="${di}">加到 ${md(PLAN[di].date)}</button>`;
-  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
+  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}${pl?`<div class="mc-plan">${pl}</div>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
 }
-// First heart or comment without a name: ask right there, then finish what they tapped.
+// First heart or itinerary edit without a name: ask right there, then finish what they tapped.
 let whoThen=null;
 function askWho(then){
   const d=$("#whoDlg"); whoThen=then;
@@ -1585,7 +1537,7 @@ function mergeAdded(){
   });
   render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
 }
-// Browsers allow only ~6 open connections per host, and hearts + comments already hold live streams to Firebase.
+// Browsers allow only ~6 open connections per host, and the hearts already hold live streams to Firebase.
 // So agent-added places, removals and the inbox are polled instead of streamed (faster while 新增地點 is open).
 const polled={};
 function liveJSON(path,apply){
@@ -1597,7 +1549,7 @@ function liveJSON(path,apply){
 const INBOX_STATUS={new:["待處理","wait"],processing:["處理中","wait"],added:["已加入","ok"],duplicate:["已在地點庫","ok"],failed:["找不到","off"]};
 function renderInbox(){
   const el=$("#inboxList"); if(!el) return;
-  const items=Object.entries(INBOX).filter(([,x])=>x&&typeof x.text==="string").sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,40);
+  const items=Object.entries(INBOX).filter(([,x])=>x&&typeof x.text==="string"&&!x.hidden).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,40);
   if(inboxBlocked){el.innerHTML=`<li class="inbox-empty">收件匣還沒開放（資料庫權限），設定好之後就能使用。</li>`; return;}
   if(!items.length){el.innerHTML=`<li class="inbox-empty">還沒有人送出地點。</li>`; return;}
   el.innerHTML=items.map(([iid,x])=>{const st=INBOX_STATUS[x.status]||INBOX_STATUS.new, p=x.placeId?placeById(x.placeId):null, rm=x.placeId&&REMOVED[x.placeId];
@@ -1651,16 +1603,16 @@ const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)
 const todayCM=()=>new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Bangkok"});
 function daySection(di){
   const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
-  let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"可選":pt.hotel?"宿":pt.airport?"機":++k;
+  let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"彈性":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"";
     const name=pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`;
     if(ed&&bk) return `<li class="ps edit fixed"><span class="ps-n">${num}</span>
-      <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・已預訂，時間固定；要改請看「住宿」分頁的已訂資料</span></div></li>`;
+      <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・已預訂，時間固定；要改請看「已訂」分頁</span></div></li>`;
     if(ed) return `<li class="ps edit${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}"><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}<span class="ps-ed">
         <button type="button" data-pmv="${di}:${i}:-1" aria-label="上移 ${esc(pt.n)}"${i===0?" disabled":""}>↑</button>
         <button type="button" data-pmv="${di}:${i}:1" aria-label="下移 ${esc(pt.n)}"${i===stops.length-1?" disabled":""}>↓</button>
-        <button type="button" data-pdel="${di}:${i}" aria-label="移除 ${esc(pt.n)}">✕</button></span></div>
+        ${pt.p?`<button type="button" class="popt" data-popt="${di}:${i}" aria-pressed="${!!st.opt}" title="${st.opt?"改回必去":"設為彈性（時間夠再去，不算進主要路線）"}">彈性</button>`:""}<button type="button" data-pdel="${di}:${i}" aria-label="移除 ${esc(pt.n)}">✕</button></span></div>
         <div class="ps-in"><input type="time" value="${esc(st.t||"")}" data-pt="${di}:${i}" aria-label="${esc(pt.n)} 的時間"><input type="text" value="${esc(st.d||"")}" data-pn="${di}:${i}" maxlength="120" placeholder="備註" aria-label="${esc(pt.n)} 的備註"></div></div></li>`;
     return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${bk?" fixed":""}"><span class="ps-n">${num}</span><span class="ps-t">${esc(time)}</span>
       <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(st.d||"")}</span></div>
@@ -1679,13 +1631,15 @@ function daySection(di){
 function renderPlan(){
   const el=$("#planPanel"); planTick(); if(el.dataset.done) return; el.dataset.done="1";
   const ti=PLAN.findIndex(d=>d.date===todayCM());
-  el.innerHTML=`<p class="plan-lead">依 ${md(PLAN_ASOF)} 大家的愛心、已訂的住宿與餐廳、營業時間與公休日排的建議行程；標「可選」的是有空再去。按「編輯行程」可以調整順序、時間、加減地點，三個人都會即時看到。地圖上的虛線是順序示意，實際路線請按「Google 地圖路線」導航；變淡的點是其他候選地點（跟「地圖」分頁的篩選一致），點了可以加到這天。</p>
+  el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
+  <p class="plan-lead">依 ${md(PLAN_ASOF)} 的愛心排。標「彈性」的是時間夠再去，不算進主要路線；地圖虛線是順序示意，導航請按「Google 地圖路線」；變淡的點是其他候選地點，點了可以加到這天。</p>
   <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
   if(ti>0) requestAnimationFrame(()=>$("#pday"+(ti+1)).scrollIntoView());
 }
 function renderDay(di){
+  if(pcId()) renderPopup();
   if(mapReady&&mapState.planDay===di) drawMarkers();
   const sec=$("#pday"+(di+1)); if(!sec) return;
   const t=document.createElement("div"); t.innerHTML=daySection(di); const n=t.firstElementChild; sec.replaceWith(n);
@@ -1707,13 +1661,13 @@ async function setDay(di,val){
   try{await putPlan(date,val);}catch(e){if(before) PLAN_LIVE[date]=before; else delete PLAN_LIVE[date]; renderDay(di); planErr(e);}
 }
 // New stops go before the day's closing hotel/airport stop.
-function addStop(di,id){
-  if(!me){askWho(()=>addStop(di,id)); return;}
+function addStop(di,id,opt){
+  if(!me){askWho(()=>addStop(di,id,opt)); return;}
   const stops=dayStops(di), p=placeById(id); if(!p) return;
   if(BOOKINGS.some(b=>b.id===id&&b.date===PLAN[di].date)){showToast(`「${p.n}」已訂在這天，行程裡已經有了`); return;}
   const last=stops[stops.length-1], at=last&&(last.hotel||last.at)?stops.length-1:stops.length;
-  stops.splice(at,0,LODGING.some(h=>h.id===id)?{t:"",d:"",hotel:id}:{t:"",d:"",id});
-  saveDay(di,stops,`已把「${p.n}」加到 ${md(PLAN[di].date)}`);
+  stops.splice(at,0,LODGING.some(h=>h.id===id)?{t:"",d:"",hotel:id}:opt?{t:"",d:"",id,opt:true}:{t:"",d:"",id});
+  saveDay(di,stops,`已把「${p.n}」加到 ${md(PLAN[di].date)}${opt?"（彈性）":""}`);
 }
 let planTimer=null;
 async function planTick(){
@@ -1726,19 +1680,20 @@ async function planTick(){
   if(!planTimer) planTimer=setInterval(()=>{if(!document.hidden&&(!$("#planPanel").hidden||(!$("#mapPanel").hidden&&mapState.planDay!=null))) planTick();},8000);
 }
 // Place picker: add a place to a day (from the day's 「＋ 加地點」), or choose the day (from a card's 「加入行程」).
-const PK={mode:"place",day:0,id:null};
+const PK={mode:"place",day:0,id:null,opt:false};
 function openPicker(mode,arg){
   if(!me){askWho(()=>openPicker(mode,arg)); return;}
-  PK.mode=mode; if(mode==="place") PK.day=arg; else PK.id=arg;
+  PK.mode=mode; PK.opt=false; if(mode==="place") PK.day=arg; else PK.id=arg;
   const d=$("#pk"); renderPicker(""); if(!d.open) d.showModal?d.showModal():d.setAttribute("open","");
   const q=$("#pkQ"); if(q&&!matchMedia("(pointer:coarse)").matches) q.focus();
 }
 function renderPicker(q){
+  const optBox=`<label class="pk-opt"><input type="checkbox" id="pkOpt"${PK.opt?" checked":""}> 加為「彈性」（時間夠再去，不算進主要路線）</label>`;
   if(PK.mode==="day"){const p=placeById(PK.id);
-    $("#pkIn").innerHTML=`<h2 class="pk-h">把「${esc(p?p.n:"")}」加到哪一天？</h2><div class="pk-days">${PLAN.map((d,i)=>`<button type="button" class="pk-day" data-pkday="${i}"><b>${md(d.date)}</b><span>${esc(d.title)}</span></button>`).join("")}</div>`; return;}
+    $("#pkIn").innerHTML=`<h2 class="pk-h">把「${esc(p?p.n:"")}」加到哪一天？</h2>${optBox}<div class="pk-days">${PLAN.map((d,i)=>`<button type="button" class="pk-day" data-pkday="${i}"><b>${md(d.date)}</b><span>${esc(d.title)}</span></button>`).join("")}</div>`; return;}
   const ql=q.toLowerCase(), list=[...LODGING,...P].filter(p=>!ql||[p.n,p.loc,p.c,p.sub,p.r].join(" ").toLowerCase().includes(ql))
     .sort((a,b)=>(LODGING.includes(b)-LODGING.includes(a))||(heartCount(b)-heartCount(a))||a.n.localeCompare(b.n,"zh-Hant")).slice(0,60);
-  const head=`<h2 class="pk-h">加地點到 ${md(PLAN[PK.day].date)}</h2><input id="pkQ" type="search" placeholder="搜尋地點" aria-label="搜尋地點" value="${esc(q)}">`;
+  const head=`<h2 class="pk-h">加地點到 ${md(PLAN[PK.day].date)}</h2><input id="pkQ" type="search" placeholder="搜尋地點" aria-label="搜尋地點" value="${esc(q)}">${optBox}`;
   const items=list.map(p=>{const h=LODGING.includes(p); return `<li><button type="button" class="pk-i" data-pkpick="${p.id}"><b>${esc(p.n)}</b><span class="local">${h?"住宿":esc(p.c)+(p.r?"・"+esc(p.r):"")}${!h&&heartCount(p)?`・${heartCount(p)} 個愛心`:""}</span></button></li>`;}).join("");
   if($("#pkQ")){$("#pkList").innerHTML=items||`<li class="ps-empty">找不到符合的地點。</li>`; return;}
   $("#pkIn").innerHTML=head+`<ol class="pk-list" id="pkList">${items}</ol>`;
@@ -1759,7 +1714,7 @@ function drawPlanMap(box){
     const m=L.map(box,{scrollWheelZoom:false,dragging:!matchMedia("(pointer:coarse)").matches,tap:false});
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(m);
     const others=L.layerGroup().addTo(m);
-    const all=addRoute(m,d.stops);
+    const all=addRoute(m,d.stops,di);
     if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15}); else m.setView(CITY,13);
     addOthers(others,di,d.stops); planMaps[di]={m,others};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
@@ -1773,14 +1728,14 @@ function addOthers(target,di,stops){
 }
 const planMaps={};   // day index -> {m, others} so filter changes on the 地圖 tab reach the day maps too
 function refreshPlanOthers(){Object.entries(planMaps).forEach(([di,x])=>{if(!x.m._container.isConnected){delete planMaps[di]; return;} x.others.clearLayers(); addOthers(x.others,+di,dayStops(+di));});}
-// Numbered pins (宿/機 for hotel/airport, 可選 for extras) and a dashed line through the main stops. Returns all points.
-function addRoute(target,stops){
+// Numbered pins (宿/機 for hotel/airport, 彈性 for extras) and a dashed line through the main stops. Returns all points.
+function addRoute(target,stops,di){
   const line=[], all=[]; let k=0;
   stops.forEach(st=>{const pt=planPoint(st); if(!pt||!pt.ll) return; all.push(pt.ll);
-    const label=st.opt?"可選":pt.hotel?"宿":pt.airport?"機":String(++k);
+    const label=st.opt?"彈性":pt.hotel?"宿":pt.airport?"機":String(++k);
     const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
     L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:st.opt?[30,20]:[26,26],iconAnchor:st.opt?[15,10]:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
-      .bindPopup(pt.p?mapCard(pt.p):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
+      .bindPopup(pt.p?()=>mapCard(pt.p,di):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
     if(!st.opt) line.push(pt.ll);});
   L.polyline(line,{color:"#b0281c",weight:3,dashArray:"6 7",opacity:.85}).addTo(target);
   return all;
@@ -1805,6 +1760,9 @@ document.addEventListener("click",async e=>{
     let j=i+dir; if(j<0||j>=st.length) return; while(isFixed(st[j],di)&&j+dir>=0&&j+dir<st.length&&isFixed(st[j+dir],di)) j+=dir;   // hop over a run of bookings in one step
     const [x]=st.splice(i,1); st.splice(j,0,x);
     await saveDay(di,st,`已移動「${(planPoint(x)||{n:""}).n}」`); const b=document.querySelector(`[data-pmv="${di}:${j}:${dir}"]`)||document.querySelector(`[data-pmv="${di}:${j}:${-dir}"]`); if(b) b.focus({preventScroll:true}); return;}
+  const pop=e.target.closest("[data-popt]");
+  if(pop){const [di,i]=pop.dataset.popt.split(":").map(Number), st=dayStops(di); if(!st[i]||isFixed(st[i],di)) return; st[i].opt=!st[i].opt; const n=(planPoint(st[i])||{n:""}).n;
+    await saveDay(di,st,st[i].opt?`「${n}」改為彈性`:`「${n}」改回必去`); const b=document.querySelector(`[data-popt="${di}:${i}"]`); if(b) b.focus({preventScroll:true}); return;}
   const pdl=e.target.closest("[data-pdel]");
   if(pdl){const [di,i]=pdl.dataset.pdel.split(":").map(Number), st=dayStops(di); if(isFixed(st[i],di)) return; const gone=st.splice(i,1)[0]; saveDay(di,st,`已移除「${(planPoint(gone)||{n:""}).n}」`); return;}
   const pad=e.target.closest("[data-padd]");
@@ -1814,9 +1772,9 @@ document.addEventListener("click",async e=>{
   const adp=e.target.closest("[data-addplan]");
   if(adp){openPicker("day",adp.dataset.addplan); return;}
   const pkp=e.target.closest("[data-pkpick]");
-  if(pkp){closePicker(); addStop(PK.day,pkp.dataset.pkpick); return;}
+  if(pkp){closePicker(); addStop(PK.day,pkp.dataset.pkpick,PK.opt); return;}
   const pkd=e.target.closest("[data-pkday]");
-  if(pkd){closePicker(); addStop(+pkd.dataset.pkday,PK.id); return;}
+  if(pkd){closePicker(); addStop(+pkd.dataset.pkday,PK.id,PK.opt); return;}
   if(e.target.closest("[data-pkclose]")||e.target===$("#pk")){closePicker(); return;}
   const pcb=e.target.closest("[data-pcard]");
   if(pcb){openPopup(pcb.dataset.pcard); return;}
@@ -1835,15 +1793,7 @@ document.addEventListener("click",async e=>{
   const rst=e.target.closest("[data-restore]");
   if(rst){setRemoved(rst.dataset.restore,false); return;}
   const pw=e.target.closest("[data-pickwho]");
-  if(pw){const d=$("#whoDlg"); d.close?d.close():d.removeAttribute("open"); setMe(pw.dataset.pickwho); showToast(`嗨 ${WHO[me].name}！之後按愛心、留言都會用這個名字`); const f=whoThen; whoThen=null; if(f) f(); return;}
-  const ca=e.target.closest("[data-cadd]");
-  if(ca){const id=ca.dataset.cadd; if(commentsBlocked){showToast("留言功能還沒開放，資料庫權限設定好之後就能使用。"); return;} if(!me){askWho(()=>{const b=document.querySelector(`[data-cadd="${id}"]`); if(b) b.click();}); return;} composing.add(id); render(); const t=document.querySelector(`[data-draft="${id}"]`); if(t) t.focus(); return;}
-  const cc=e.target.closest("[data-ccancel]");
-  if(cc){composing.delete(cc.dataset.ccancel); delete drafts[cc.dataset.ccancel]; render(); return;}
-  const cs=e.target.closest("[data-csend]");
-  if(cs){sendComment(cs.dataset.csend); return;}
-  const cd=e.target.closest("[data-cdel]");
-  if(cd){deleteComment(cd.dataset.cdel,cd.dataset.cid); return;}
+  if(pw){const d=$("#whoDlg"); d.close?d.close():d.removeAttribute("open"); setMe(pw.dataset.pickwho); showToast(`嗨 ${WHO[me].name}！之後按愛心、編輯行程都會用這個名字`); const f=whoThen; whoThen=null; if(f) f(); return;}
   const wp=e.target.closest("[data-wpick]");
   if(wp){const k=wp.dataset.wpick; mapState.people.has(k)?mapState.people.delete(k):mapState.people.add(k); syncWho(); syncMapFilterBtn(); drawMarkers(); renderTrip(); return;}
   const wm=e.target.closest("[data-wmode]");
@@ -1898,6 +1848,7 @@ document.addEventListener("change",e=>{
   saveDay(di,st,null,true);
 });
 document.addEventListener("input",e=>{if(e.target.id==="pkQ") renderPicker(e.target.value);});
+document.addEventListener("change",e=>{if(e.target.id==="pkOpt") PK.opt=e.target.checked;});
 $("#addForm").addEventListener("submit",async e=>{e.preventDefault(); const t=$("#addText").value.trim(), b=$("#addSend"); if(!t||b.disabled) return;
   b.disabled=true; b.textContent="送出中…"; try{await submitInbox(t,$("#addNote").value.trim());} finally{b.disabled=false; b.textContent="送出";}});
 setInterval(()=>{if(tripState.now) render();},60000);
@@ -1918,8 +1869,6 @@ document.addEventListener("error",e=>{
 },true);
 $("#lb").addEventListener("touchstart",e=>{lbTouch=e.touches[0].clientX;},{passive:true});
 $("#lb").addEventListener("touchend",e=>{if(lbTouch==null) return; const dx=e.changedTouches[0].clientX-lbTouch; if(Math.abs(dx)>40) lbGo(dx<0?1:-1); lbTouch=null;});
-document.addEventListener("input",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id) drafts[id]=e.target.value;});
-document.addEventListener("keydown",e=>{const id=e.target.dataset&&e.target.dataset.draft; if(id&&e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault(); sendComment(id);}});
 TABS.forEach(([k,tb])=>{$("#"+tb).onclick=()=>setTab(k);});
 $(".tabs").addEventListener("keydown",e=>{if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return; e.preventDefault();
   const i=TABS.findIndex(x=>$("#"+x[1]).getAttribute("aria-selected")==="true"), n=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length; setTab(TABS[n][0],true);});
@@ -1959,21 +1908,6 @@ pull().then(()=>PEOPLE.forEach(x=>{if(reachable[x.key]) listen(x);}));
 liveJSON("places",d=>{ADDED=d; mergeAdded();});
 liveJSON("removed",d=>{REMOVED=Object.fromEntries(Object.entries(d).filter(([,v])=>v===true)); mergeAdded();});
 liveJSON("inbox",d=>{INBOX=d; renderInbox();});
-const validComment=c=>c&&typeof c==="object"&&typeof c.text==="string"&&typeof c.ts==="number"&&typeof c.who==="string";
-const cleanComments=cs=>Object.fromEntries(Object.entries(cs&&typeof cs==="object"?cs:{}).filter(([,c])=>validComment(c)));
-function applyComments(obj){COMMENTS={}; Object.entries(obj||{}).forEach(([pid,cs])=>{if(placeById(pid)) COMMENTS[pid]=cleanComments(cs);}); Object.keys(COMMENTS).forEach(refreshComments); document.querySelectorAll("[data-cmts]").forEach(ul=>refreshComments(ul.dataset.cmts));}
-(async()=>{
-  try{const r=await fetch(FB+"/comments.json"); if(r.status===401||r.status===403){commentsBlocked=true; return;} if(!r.ok) return; applyComments(await r.json());
-    const es=new EventSource(FB+"/comments.json");
-    es.addEventListener("put",ev=>{try{const d=JSON.parse(ev.data), parts=d.path.split("/").filter(Boolean);
-      if(!parts.length){applyComments(d.data); return;}
-      const [pid,cid]=parts;
-      if(!placeById(pid)) return;
-      if(!cid){if(d.data) COMMENTS[pid]=cleanComments(d.data); else delete COMMENTS[pid];}
-      else{COMMENTS[pid]=COMMENTS[pid]||{}; if(validComment(d.data)) COMMENTS[pid][cid]=d.data; else delete COMMENTS[pid][cid];}
-      refreshComments(pid);}catch(e){}});
-  }catch(e){}
-})();
 setInterval(pull,30000);
 </script>
 
