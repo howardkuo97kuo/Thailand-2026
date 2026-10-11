@@ -571,6 +571,29 @@ button.ps-name:hover{text-decoration:underline}
 .next-in b{font-family:var(--f-display);font-size:17px}
 .next-in b .linkbtn{font:inherit;color:var(--ink);padding:0;min-height:0;text-align:left}
 .next-go{text-decoration:none;flex:none}
+/* map: hearts, bookings, legend */
+.route-pin .rp-h{position:absolute;top:-9px;right:-14px;font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 4px;border-radius:999px;color:#fff;background:#d97a6c;border:1.5px solid #fff;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.route-pin .rp-h.h2{background:#b0281c}
+.route-pin .rp-h.h3{background:#7a1308;border-color:#f0b628}
+.route-pin .rp-b{position:absolute;bottom:-8px;right:-10px;font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 3px;border-radius:4px;color:#fff;background:#1f6f5c;border:1.5px solid #fff}
+.route-pin.booked span{box-shadow:0 0 0 3px #1f6f5c,0 2px 6px -1px rgba(0,0,0,.4)}
+.pday-mapcol{display:flex;flex-direction:column;min-width:0;border-left:1px solid var(--line)}
+.pday-mapcol .pday-map{flex:1;border-left:0}
+.map-legend{display:flex;flex-wrap:wrap;gap:4px 12px;padding:8px 12px;font-size:11.5px;color:var(--muted);background:var(--card);border-top:1px solid var(--line)}
+#mapLegend .map-legend{border:1px solid var(--line);border-radius:8px;margin-top:6px}
+.map-legend span{display:inline-flex;align-items:center;gap:5px}
+.lg-dot{display:inline-block;border-radius:50%;background:#8a8378}
+.lg-dot.h0{width:8px;height:8px;border:1.5px solid #fff;box-shadow:0 0 0 1px #8a8378}
+.lg-dot.h1{width:11px;height:11px;border:2.5px solid #f0b628}
+.lg-dot.h2{width:15px;height:15px;border:4px solid #f0b628}
+.lg-dot.h3{width:19px;height:19px;border:4px solid #b0281c}
+.lg-bk{font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 3px;border-radius:4px;color:#fff;background:#1f6f5c}
+.lg-pin{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1.5px dashed #6b6358;font:700 9px/1 var(--f-mono);font-style:normal;color:#6b6358;background:#fff}
+.booked-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:13px}
+.booked-sum b{color:#1f6f5c}
+.booked-sum span{padding:2px 8px;border-radius:999px;background:var(--paper);border:1px solid var(--line)}
+.booked-sum .linkbtn{font-size:13px;margin-left:auto}
+@media (max-width:760px){.pday-mapcol{order:-1;border-left:0;border-bottom:1px solid var(--line)}.pday-mapcol .pday-map{min-height:260px}}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -725,7 +748,8 @@ header.top>.side{order:2}
       </div>
     </div>
     <div id="map" role="region" aria-label="清邁地點地圖"><p class="map-msg">地圖載入中…</p></div>
-    <p class="map-note"><span id="mapDay"></span>黑色房子是住宿，金色外框是有人按愛心的地點；點標記看簡介與 Google 地圖連結。</p>
+    <div id="mapLegend"></div>
+    <p class="map-note"><span id="mapDay"></span>黑色房子是住宿；點越大、外框越粗代表越多人按愛心。點標記看簡介與 Google 地圖連結。</p>
     <h2 class="trip-h">速查表</h2>
     <p class="trip-lead">跟上方地圖同一批地點：營業時間、評分、離住宿多遠，一鍵開 Google 地圖。點欄位標題可排序。</p>
     <p class="count" id="tripCount"></p>
@@ -874,7 +898,7 @@ const PLAN_ASOF="2026-10-11";  // the hearts the itinerary was planned from
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
 const AIRPORT={n:"清邁國際機場 CNX",ll:[18.766847,98.962638]};
 const PLAN=[
- {date:"2026-10-15",title:"抵達・咖哩麵、果昔＋THE HOUSE",stops:[
+ {date:"2026-10-15",title:"抵達・古城果昔、THE HOUSE、北門爵士",stops:[
   {t:"10:25",at:AIRPORT,d:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
   {t:"11:30",hotel:"jhaban",d:"先寄放行李（下午入住）"},
   {t:"12:00",id:"khunyai",d:"午餐：泰北咖哩麵，14:00 收、會賣完"},
@@ -884,7 +908,7 @@ const PLAN=[
   {t:"18:30",id:"house",d:"已訂位 3 人；必點炸魚、椰奶咖哩蝦、西瓜涼拌"},
   {t:"20:30",id:"riflesso",d:"開心果口味，開到 22:00"},
   {t:"21:30",hotel:"jhaban",d:"回住宿，早點休息"}]},
- {date:"2026-10-16",title:"料理課＋尼曼午後",stops:[
+ {date:"2026-10-16",title:"料理課、尼曼咖啡與晚餐、學生夜市",stops:[
   {t:"08:30",hotel:"jhaban",d:"出發（料理課通常會到住宿接送）"},
   {t:"09:00",id:"asiascenic",d:"09:00 開始，約 5 小時到 14:00；市場導覽＋做菜，含午餐"},
   {t:"14:30",id:"ristr8to",d:"拉花咖啡（開到 17:30）；也可改 Roast8ry"},
@@ -909,7 +933,7 @@ const PLAN=[
   {t:"21:00",id:"jazz",d:"想坐室內 20:00 前到",opt:true},
   {t:"21:30",id:"mooyim",d:"宵夜香茅陶鍋，開到 03:00",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
- {date:"2026-10-18",title:"換住宿、市場採買、週日夜市＋河邊",stops:[
+ {date:"2026-10-18",title:"換住宿、市場採買、河邊午餐、週日夜市",stops:[
   {t:"07:30",id:"sapa",d:"瑪莎拉咖哩配煎餅；只收現金，週日有開"},
   {t:"09:00",hotel:"jhaban",d:"退房"},
   {t:"09:30",hotel:"thee",d:"寄放行李（下午入住）"},
@@ -922,7 +946,7 @@ const PLAN=[
   {t:"17:30",id:"sunday",d:"週日限定，逛約 2 小時"},
   {t:"20:00",id:"rotipadae",d:"自己寫單、等叫號"},
   {t:"21:00",hotel:"thee",d:"回新住宿"}]},
- {date:"2026-10-19",title:"北區咖啡、尼曼、陶鍋晚餐",stops:[
+ {date:"2026-10-19",title:"塔佩門早餐、北區咖啡、尼曼、陶鍋晚餐",stops:[
   {t:"07:30",hotel:"thee",d:"出發"},
   {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完；週日休所以排今天"},
   {t:"09:00",id:"magic",d:"泰奶、手沖；週三休，15:30 關"},
@@ -1442,6 +1466,7 @@ function syncWho(){
 }
 let mapReady=false, lmap=null, lLayer=null, leafletReady=null;
 function openMap(){
+  if(!$("#mapLegend").innerHTML) $("#mapLegend").innerHTML=MAP_LEGEND;
   if(!$("#mapCats").innerHTML){
     $("#mapCats").innerHTML=CATS.map(c=>`<button type="button" class="chip" data-mapcat="${esc(c)}" aria-pressed="true"><span class="dot" style="background:${CAT_COLOR[c]}"></span>${esc(c)}</button>`).join("");
     const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti>=0&&mapState.planDay==null&&!mapState.autoDay){mapState.autoDay=true; mapState.planDay=ti;}
@@ -1466,7 +1491,7 @@ function drawLeaflet(fit){
   lLayer.clearLayers(); const pts=[], di=mapState.planDay, stops=di==null?null:dayStops(di), onRoute=new Set((stops||[]).map(st=>st.id).filter(Boolean));
   if(stops) pts.push(...addOthers(lLayer,di,stops));
   else mapPlaces().forEach(p=>{const ring=isMust(p);
-    L.circleMarker(p.ll,{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1}).bindTooltip(p.n).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
+    L.circleMarker(p.ll,dotStyle(p,false)).bindTooltip(p.n).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
   LODGING.filter(h=>h.ll).forEach(h=>{
     L.marker(h.ll,{icon:L.divIcon({html:HOUSE_SVG,className:"house-pin",iconSize:[26,25],iconAnchor:[13,13]}),zIndexOffset:1000,title:h.n})
       .bindPopup(`<div class="mc"><b>${esc(h.n)}</b><div class="mc-m">住宿・${md(h.in)} 入住 → ${md(h.out)} 退房</div><a href="${mapsUrl(h)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`).addTo(lLayer); pts.push(h.ll);});
@@ -1691,7 +1716,7 @@ function daySection(di){
       ${live&&live.by?`<span class="pday-mod">${esc((WHO[live.by]||{name:live.by}).name)} 修改於 ${ago(live.ts||0)}</span>`:""}</header>
     <div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>
       ${ed?`<div class="ps-tools"><button type="button" class="chip small" data-padd="${di}">＋ 加地點</button>${stops.some(st=>bookedOn(st,d.date))?`<span class="local">標「已訂」的不能移動或刪除</span>`:""}${live?`<button type="button" class="linkbtn" data-preset="${di}">恢復建議行程</button>`:""}</div>`:""}</div>
-      <div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div></div>
+      <div class="pday-mapcol"><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div>${MAP_LEGEND}</div></div>
   </section>`;
 }
 function renderPlan(){
@@ -1701,6 +1726,7 @@ function renderPlan(){
   const ti=PLAN.findIndex(d=>d.date===todayCM());
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
   <p class="plan-lead">依 ${md(PLAN_ASOF)} 的愛心排。標「彈性」的是時間夠再去，不算進主要路線（地圖上是 O）；地圖虛線是順序示意，導航請按「Google 地圖路線」；變淡的點是其他候選地點，點了可以加到這天。</p>
+  <div class="booked-sum"><b>已訂</b>${[...FLIGHTS.map(f=>({date:f.date,time:f.time,n:f.kind==="arrive"?"抵達清邁":"起飛回程"})),...BOOKINGS.map(b=>({date:b.date,time:bkTime(b),n:(placeById(b.id)||{n:b.id}).n}))].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(x=>`<span>${md(x.date)} ${esc(x.time)} ${esc(x.n)}</span>`).join("")}<a href="#stay" class="linkbtn" data-gotab="stay">看詳細</a></div>
   <div id="nextStop" hidden></div>
   <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
@@ -1775,7 +1801,7 @@ function renderDay(di){
   if(mapReady&&mapState.planDay===di) drawMarkers();
   const sec=$("#pday"+(di+1)); if(!sec) return;
   const t=document.createElement("div"); t.innerHTML=daySection(di); const n=t.firstElementChild;
-  const oldBox=sec.querySelector("[data-pmap]"), x=planMaps[di];
+  const oldBox=sec.querySelector("[data-pmap]"), x=planMaps[di];   // the live map box is carried over into the new section
   if(x&&x.route&&oldBox&&x.m.getContainer()===oldBox){
     n.querySelector("[data-pmap]").replaceWith(oldBox); sec.replaceWith(n);   // keep the live map, just redraw its layers
     const stops=dayStops(di); x.m.closePopup(); x.route.clearLayers(); const pts=addRoute(x.route,stops,di);
@@ -1880,11 +1906,17 @@ function drawPlanMap(box){
     addOthers(others,di,d.stops); planMaps[di]={m,others,route};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
+// Map dots grow with hearts: none (small, white edge), ♥1 (gold edge), ♥2 (bigger, thick gold), ♥3 (biggest, red edge).
+const HEART_DOT=[{r:5,c:"#ffffff",w:1.5},{r:7,c:"#f0b628",w:2.5},{r:9.5,c:"#f0b628",w:4},{r:12,c:"#b0281c",w:4}];
+function dotStyle(p,dim){const n=heartable(p)?Math.min(3,heartCount(p)):0, h=HEART_DOT[n];
+  return {radius:dim?Math.max(4,h.r-1.5):h.r,color:h.c,weight:h.w,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:dim?.5:1,opacity:dim?.75:1};}
+const heartBadge=p=>{if(!p||!heartable(p)) return ""; const n=Math.min(3,heartCount(p)); return n?`<i class="rp-h h${n}">♥${n}</i>`:"";};
+const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span><i class="lg-dot h0"></i>沒人愛心</span><span><i class="lg-dot h1"></i>♥1</span><span><i class="lg-dot h2"></i>♥2</span><span><i class="lg-dot h3"></i>♥3 三人都愛</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-pin">O</i>彈性</span></div>`;
 // The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
 function addOthers(target,di,stops){
   const onRoute=new Set(stops.map(st=>st.id).filter(Boolean)), pts=[];
   mapPlaces().forEach(p=>{if(onRoute.has(p.id)) return; const ring=isMust(p);
-    L.circleMarker(p.ll,{radius:ring?7:5,color:ring?"#f0b628":"#ffffff",weight:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:.45,opacity:.6}).bindTooltip(p.n).bindPopup(()=>mapCard(p,di),{maxWidth:280}).addTo(target); if(nearCity(p.ll)) pts.push(p.ll);});
+    L.circleMarker(p.ll,dotStyle(p,true)).bindTooltip(p.n).bindPopup(()=>mapCard(p,di),{maxWidth:280}).addTo(target); if(nearCity(p.ll)) pts.push(p.ll);});
   return pts;
 }
 const planMaps={};   // day index -> {m, others} so filter changes on the 地圖 tab reach the day maps too
@@ -1895,7 +1927,8 @@ function addRoute(target,stops,di){
   stops.forEach(st=>{const pt=planPoint(st); if(!pt||!pt.ll) return; all.push(pt.ll);
     const label=st.opt?"O":pt.hotel?"宿":pt.airport?"機":String(++k);
     const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
-    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
+    const bk=di!=null&&PLAN[di]&&bookedOn(st,PLAN[di].date);
+    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>${heartBadge(pt.p)}${bk?`<i class="rp-b">訂</i>`:""}`,className:cls+(bk?" booked":""),iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
       .bindPopup(pt.p?()=>mapCard(pt.p,di):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
     if(!st.opt) line.push(pt.ll);});
   L.polyline(line,{color:"#b0281c",weight:3,dashArray:"6 7",opacity:.85}).addTo(target);
@@ -1937,6 +1970,8 @@ document.addEventListener("click",async e=>{
   const pkd=e.target.closest("[data-pkday]");
   if(pkd){closePicker(); addStop(+pkd.dataset.pkday,PK.id,PK.opt); return;}
   if(e.target.closest("[data-pkclose]")||e.target===$("#pk")){closePicker(); return;}
+  const gt=e.target.closest("[data-gotab]");
+  if(gt){e.preventDefault(); setTab(gt.dataset.gotab); window.scrollTo(0,$("#"+TABS.find(x=>x[0]===gt.dataset.gotab)[2]).offsetTop-60); return;}
   const pcb=e.target.closest("[data-pcard]");
   if(pcb){openPopup(pcb.dataset.pcard); return;}
   if(e.target.closest("[data-pcclose]")||e.target===$("#pc")){closePopup(); return;}
