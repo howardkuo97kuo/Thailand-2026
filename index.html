@@ -486,7 +486,6 @@ button.ps-name:hover{text-decoration:underline}
 .pnav .chip[aria-current="date"]{background:var(--heart);color:var(--on-heart);border-color:transparent}
 .pday{scroll-margin-top:64px}
 .pday-today{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--on-heart);background:var(--heart);padding:2px 8px;border-radius:999px}
-.route-pin.opt span{width:auto;min-width:30px;padding:0 4px;height:20px;border-radius:6px;font:500 10px/1 var(--f-body)}
 @media (max-width:760px){.pday-map{order:-1;min-height:260px;border-top:0;border-bottom:1px solid var(--line)}}
 /* place card pop-up (from 行程) */
 .pc{overflow:hidden}
@@ -1650,7 +1649,7 @@ function renderPlan(){
   const el=$("#planPanel"); planTick(); if(el.dataset.done) return; el.dataset.done="1";
   const ti=PLAN.findIndex(d=>d.date===todayCM());
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
-  <p class="plan-lead">依 ${md(PLAN_ASOF)} 的愛心排。標「彈性」的是時間夠再去，不算進主要路線；地圖虛線是順序示意，導航請按「Google 地圖路線」；變淡的點是其他候選地點，點了可以加到這天。</p>
+  <p class="plan-lead">依 ${md(PLAN_ASOF)} 的愛心排。標「彈性」的是時間夠再去，不算進主要路線（地圖上是 O）；地圖虛線是順序示意，導航請按「Google 地圖路線」；變淡的點是其他候選地點，點了可以加到這天。</p>
   <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
@@ -1793,13 +1792,13 @@ function addOthers(target,di,stops){
 }
 const planMaps={};   // day index -> {m, others} so filter changes on the 地圖 tab reach the day maps too
 function refreshPlanOthers(){Object.entries(planMaps).forEach(([di,x])=>{if(!x.m._container.isConnected){delete planMaps[di]; return;} x.others.clearLayers(); addOthers(x.others,+di,dayStops(+di));});}
-// Numbered pins (宿/機 for hotel/airport, 彈性 for extras) and a dashed line through the main stops. Returns all points.
+// Numbered pins (宿/機 for hotel/airport, O for 彈性 extras) and a dashed line through the main stops. Returns all points.
 function addRoute(target,stops,di){
   const line=[], all=[]; let k=0;
   stops.forEach(st=>{const pt=planPoint(st); if(!pt||!pt.ll) return; all.push(pt.ll);
-    const label=st.opt?"彈性":pt.hotel?"宿":pt.airport?"機":String(++k);
+    const label=st.opt?"O":pt.hotel?"宿":pt.airport?"機":String(++k);
     const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
-    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:st.opt?[30,20]:[26,26],iconAnchor:st.opt?[15,10]:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
+    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
       .bindPopup(pt.p?()=>mapCard(pt.p,di):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
     if(!st.opt) line.push(pt.ll);});
   L.polyline(line,{color:"#b0281c",weight:3,dashArray:"6 7",opacity:.85}).addTo(target);
