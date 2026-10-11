@@ -497,6 +497,7 @@ button.ps-name:hover{text-decoration:underline}
 .route-pin.opt span{background:#fff;border-style:dashed;color:#6b6358}
 @media (max-width:760px){.pday-body{grid-template-columns:1fr}.pday-map{min-height:300px;border-left:0;border-top:1px solid var(--line)}.ps-list{max-height:none}.ps{grid-template-columns:30px 44px 1fr auto;padding:8px 12px}}
 @media (pointer:coarse){.ps .mini{min-height:36px}}
+.noheart{font-size:12px;color:var(--muted)}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -664,7 +665,7 @@ header.top>.side{order:2}
 </div>
 
 <script>
-const CATS=["景點","美食","咖啡甜點","課程體驗","購物市集"];
+const CATS=["景點","美食","咖啡甜點","按摩","課程體驗","購物市集"];
 const REGIONS=["古城","古城東・塔佩門","夜市・濱河","尼曼","北區","西郊","城南","郊區"];
 // Category icons: one line family (24px grid, round joins) drawn for this trip — chedi, khao soi bowl, coffee,
 // herbal compress ball, wok, Bo Sang paper umbrella, tuk-tuk, lotus.
@@ -792,9 +793,7 @@ const P=[
 ];
 // Practical stops (換匯, a friend's place) aren't choices: they're listed on the 住宿 tab, not among the places.
 const UTIL=P.filter(p=>p.c==="其他");
-// Massage shops aren't picked or scheduled either: kept as a list on the 住宿 tab to look up when there's free time.
-const SPA=P.filter(p=>p.c==="按摩");
-P.splice(0,P.length,...P.filter(p=>p.c!=="其他"&&p.c!=="按摩"));
+P.splice(0,P.length,...P.filter(p=>p.c!=="其他"));
 const IMG={};
 // Suggested itinerary (from the team's hearts, fixed bookings, opening hours and closed days).
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
@@ -808,7 +807,7 @@ const PLAN=[
   {t:"21:15",hotel:"jhaban",d:"回住宿，早點休息"}]},
  {date:"2026-10-16",title:"瑜伽、尼曼咖啡、學生夜市",stops:[
   {t:"09:15",hotel:"jhaban",d:"出發"},
-  {t:"09:45",id:"wildrose",d:"早上那堂瑜伽，先上網預約"},
+  {t:"09:45",id:"wildrose",d:"早上那堂瑜伽，想上再上網預約",opt:true},
   {t:"11:30",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
   {t:"13:00",id:"ristr8to",d:"拉花咖啡；也可改 Roast8ry"},
   {t:"14:00",id:"7senses",d:"手作義式冰淇淋，可先試吃"},
@@ -849,7 +848,7 @@ const PLAN=[
   {t:"07:30",hotel:"thee",d:"出發"},
   {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完；週日休所以排今天"},
   {t:"09:00",id:"magic",d:"泰奶、手沖；週三休，15:30 關"},
-  {t:"10:00",id:"onepct",d:"普拉提要先預約"},
+  {t:"10:00",id:"onepct",d:"普拉提，想上要先預約；不上就多在北區逛逛",opt:true},
   {t:"12:30",id:"kaosoy",d:"推泰北香腸咖哩麵"},
   {t:"14:00",id:"joost",d:"山竹、酪梨冰沙"},
   {t:"15:00",hotel:"thee",d:"回住宿休息"},
@@ -901,7 +900,10 @@ try{const o=JSON.parse(localStorage.getItem("cnxSort")||"null"); if(o&&typeof o.
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 // Only Charlie inherits the preset picks (p.m), since Charlie's hearts are the old 必去 data.
-const hearted=(p,who)=>{const v=remote[who][p.id]; return typeof v==="boolean"?v:(who==="charlie"&&!!p.m);};
+// Massage shops and classes are shown but not voted on: no heart button, never counted as hearted.
+const NO_HEART=new Set(["按摩","課程體驗"]);
+const heartable=p=>!!p&&!NO_HEART.has(p.c);
+const hearted=(p,who)=>{if(!heartable(p)) return false; const v=remote[who][p.id]; return typeof v==="boolean"?v:(who==="charlie"&&!!p.m);};
 // 看過: places this person already went through in quick pick (想去 or 之後再說). Kept on this device only.
 let SEEN=new Set();
 const seenKey=()=>"cnxSeen_"+me;
@@ -920,7 +922,7 @@ const LIVE={}, liveTried=new Set();
 const MAX_PHOTOS=5;   // at least 4 per place after skips; each photo is one billable request
 // Google photos reviewed by hand and left out (position in Google's list + author, so a reorder can't hide the wrong one).
 const SKIP_PHOTOS={reliever:[[0,"Reliever Health massage"]],gex:[[4,"chloe mo"]],maekha:[[2,"Deborah Long"]]};
-const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id)||SPA.find(x=>x.id===id);
+const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id);
 const mediaUrl=(name,w)=>`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${w}&key=${GMAPS_KEY}`;
 const phList=p=>LIVE[p.id]||(IMG[p.id]||[]).map(u=>({src:u,thumb:u,by:null}));
 const photosOf=p=>phList(p).map(x=>x.src);
@@ -1123,10 +1125,12 @@ function tags(p){
   return t;
 }
 function whoDots(p){
+  if(!heartable(p)) return "";
   const on=PEOPLE.filter(x=>hearted(p,x.key));
   return `<span class="whos" role="img" aria-label="${on.length?on.map(x=>x.name).join("、")+" 有愛心":"還沒有人按愛心"}">${PEOPLE.map(x=>`<span class="who${hearted(p,x.key)?" on":""}" title="${x.name}${hearted(p,x.key)?" 有愛心":""}">${x.name[0]}</span>`).join("")}</span>`;
 }
 function heartBtn(p,compact){
+  if(!heartable(p)) return compact?"":`<span class="noheart">不用投票，有空再排</span>`;
   const on=!!me&&hearted(p,me), ok=canWrite&&!(me&&reachable[me]===false);
   const label=!me?"先選我是誰再按愛心":on?"取消我的愛心":"加上我的愛心";
   return `<button type="button" class="heart${compact?" icon":""}" data-heart="${p.id}" aria-pressed="${on}" ${ok?"":"disabled"} title="${ok?label:WHO[me].name+" 的愛心尚未開放（資料庫權限）"}"${compact?` aria-label="${label}"`:""}>${ICON_HEART}${compact?"":"<span>愛心</span>"}</button>`;
@@ -1201,16 +1205,16 @@ function writeUrlState(){
   if(url!==location.pathname+location.search+location.hash) history.replaceState(null,"",url);
 }
 function renderBanner(){
-  const left=me?P.filter(p=>!seen(p)).length:P.length;
+  const HP=P.filter(heartable), left=me?HP.filter(p=>!seen(p)).length:HP.length;
   $("#qpbSub").textContent=!me?"一次看一個地點，按「想去」或「之後再說」，幾分鐘就能看完。":left?`還有 ${left} 個地點你還沒看過，一次看一個，按「想去」或「之後再說」。`:"全部都看過了！之後再說的地點還在列表裡，隨時可以再按愛心。";
-  $("#qpOpen").lastChild.textContent=me&&left&&left<P.length?"繼續挑選":"開始挑選";
+  $("#qpOpen").lastChild.textContent=me&&left&&left<HP.length?"繼續挑選":"開始挑選";
   $("#qpOpen").disabled=!!me&&!left;
 }
 function renderProgress(){
   const el=$("#progress"); if(!me){el.hidden=true; return;}
-  const n=P.filter(seen).length, h=P.filter(p=>hearted(p,me)).length;
+  const HP=P.filter(heartable), n=HP.filter(seen).length, h=HP.filter(p=>hearted(p,me)).length;
   el.hidden=false;
-  el.innerHTML=`<span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(n/P.length*100)}%"></span></span><span>${WHO[me].name} 已看過 <b>${n}</b>／${P.length}・想去 ${h}</span>`;
+  el.innerHTML=`<span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(n/HP.length*100)}%"></span></span><span>${WHO[me].name} 已看過 <b>${n}</b>／${HP.length}・想去 ${h}</span>`;
 }
 function render(){
   const ae=document.activeElement, keep=ae&&ae.dataset&&ae.dataset.draft?{id:ae.dataset.draft,pos:ae.selectionStart}:null;
@@ -1285,11 +1289,6 @@ function renderStay(){
       <p class="util-lead">換匯所與朋友住處，不用挑、需要時查。</p>
       <div class="util-grid">${UTIL.map(utilCard).join("")}</div>
     </section>
-    ${SPA.length?`<section class="util" aria-labelledby="spaH">
-      <h2 id="spaH">按摩店</h2>
-      <p class="util-lead">不排進行程、不用按愛心；有空檔想按摩時從這裡挑，熱門的店記得先預約。</p>
-      <div class="util-grid">${SPA.map(utilCard).join("")}</div>
-    </section>`:""}
     <section class="cheat" aria-labelledby="cheatH">
       <h2 id="cheatH">出發前小抄</h2>
       <dl>
@@ -1376,7 +1375,7 @@ function renderRoutes(){
 const CAT_COLOR={"景點":"#1f6f5c","美食":"#b0281c","咖啡甜點":"#8a5d00","按摩":"#7b4fa0","課程體驗":"#1f5fa8","購物市集":"#c2570c","其他":"#5c564c"};
 // Whose hearts the map and the trip table show: pick people (none = every place), then "任一人" (any of them) or "都要" (all of them).
 const mapState={cats:new Set(CATS),people:new Set(PEOPLE.map(x=>x.key)),mode:"any"};
-const whoPass=p=>{const ks=[...mapState.people]; if(!ks.length) return true; return mapState.mode==="all"?ks.every(k=>hearted(p,k)):ks.some(k=>hearted(p,k));};
+const whoPass=p=>{const ks=[...mapState.people]; if(!ks.length||!heartable(p)) return true; return mapState.mode==="all"?ks.every(k=>hearted(p,k)):ks.some(k=>hearted(p,k));};
 const whoLabel=()=>{const ns=PEOPLE.filter(x=>mapState.people.has(x.key)).map(x=>x.name); if(!ns.length) return "全部地點"; if(ns.length===1) return ns[0]+" 的愛心"; return ns.join("、")+(mapState.mode==="all"?" 都愛":" 任一人愛");};
 function syncWho(){
   $("#mapPeople").innerHTML=PEOPLE.map(x=>`<button type="button" class="chip whochip" data-wpick="${x.key}" aria-pressed="${mapState.people.has(x.key)}"><span class="who${mapState.people.has(x.key)?" on":""}" aria-hidden="true">${x.name[0]}</span>${x.name}</button>`).join("");
@@ -1484,13 +1483,13 @@ async function setHeartNow(p,val){remote[me][p.id]=val; updatePlaces([p.id]); tr
 const QP={queue:[],i:0,hist:[]};
 function openQuickPick(){
   if(!me){askWho(openQuickPick); return;}
-  loadSeen(); QP.queue=filtered().filter(p=>!seen(p)).map(p=>p.id); QP.i=0; QP.hist=[];
+  loadSeen(); QP.queue=filtered().filter(p=>heartable(p)&&!seen(p)).map(p=>p.id); QP.i=0; QP.hist=[];
   const d=$("#qp"); renderQP(); d.showModal?d.showModal():d.setAttribute("open","");
 }
 function qpCurrent(){return QP.i<QP.queue.length?placeById(QP.queue[QP.i]):null;}
 function renderQP(){
-  const p=qpCurrent(), done=P.filter(seen).length;
-  const head=`<div class="qp-top"><span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(done/P.length*100)}%"></span></span><span class="qp-count">${WHO[me].name} 已看過 ${done}／${P.length}</span><button type="button" class="linkbtn" data-qp="close">關閉</button></div>`;
+  const HP=P.filter(heartable), p=qpCurrent(), done=HP.filter(seen).length;
+  const head=`<div class="qp-top"><span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(done/HP.length*100)}%"></span></span><span class="qp-count">${WHO[me].name} 已看過 ${done}／${HP.length}</span><button type="button" class="linkbtn" data-qp="close">關閉</button></div>`;
   if(!p){$("#qpIn").innerHTML=head+`<div class="qp-done"><h2 id="qpName">這一批都看完了</h2><p>目前想去 ${P.filter(x=>hearted(x,me)).length} 個。之後再說的地點還在列表裡，隨時可以再按愛心。</p><button type="button" class="chip send" data-qp="close">完成</button></div>`; return;}
   loadLive(p.id);
   const ph=phList(p)[0];
@@ -1548,11 +1547,11 @@ let ADDED={}, REMOVED={}, INBOX={}, inboxBlocked=false;
 const validAdded=p=>p&&typeof p==="object"&&typeof p.n==="string"&&typeof p.c==="string"&&typeof p.id==="string";
 function mergeAdded(){
   for(let i=P.length-1;i>=0;i--) if(P[i].added) P.splice(i,1);
-  for(const L of [UTIL,SPA]) for(let i=L.length-1;i>=0;i--) if(L[i].added) L.splice(i,1);
+  for(let i=UTIL.length-1;i>=0;i--) if(UTIL[i].added) UTIL.splice(i,1);
   Object.values(ADDED).forEach(p=>{
     if(!validAdded(p)||REMOVED[p.id]||P.some(x=>x.id===p.id)) return;
     const q={...p,added:true,m:false};
-    (q.c==="其他"?UTIL:q.c==="按摩"?SPA:P).push(q);
+    (q.c==="其他"?UTIL:P).push(q);
   });
   render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
 }
