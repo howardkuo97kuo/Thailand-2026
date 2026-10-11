@@ -1378,6 +1378,8 @@ function setTab(t,focus){
   if(focus) $("#"+TABS.find(x=>x[0]===t)[1]).focus();
   const h=TABS.find(x=>x[0]===t)[3]; if(location.hash!==h) history.replaceState(null,"",location.pathname+location.search+h);
 }
+// "10/11 21:05" for who-edited-when labels (行程 days, 推薦 inbox).
+const ago=ts=>{const d=new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;};
 // The list's own note for a place ("我們的備註").
 function notesBlock(p){
   return p.note?`<div class="notes"><p class="notes-k">我們的備註</p><p class="note">${esc(p.note)}</p></div>`:"";
