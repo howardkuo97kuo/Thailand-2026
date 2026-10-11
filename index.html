@@ -489,6 +489,26 @@ button.ps-name:hover{text-decoration:underline}
 @media (max-width:760px){.pday-body{grid-template-columns:1fr}.pday-map{min-height:300px;border-left:0;border-top:1px solid var(--line)}.ps-list{max-height:none}.ps{grid-template-columns:30px 44px 1fr auto;padding:8px 12px}}
 @media (pointer:coarse){.ps .mini{min-height:36px}}
 .noheart{font-size:12px;color:var(--muted)}
+/* Phones: tab bar on one line; compact header */
+.tabs button{white-space:nowrap}
+@media (max-width:640px){
+  .tabs{overflow-x:auto;gap:0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:none;padding:8px 11px;font-size:14.5px}
+  .tabs .n{display:none}
+  header.top .hero-art{display:none}
+  .stats{gap:16px}
+  .stat b{font-size:18px}
+}
+/* 行程: day jump bar */
+.pnav{position:sticky;top:0;z-index:5;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:10px 0;margin-top:10px;background:var(--paper);border-bottom:1px solid var(--line)}
+.pnav::-webkit-scrollbar{display:none}
+.pnav .chip{flex:none}
+.pnav .chip[aria-current="date"]{background:var(--heart);color:var(--on-heart);border-color:transparent}
+.pday{scroll-margin-top:64px}
+.pday-today{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--on-heart);background:var(--heart);padding:2px 8px;border-radius:999px}
+.route-pin.opt span{width:auto;min-width:30px;padding:0 4px;height:20px;border-radius:6px;font:500 10px/1 var(--f-body)}
+@media (max-width:760px){.pday-map{order:-1;min-height:260px;border-top:0;border-bottom:1px solid var(--line)}}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -576,10 +596,10 @@ header.top>.side{order:2}
 
   <div class="tabs" role="tablist" aria-label="頁面">
     <button type="button" role="tab" id="tabPlaces" aria-controls="placesPanel" aria-selected="true">地點<span class="n" id="nPlaces"></span></button>
-    <button type="button" role="tab" id="tabPlan" aria-controls="planPanel" aria-selected="false" tabindex="-1">行程<span class="n">建議</span></button>
     <button type="button" role="tab" id="tabStay" aria-controls="stayPanel" aria-selected="false" tabindex="-1">住宿<span class="n">已訂</span></button>
     <button type="button" role="tab" id="tabAdd" aria-controls="addPanel" aria-selected="false" tabindex="-1">新增地點</button>
     <button type="button" role="tab" id="tabMap" aria-controls="mapPanel" aria-selected="false" tabindex="-1">地圖</button>
+    <button type="button" role="tab" id="tabPlan" aria-controls="planPanel" aria-selected="false" tabindex="-1">行程<span class="n">建議</span></button>
   </div>
 
   <div id="placesPanel" role="tabpanel" aria-labelledby="tabPlaces">
@@ -781,6 +801,7 @@ const P=[
 const UTIL=P.filter(p=>p.c==="其他");
 P.splice(0,P.length,...P.filter(p=>p.c!=="其他"));
 const IMG={};
+const PLAN_ASOF="2026-10-11";  // the hearts the itinerary was planned from
 // Suggested itinerary (from the team's hearts, fixed bookings, opening hours and closed days).
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
 const AIRPORT={n:"清邁國際機場 CNX",ll:[18.766847,98.962638]};
@@ -1148,7 +1169,7 @@ function tripList(){
 function openBadge(p){const o=openNow(p); return o==null?"":`<span class="opennow ${o?"on":"off"}">${o?"營業中":"休息中"}</span>`;}
 function renderTrip(){
   const list=tripList(), t=cmNow(), hhmm=`${String(t.getUTCHours()).padStart(2,"0")}:${String(t.getUTCMinutes()).padStart(2,"0")}`;
-  $("#tripCount").textContent=`${list.length} 個地點`+`（${whoLabel()}）`+`・清邁現在 ${hhmm}`+(planDate()?`・今晚住 ${hotelFor(planDate()).n}`:"");
+  $("#tripCount").textContent=`${list.length} 個地點`+`（${whoLabel()}${mapState.people.size?"；按摩、課程不用愛心，一律顯示":""}）`+`・清邁現在 ${hhmm}`+(planDate()?`・今晚住 ${hotelFor(planDate()).n}`:"");
   $("#tripOut").innerHTML=!list.length?`<div class="empty"><span>${mapState.people.size?"這個條件下還沒有符合的愛心，或目前都沒開。":"沒有符合的地點。"}</span></div>`:
   `<div class="tablebox"><table class="trip"><thead><tr>${TRIP_COLS.map(c=>th(c,tripState,"data-tsort")).join("")}</tr></thead><tbody>${
     list.map(p=>`<tr><td class="thearts">${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b><div class="local">${esc(p.a)}</div></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="thours">${bookingOf(p)?`<span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span><br>`:""}${esc(p.h)}${closedLabel(p)&&!(p.h||"").includes(closedLabel(p))?`<div class="local">${closedLabel(p)}</div>`:""}${openBadge(p)}</td><td class="rating trate">${p.rt?`<span class="mlabel">評分 </span>${p.rt} (${p.rv})`:""}</td><td class="rating tdist">${distFrom(p)!=null?`<span class="mlabel">距住宿 </span>${fmtKm(distFrom(p))}`:""}</td><td class="tlinks"><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></td></tr>`).join("")
@@ -1284,7 +1305,7 @@ function renderStay(){
       </dl>
     </section>`;
 }
-const TABS=[["places","tabPlaces","placesPanel",""],["plan","tabPlan","planPanel","#plan"],["add","tabAdd","addPanel","#add"],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"]];
+const TABS=[["places","tabPlaces","placesPanel",""],["add","tabAdd","addPanel","#add"],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"],["plan","tabPlan","planPanel","#plan"]];
 function setTab(t,focus){
   TABS.forEach(([k,tb,pn])=>{const on=k===t; $("#"+tb).setAttribute("aria-selected",String(on)); $("#"+tb).tabIndex=on?0:-1; $("#"+pn).hidden=!on;});
   if(t==="stay"&&!$("#stayPanel").innerHTML){renderStay(); watchPhotos();}
@@ -1519,20 +1540,23 @@ function dayRouteLinks(pts){
 }
 function renderPlan(){
   const el=$("#planPanel"); if(el.dataset.done) return; el.dataset.done="1";
-  el.innerHTML=`<p class="plan-lead">依大家目前的愛心、已訂的住宿與餐廳、營業時間與公休日排的建議行程；標「可選」的是有空再去。地圖上的虛線是順序示意，實際路線請按「Google 地圖路線」導航。</p>`+
+  const today=new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Bangkok"}), ti=PLAN.findIndex(d=>d.date===today);
+  el.innerHTML=`<p class="plan-lead">依 ${md(PLAN_ASOF)} 大家的愛心、已訂的住宿與餐廳、營業時間與公休日排的建議行程；標「可選」的是有空再去。地圖上的虛線是順序示意，實際路線請按「Google 地圖路線」導航。</p>
+  <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>{
-    let k=0; const rows=d.stops.map(st=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"":++k;
-      return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}"><span class="ps-n">${st.opt?"可選":num}</span><span class="ps-t">${esc(st.t)}</span>
+    let k=0; const rows=d.stops.map(st=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"可選":pt.hotel?"宿":pt.airport?"機":++k;
+      return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}"><span class="ps-n">${num}</span><span class="ps-t">${esc(st.t)}</span>
         <div class="ps-b">${pt.p?`<button type="button" class="linkbtn ps-name" data-gocard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`}
         <span class="local">${esc(st.d||"")}</span></div>
         <a class="mini" href="${pt.url}" target="_blank" rel="noopener">地圖</a></li>`;}).join("");
     const main=d.stops.filter(st=>!st.opt).map(planPoint).filter(Boolean), links=dayRouteLinks(main);
     return `<section class="pday" id="pday${di+1}">
-      <header class="pday-h"><span class="pday-d">Day ${di+1}</span><h2>${md(d.date)}・${esc(d.title)}</h2>
+      <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
         <span class="pday-links">${links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}</span></header>
       <div class="pday-body"><ol class="ps-list">${rows}</ol><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div></div>
     </section>`;}).join("");
   watchPlanMaps();
+  if(ti>0) requestAnimationFrame(()=>$("#pday"+(ti+1)).scrollIntoView());
 }
 
 function ensureLeaflet(){
@@ -1551,9 +1575,9 @@ function drawPlanMap(box){
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(m);
     const line=[], all=[]; let k=0;
     d.stops.forEach(st=>{const pt=planPoint(st); if(!pt||!pt.ll) return; all.push(pt.ll);
-      const label=st.opt?"＋":pt.hotel?"宿":pt.airport?"機":String(++k);
+      const label=st.opt?"可選":pt.hotel?"宿":pt.airport?"機":String(++k);
       const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
-      L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?0:500})
+      L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>`,className:cls,iconSize:st.opt?[30,20]:[26,26],iconAnchor:st.opt?[15,10]:[13,13]}),title:pt.n,zIndexOffset:st.opt?0:500})
         .bindPopup(pt.p?mapCard(pt.p):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(m);
       if(!st.opt) line.push(pt.ll);});
     L.polyline(line,{color:"#b0281c",weight:3,dashArray:"6 7",opacity:.85}).addTo(m);
@@ -1563,9 +1587,10 @@ function drawPlanMap(box){
 const planObserver=("IntersectionObserver" in window)?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){planObserver.unobserve(e.target); drawPlanMap(e.target);}}),{rootMargin:"300px 0px"}):null;
 function watchPlanMaps(){document.querySelectorAll("[data-pmap]").forEach(b=>planObserver?planObserver.observe(b):drawPlanMap(b));}
 function note(msg){const n=$("#notice");n.textContent=msg;n.hidden=!msg;}
-function showWhoHint(){const n=$("#notice"); n.innerHTML=`<span>你是誰？選好就能按愛心、留言：</span>${PEOPLE.map(x=>`<button type="button" class="chip small" data-me="${x.key}">${x.name}</button>`).join("")}`; n.hidden=false;}
 
 document.addEventListener("click",async e=>{
+  const pj=e.target.closest("[data-pjump]");
+  if(pj){const d=$("#pday"+pj.dataset.pjump); if(d) d.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth"}); return;}
   const lbb=e.target.closest("[data-lb]");
   if(lbb){const a=lbb.dataset.lb; if(a==="close"){const d=$("#lb"); d.close?d.close():d.removeAttribute("open");} else lbGo(a==="next"?1:-1); return;}
   if(e.target.closest("#lb")&&!e.target.closest(".lb-bar,.lb-nav")&&e.target.id!=="lbIn"&&e.target.tagName!=="IMG"){const d=$("#lb"); d.close?d.close():d.removeAttribute("open"); return;}
@@ -1659,7 +1684,6 @@ TABS.forEach(([k,tb])=>{$("#"+tb).onclick=()=>setTab(k);});
 $(".tabs").addEventListener("keydown",e=>{if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return; e.preventDefault();
   const i=TABS.findIndex(x=>$("#"+x[1]).getAttribute("aria-selected")==="true"), n=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length; setTab(TABS[n][0],true);});
 {const hash=location.hash==="#trip"?"#map":location.hash, h=TABS.find(x=>x[3]&&x[3]===hash); if(h) setTab(h[0]);}
-if(!me) showWhoHint();
 
 const FB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app";
 function setSync(ok){const n=document.getElementById("sync"); if(n){n.dataset.state=ok?"ok":"off"; n.textContent=ok?"已同步":"離線，愛心可能沒存到";}}
