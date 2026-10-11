@@ -561,6 +561,16 @@ button.ps-name:hover{text-decoration:underline}
 #stayPanel .tab-lead+.stay-lead{margin-top:4px}
 #addPanel .tab-lead+.addbox{margin-top:12px}
 .tab-lead+.plan-lead{margin-top:2px}
+/* 行程: hours warnings, distances, next stop */
+.ps-warn{font-size:12px;font-weight:700;color:var(--heart)}
+.ps-gap{list-style:none;padding:0 14px 0 52px;margin:-4px 0;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+#nextStop{display:flex;align-items:center;gap:12px;margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--heart-soft);border:1px solid var(--heart-line)}
+#nextStop[hidden]{display:none}
+.next-in{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.next-k{font-size:12px;font-weight:700;color:var(--heart)}
+.next-in b{font-family:var(--f-display);font-size:17px}
+.next-in b .linkbtn{font:inherit;color:var(--ink);padding:0;min-height:0;text-align:left}
+.next-go{text-decoration:none;flex:none}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -1099,7 +1109,8 @@ const fmtKm=d=>d<1?`${Math.round(d*1000/50)*50} 公尺`:`${d.toFixed(1)} 公里`
 const distLine=p=>{const hs=(planDate()?[hotelFor(planDate())]:LODGING).filter(h=>h.ll); let best=null;
   hs.forEach(h=>{const d=km(p.ll,h.ll); if(!best||d<best.d) best={h,d};}); return `離 ${esc(best.h.n)} ${fmtKm(best.d)}`;};
 // "Open now" uses Chiang Mai time (UTC+7) whatever the phone's timezone; p.oh holds weekly minute ranges from Google.
-const cmNow=()=>new Date(Date.now()+7*36e5);
+const NOW_SHIFT=(()=>{const v=new URLSearchParams(location.search).get("now"), t=v&&Date.parse(v+(v.length<=16?":00Z":"Z")); return t?t-(Date.now()+7*36e5):0;})();
+const cmNow=()=>new Date(Date.now()+7*36e5+NOW_SHIFT);
 const cmMinuteOfWeek=()=>{const d=cmNow(); return d.getUTCDay()*1440+d.getUTCHours()*60+d.getUTCMinutes();};
 const cmToday=()=>cmNow().toISOString().slice(0,10);
 const openNow=p=>{if(!p.oh) return null; if(p.oh==="24h") return true; const t=cmMinuteOfWeek(); return p.oh.some(([a,b])=>(t>=a&&t<b)||(t+10080>=a&&t+10080<b));};
@@ -1406,7 +1417,7 @@ function syncMapFilterBtn(){
   const n=(mapState.cats.size<CATS.length)+(mapState.people.size!==PEOPLE.length||mapState.mode==="all")+(!!tripState.now);
   $("#mapFilterBtn").textContent=n?`篩選 (${n})`:"篩選";
 }
-function showMapDay(di,fit){mapState.planDay=di; syncMapPlan(); if(di!=null) planTick(); drawMarkers(fit);}
+function showMapDay(di,fit){mapState.planDay=di; syncMapPlan(); drawMarkers(fit);}
 const whoPass=p=>{const ks=[...mapState.people]; if(!ks.length||!heartable(p)) return true; return mapState.mode==="all"?ks.every(k=>hearted(p,k)):ks.some(k=>hearted(p,k));};
 const whoLabel=()=>{const ns=PEOPLE.filter(x=>mapState.people.has(x.key)).map(x=>x.name); if(!ns.length) return "全部地點"; if(ns.length===1) return ns[0]+" 的愛心"; return ns.join("、")+(mapState.mode==="all"?" 都愛":" 任一人愛");};
 function syncWho(){
@@ -1417,7 +1428,7 @@ let mapReady=false, lmap=null, lLayer=null, leafletReady=null;
 function openMap(){
   if(!$("#mapCats").innerHTML){
     $("#mapCats").innerHTML=CATS.map(c=>`<button type="button" class="chip" data-mapcat="${esc(c)}" aria-pressed="true"><span class="dot" style="background:${CAT_COLOR[c]}"></span>${esc(c)}</button>`).join("");
-    const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti>=0&&mapState.planDay==null&&!mapState.autoDay){mapState.autoDay=true; mapState.planDay=ti; planTick();}
+    const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti>=0&&mapState.planDay==null&&!mapState.autoDay){mapState.autoDay=true; mapState.planDay=ti;}
     syncWho(); syncMapPlan(); syncMapFilterBtn();
   }
   if(lmap||window.__mapsLoading) return;
@@ -1595,7 +1606,12 @@ function dayRouteLinks(pts){
   return links;
 }
 // Edits to the itinerary live in Firebase /plan/{date} = {stops,by,ts}; a day without an entry uses the suggested PLAN.
-let PLAN_LIVE={}, planBlocked=false;
+// PLAN_LIVE starts from the copy saved on this device, so 行程 opens with the latest known edits instead of
+// flashing the suggested version; planLoaded is true once Firebase has answered this visit.
+const PLAN_KEY="cnxPlan";
+let PLAN_LIVE=(()=>{try{const v=JSON.parse(localStorage.getItem(PLAN_KEY)||"null"); return v&&typeof v==="object"?v:{};}catch(e){return {};}})();
+let planBlocked=false, planLoaded=false, planHadCache=(()=>{try{return localStorage.getItem(PLAN_KEY)!==null;}catch(e){return false;}})();
+function savePlanCache(){try{localStorage.setItem(PLAN_KEY,JSON.stringify(PLAN_LIVE));}catch(e){}}
 const planEditing=new Set();
 const fromFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at==="airport") o.at=AIRPORT; return o;};
 const toFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at) o.at="airport"; return o;};
@@ -1611,17 +1627,29 @@ function dayStops(di){
   return stops;
 }
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
-const todayCM=()=>new Date().toLocaleDateString("sv-SE",{timeZone:"Asia/Bangkok"});
+const todayCM=()=>cmToday();
 // Times are picked in half-hour steps (05:00–24:00); an older off-grid time (e.g. 19:45) stays selectable until changed.
 const HALF_HOURS=Array.from({length:39},(_,i)=>{const m=300+i*30; return String(Math.floor(m/60)).padStart(2,"0")+":"+(m%60?"30":"00");});
 function timeOptions(t){
   const list=t&&!HALF_HOURS.includes(t)?[...HALF_HOURS,t].sort():HALF_HOURS;
   return `<option value=""${t?"":" selected"}>未定</option>`+list.map(x=>`<option value="${x}"${x===t?" selected":""}>${x}</option>`).join("");
 }
+// "⚠ 週日公休" / "⚠ 這時間沒營業" for a stop, from the place's closed days and weekly hours (Google data).
+function hoursWarn(st,date){
+  const p=st.id&&placeById(st.id); if(!p||bookedOn(st,date)) return "";
+  const w=weekday(date);
+  if((p.cd||[]).includes(w)) return `週${WD[w]}公休`;
+  const t=toMin(st.t); if(t==null||!Array.isArray(p.oh)||!p.oh.length) return "";
+  const m=w*1440+t, open=p.oh.some(([a,b])=>(m>=a&&m<b)||(m+10080>=a&&m+10080<b));
+  if(open) return "";
+  const later=p.oh.map(([a])=>a).filter(a=>a>m&&a<(w+1)*1440).sort((x,y)=>x-y)[0];
+  return later!=null?`${fromMin(later-w*1440)} 才開門`:`${st.t} 已打烊或沒營業（${p.h||""}）`;
+}
 function daySection(di){
   const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
+  const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"彈性":pt.hotel?"宿":pt.airport?"機":++k;
-    const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"";
+    const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
     const name=pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`;
     if(ed&&bk) return `<li class="ps edit fixed" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・已預訂，時間固定；要改請看「已訂」分頁</span></div></li>`;
@@ -1630,10 +1658,10 @@ function daySection(di){
         <button type="button" data-pmv="${di}:${i}:-1" aria-label="上移 ${esc(pt.n)}"${i===0?" disabled":""}>↑</button>
         <button type="button" data-pmv="${di}:${i}:1" aria-label="下移 ${esc(pt.n)}"${i===stops.length-1?" disabled":""}>↓</button>
         ${pt.p?`<button type="button" class="popt" data-popt="${di}:${i}" aria-pressed="${!!st.opt}" title="${st.opt?"改回必去":"設為彈性（時間夠再去，不算進主要路線）"}">彈性</button>`:""}<button type="button" data-pdel="${di}:${i}" aria-label="移除 ${esc(pt.n)}">✕</button></span></div>
-        <div class="ps-in"><select data-pt="${di}:${i}" aria-label="${esc(pt.n)} 的時間">${timeOptions(st.t)}</select><input type="text" value="${esc(st.d||"")}" data-pn="${di}:${i}" maxlength="120" placeholder="備註" aria-label="${esc(pt.n)} 的備註"></div></div></li>`;
+        <div class="ps-in"><select data-pt="${di}:${i}" aria-label="${esc(pt.n)} 的時間">${timeOptions(st.t)}</select><input type="text" value="${esc(st.d||"")}" data-pn="${di}:${i}" maxlength="120" placeholder="備註" aria-label="${esc(pt.n)} 的備註"></div>${wl}</div></li>`;
     return `<li class="ps${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${bk?" fixed":""}"><span class="ps-n">${num}</span><span class="ps-t">${esc(time)}</span>
-      <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(st.d||"")}</span></div>
-      <a class="mini" href="${pt.url}" target="_blank" rel="noopener">地圖</a></li>`;}).join("");
+      <div class="ps-b"><div class="ps-top">${name}${lock}</div>${wl}<span class="local">${esc(st.d||"")}</span></div>
+      <a class="mini" href="${pt.url}" target="_blank" rel="noopener">地圖</a></li>`+gap(i);}).join("");
   const main=stops.filter(st=>!st.opt).map(planPoint).filter(Boolean), links=dayRouteLinks(main);
   return `<section class="pday${ed?" editing":""}" id="pday${di+1}">
     <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
@@ -1646,13 +1674,17 @@ function daySection(di){
   </section>`;
 }
 function renderPlan(){
-  const el=$("#planPanel"); planTick(); if(el.dataset.done) return; el.dataset.done="1";
+  const el=$("#planPanel"); if(el.dataset.done==="1") return;
+  if(!planLoaded&&!planHadCache){if(el.dataset.done!=="wait"){el.dataset.done="wait"; el.innerHTML=`<p class="tab-lead">載入行程中…</p>`; setTimeout(()=>{if(el.dataset.done==="wait"){el.dataset.done=""; renderPlan();}},2500);} return;}
+  el.dataset.done="1";
   const ti=PLAN.findIndex(d=>d.date===todayCM());
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
   <p class="plan-lead">依 ${md(PLAN_ASOF)} 的愛心排。標「彈性」的是時間夠再去，不算進主要路線（地圖上是 O）；地圖虛線是順序示意，導航請按「Google 地圖路線」；變淡的點是其他候選地點，點了可以加到這天。</p>
+  <div id="nextStop" hidden></div>
   <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
+  renderNext();
   if(ti>0) requestAnimationFrame(()=>$("#pday"+(ti+1)).scrollIntoView());
 }
 // After a move or an add, times follow the new order: the moved/new stop goes 30 min after the stop before it
@@ -1701,12 +1733,37 @@ function initSort(di){
         const note=retime(di,next,next.indexOf(moved)); saveDay(di,next,`已移動「${(planPoint(moved)||{n:""}).n}」${note}`);}});
   }).catch(()=>showToast("拖拉功能載入失敗，可以先用 ↑ ↓ 調整順序。"));
 }
+// During the trip: the next stop today (by time), with one-tap navigation from where you are.
+function renderNext(){
+  const el=$("#nextStop"); if(!el) return;
+  const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti<0){el.hidden=true; return;}
+  const n=cmNow(), now=n.getUTCHours()*60+n.getUTCMinutes(), stops=dayStops(ti).filter(st=>planPoint(st));
+  const timeOf=st=>{const b=bookedOn(st,PLAN[ti].date); return toMin(b?b.time:st.t);};
+  const nx=stops.find(st=>{const t=timeOf(st); return t!=null&&t>=now-15;});
+  el.hidden=false;
+  if(!nx){el.innerHTML=`<div class="next-in"><span class="next-k">今天的行程</span><b>都走完了，辛苦了！</b></div>`; return;}
+  const pt=planPoint(nx), t=timeOf(nx), mins=t-now, when=mins<=0?"現在":mins<60?`${mins} 分鐘後`:`${fromMin(t)}`, warn=hoursWarn(nx,PLAN[ti].date);
+  const nav=pt.ll?`https://www.google.com/maps/dir/?api=1&destination=${pt.ll.join(",")}&travelmode=driving`:pt.url;
+  el.innerHTML=`<div class="next-in"><span class="next-k">下一站・${esc(when)}</span><b>${pt.p?`<button type="button" class="linkbtn" data-pcard="${esc(nx.id)}">${esc(pt.n)}</button>`:esc(pt.n)}</b>${nx.d?`<span class="local">${esc(nx.d)}</span>`:""}${warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:""}</div>
+    <a class="qpb-btn next-go" href="${nav}" target="_blank" rel="noopener">導航</a>`;
+}
+setInterval(()=>{if(!$("#planPanel").hidden&&!document.hidden) renderNext();},60000);
 function renderDay(di){
+  if(PLAN[di]&&PLAN[di].date===todayCM()) renderNext();
   if(pcId()) renderPopup();
   if(mapReady&&mapState.planDay===di) drawMarkers();
   const sec=$("#pday"+(di+1)); if(!sec) return;
-  const t=document.createElement("div"); t.innerHTML=daySection(di); const n=t.firstElementChild; sec.replaceWith(n);
-  const box=n.querySelector("[data-pmap]"); if(window.L) drawPlanMap(box); else if(planObserver) planObserver.observe(box); else drawPlanMap(box);
+  const t=document.createElement("div"); t.innerHTML=daySection(di); const n=t.firstElementChild;
+  const oldBox=sec.querySelector("[data-pmap]"), x=planMaps[di];
+  if(x&&x.route&&oldBox&&x.m.getContainer()===oldBox){
+    n.querySelector("[data-pmap]").replaceWith(oldBox); sec.replaceWith(n);   // keep the live map, just redraw its layers
+    const stops=dayStops(di); x.m.closePopup(); x.route.clearLayers(); const pts=addRoute(x.route,stops,di);
+    x.others.clearLayers(); addOthers(x.others,di,stops);
+    if(pts.length&&!pts.every(ll=>x.m.getBounds().contains(ll))) x.m.fitBounds(pts,{padding:[28,28],maxZoom:15});   // refit only if a stop is off-screen
+  }else{
+    sec.replaceWith(n);
+    const box=n.querySelector("[data-pmap]"); if(window.L) drawPlanMap(box); else if(planObserver) planObserver.observe(box); else drawPlanMap(box);
+  }
   if(planEditing.has(di)) initSort(di);
 }
 async function putPlan(date,val){const r=await fetch(FB+"/plan/"+date+".json",val?{method:"PUT",body:JSON.stringify(val)}:{method:"DELETE"}); if(!r.ok) throw r.status;}
@@ -1715,14 +1772,14 @@ const planErr=e=>showToast(e===401||e===403?"行程還不能修改（資料庫�
 async function saveDay(di,stops,msg,quiet){
   if(!me){askWho(()=>saveDay(di,stops,msg,quiet)); return;}
   const date=PLAN[di].date, prev=PLAN_LIVE[date]||null, val={stops:stops.map(toFB),by:me,ts:Date.now()};
-  PLAN_LIVE[date]=val; if(!quiet) renderDay(di);
+  PLAN_LIVE[date]=val; savePlanCache(); if(!quiet) renderDay(di);
   try{await putPlan(date,val); if(msg) showToast(msg,()=>setDay(di,prev));}
-  catch(e){if(prev) PLAN_LIVE[date]=prev; else delete PLAN_LIVE[date]; renderDay(di); planErr(e);}
+  catch(e){if(prev) PLAN_LIVE[date]=prev; else delete PLAN_LIVE[date]; savePlanCache(); renderDay(di); planErr(e);}
 }
 async function setDay(di,val){
   const date=PLAN[di].date, before=PLAN_LIVE[date]||null;
-  if(val) PLAN_LIVE[date]=val; else delete PLAN_LIVE[date]; renderDay(di);
-  try{await putPlan(date,val);}catch(e){if(before) PLAN_LIVE[date]=before; else delete PLAN_LIVE[date]; renderDay(di); planErr(e);}
+  if(val) PLAN_LIVE[date]=val; else delete PLAN_LIVE[date]; savePlanCache(); renderDay(di);
+  try{await putPlan(date,val);}catch(e){if(before) PLAN_LIVE[date]=before; else delete PLAN_LIVE[date]; savePlanCache(); renderDay(di); planErr(e);}
 }
 // New stops go before the day's closing hotel/airport stop.
 function addStop(di,id,opt){
@@ -1733,15 +1790,34 @@ function addStop(di,id,opt){
   stops.splice(at,0,LODGING.some(h=>h.id===id)?{t:"",d:"",hotel:id}:opt?{t:"",d:"",id,opt:true}:{t:"",d:"",id});
   const note=retime(di,stops,at); saveDay(di,stops,`已把「${p.n}」加到 ${md(PLAN[di].date)}${opt?"（彈性）":""}${note}`);
 }
-let planTimer=null;
+// Apply a new /plan snapshot: redraw only the days that changed (never under someone's cursor).
+function applyPlan(d){
+  const old=PLAN_LIVE; PLAN_LIVE=d&&typeof d==="object"?d:{}; planBlocked=false; savePlanCache();
+  const first=!planLoaded; planLoaded=true;
+  if(first&&!planHadCache&&$("#planPanel").dataset.done==="wait"){$("#planPanel").dataset.done=""; renderPlan(); return;}
+  PLAN.forEach((x,i)=>{if(canon(old[x.date]||null)===canon(PLAN_LIVE[x.date]||null)) return;
+    const sec=$("#pday"+(i+1)), ae=document.activeElement;
+    if(sec&&ae&&sec.contains(ae)&&(ae.tagName==="INPUT"||ae.tagName==="SELECT")){ae.addEventListener("blur",()=>renderDay(i),{once:true}); return;}   // don't yank a field someone is using
+    renderDay(i);});
+}
 async function planTick(){
-  try{const r=await fetch(FB+"/plan.json"); if(r.status===401||r.status===403){planBlocked=true; return;} if(!r.ok) return;
-    const d=await r.json()||{}, old=PLAN_LIVE; PLAN_LIVE=d; planBlocked=false;
-    PLAN.forEach((x,i)=>{if(canon(old[x.date]||null)===canon(d[x.date]||null)) return;
-      const sec=$("#pday"+(i+1)); if(sec&&sec.contains(document.activeElement)&&document.activeElement.tagName==="INPUT") return;   // don't yank a field someone is typing in
-      renderDay(i);});
-  }catch(e){}
-  if(!planTimer) planTimer=setInterval(()=>{if(!document.hidden&&(!$("#planPanel").hidden||(!$("#mapPanel").hidden&&mapState.planDay!=null))) planTick();},8000);
+  try{const r=await fetch(FB+"/plan.json"); if(r.status===401||r.status===403){planBlocked=true; return;} if(!r.ok) return; applyPlan(await r.json());}catch(e){}
+}
+// Live: Firebase pushes every change (about a second). If the stream can't open, check every 8 s instead.
+let planTimer=null, planES=null;
+function startPlanLive(){
+  planTick();
+  try{
+    planES=new EventSource(FB+"/plan.json");
+    const onEvt=kind=>ev=>{try{const m=JSON.parse(ev.data), path=(m.path||"/").replace(/^\/+|\/+$/g,"");
+      if(!path){if(kind==="put") applyPlan(m.data||{}); else applyPlan({...PLAN_LIVE,...(m.data||{})}); return;}
+      const [date,...rest]=path.split("/");
+      if(rest.length){planTick(); return;}   // a change deeper than one day: just reload the whole plan
+      const next={...PLAN_LIVE}; if(kind==="put"){if(m.data==null) delete next[date]; else next[date]=m.data;} else next[date]={...(next[date]||{}),...(m.data||{})};
+      applyPlan(next);}catch(e){}};
+    planES.addEventListener("put",onEvt("put")); planES.addEventListener("patch",onEvt("patch"));
+    planES.onerror=()=>{if(!planTimer) planTimer=setInterval(()=>{if(!document.hidden&&planES.readyState!==1) planTick();},8000);};
+  }catch(e){planTimer=setInterval(()=>{if(!document.hidden) planTick();},8000);}
 }
 // Place picker: add a place to a day (from the day's 「＋ 加地點」), or choose the day (from a card's 「加入行程」).
 const PK={mode:"place",day:0,id:null,opt:false};
@@ -1777,10 +1853,10 @@ function drawPlanMap(box){
   ensureLeaflet().then(()=>{
     const m=L.map(box,{scrollWheelZoom:false,dragging:!matchMedia("(pointer:coarse)").matches,tap:false});
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(m);
-    const others=L.layerGroup().addTo(m);
-    const all=addRoute(m,d.stops,di);
+    const others=L.layerGroup().addTo(m), route=L.layerGroup().addTo(m);
+    const all=addRoute(route,d.stops,di);
     if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15}); else m.setView(CITY,13);
-    addOthers(others,di,d.stops); planMaps[di]={m,others};   // vector layers need the view set first
+    addOthers(others,di,d.stops); planMaps[di]={m,others,route};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
 // The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
@@ -1812,7 +1888,7 @@ document.addEventListener("click",async e=>{
   const mpl=e.target.closest("[data-mplan]");
   if(mpl){showMapDay(mpl.dataset.mplan===""?null:+mpl.dataset.mplan,true); return;}
   const mpd=e.target.closest("[data-mapday]");
-  if(mpd){const di=+mpd.dataset.mapday; mapState.planDay=di; setTab("map"); syncMapPlan(); planTick(); drawMarkers(true); $("#mapPanel").scrollIntoView({block:"start"}); return;}
+  if(mpd){const di=+mpd.dataset.mapday; mapState.planDay=di; setTab("map"); syncMapPlan(); drawMarkers(true); $("#mapPanel").scrollIntoView({block:"start"}); return;}
   const pjd=e.target.closest("[data-pjumpday]");
   if(pjd){setTab("plan"); const d=$("#pday"+(+pjd.dataset.pjumpday+1)); if(d) d.scrollIntoView(); return;}
   const add=e.target.closest("[data-addday]");
@@ -1936,7 +2012,7 @@ $("#lb").addEventListener("touchend",e=>{if(lbTouch==null) return; const dx=e.ch
 TABS.forEach(([k,tb])=>{$("#"+tb).onclick=()=>setTab(k);});
 $(".tabs").addEventListener("keydown",e=>{if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return; e.preventDefault();
   const i=TABS.findIndex(x=>$("#"+x[1]).getAttribute("aria-selected")==="true"), n=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length; setTab(TABS[n][0],true);});
-{const hash=location.hash==="#trip"?"#map":location.hash, h=TABS.find(x=>x[3]&&x[3]===hash); if(h) setTab(h[0]);}
+{const hash=location.hash==="#trip"?"#map":location.hash, h=TABS.find(x=>x[3]&&x[3]===hash); if(h) setTab(h[0]); else if(!hash&&TRIP_DAYS.includes(cmToday())) setTab("plan");}
 
 const FB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app";
 function setSync(ok){const n=document.getElementById("sync"); if(n){n.dataset.state=ok?"ok":"off"; n.textContent=ok?"已同步":navigator.onLine===false?"沒有網路：顯示上次存下的資料，修改會存不到":"離線，愛心可能沒存到";}}
@@ -1972,6 +2048,7 @@ pull().then(()=>PEOPLE.forEach(x=>{if(reachable[x.key]) listen(x);}));
 liveJSON("places",d=>{ADDED=d; mergeAdded();});
 liveJSON("removed",d=>{REMOVED=Object.fromEntries(Object.entries(d).filter(([,v])=>v===true)); mergeAdded();});
 liveJSON("inbox",d=>{INBOX=d; renderInbox();});
+startPlanLive();
 setInterval(pull,30000);
 </script>
 
