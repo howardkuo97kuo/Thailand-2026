@@ -572,6 +572,8 @@ button.ps-name:hover{text-decoration:underline}
 .next-in b .linkbtn{font:inherit;color:var(--ink);padding:0;min-height:0;text-align:left}
 .next-go{text-decoration:none;flex:none}
 /* map: hearts, bookings, legend */
+.route-pin .rp-h{position:absolute;top:-9px;right:-14px;font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 4px;border-radius:999px;color:#fff;background:#b0281c;border:1.5px solid #fff;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.lg-h{font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 4px;border-radius:999px;color:#fff;background:#b0281c}
 .route-pin .rp-b{position:absolute;bottom:-8px;right:-10px;font:700 9.5px/1 var(--f-body);font-style:normal;padding:2px 3px;border-radius:4px;color:#fff;background:#1f6f5c;border:1.5px solid #fff}
 .route-pin.booked span{box-shadow:0 0 0 3px #1f6f5c,0 2px 6px -1px rgba(0,0,0,.4)}
 .pday-mapcol{display:flex;flex-direction:column;min-width:0;border-left:1px solid var(--line)}
@@ -1933,8 +1935,10 @@ function dotStyle(p,dim){const ring=isMust(p);
   return dim?{radius:5,color:"#ffffff",weight:1.5,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:.45,opacity:.6}
     :{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1};}
 const heartLevel=p=>p&&heartable(p)?Math.min(3,heartCount(p)):0;
+// ♥n badge on a route pin (how many people hearted that stop).
+const heartBadge=p=>{const n=heartLevel(p); return n?`<i class="rp-h h${n}">♥${n}</i>`:"";};
 const heartMarks=p=>{const n=heartLevel(p); return n?`<span class="ps-hearts h${n}" title="${n} 個人按愛心">${"♥".repeat(n)}</span>`:"";};
-const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span><i class="lg-n">宿</i>住宿</span><span><i class="lg-n">機</i>機場</span><span><i class="lg-pin">O</i>彈性</span><span><i class="lg-bk">訂</i>已訂</span></div>`;
+const MAP_LEGEND=`<div class="map-legend" aria-label="地圖圖例"><span><i class="lg-n">宿</i>住宿</span><span><i class="lg-n">機</i>機場</span><span><i class="lg-pin">O</i>彈性</span><span><i class="lg-bk">訂</i>已訂</span><span><i class="lg-h">♥2</i>幾個人愛心</span></div>`;
 // The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
 function addOthers(target,di,stops){
   const onRoute=new Set(stops.map(st=>st.id).filter(Boolean)), pts=[];
@@ -1951,7 +1955,7 @@ function addRoute(target,stops,di){
     const label=st.opt?"O":pt.hotel?"宿":pt.airport?"機":String(++k);
     const cls="route-pin"+(st.opt?" opt":"")+(pt.hotel||pt.airport?" base":"");
     const bk=di!=null&&PLAN[di]&&bookedOn(st,PLAN[di].date);
-    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>${bk?`<i class="rp-b">訂</i>`:""}`,className:cls+(bk?" booked":""),iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
+    L.marker(pt.ll,{icon:L.divIcon({html:`<span>${label}</span>${heartBadge(pt.p)}${bk?`<i class="rp-b">訂</i>`:""}`,className:cls+(bk?" booked":""),iconSize:[26,26],iconAnchor:[13,13]}),title:pt.n,zIndexOffset:st.opt?600:1500})
       .bindPopup(pt.p?()=>mapCard(pt.p,di):`<div class="mc"><b>${esc(pt.n)}</b><div class="mc-m">${esc(st.t)}・${esc(st.d||"")}</div><a href="${pt.url}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`,{maxWidth:280}).addTo(target);
     if(!st.opt) line.push(pt.ll);});
   L.polyline(line,{color:"#b0281c",weight:3,dashArray:"6 7",opacity:.85}).addTo(target);
