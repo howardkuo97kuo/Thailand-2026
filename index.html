@@ -664,7 +664,7 @@ header.top>.side{order:2}
 </div>
 
 <script>
-const CATS=["景點","美食","咖啡甜點","按摩","課程體驗","購物市集"];
+const CATS=["景點","美食","咖啡甜點","課程體驗","購物市集"];
 const REGIONS=["古城","古城東・塔佩門","夜市・濱河","尼曼","北區","西郊","城南","郊區"];
 // Category icons: one line family (24px grid, round joins) drawn for this trip — chedi, khao soi bowl, coffee,
 // herbal compress ball, wok, Bo Sang paper umbrella, tuk-tuk, lotus.
@@ -792,7 +792,9 @@ const P=[
 ];
 // Practical stops (換匯, a friend's place) aren't choices: they're listed on the 住宿 tab, not among the places.
 const UTIL=P.filter(p=>p.c==="其他");
-P.splice(0,P.length,...P.filter(p=>p.c!=="其他"));
+// Massage shops aren't picked or scheduled either: kept as a list on the 住宿 tab to look up when there's free time.
+const SPA=P.filter(p=>p.c==="按摩");
+P.splice(0,P.length,...P.filter(p=>p.c!=="其他"&&p.c!=="按摩"));
 const IMG={};
 // Suggested itinerary (from the team's hearts, fixed bookings, opening hours and closed days).
 // Stop kinds: id = a place in the library; hotel = a LODGING id; at = custom point. opt = optional extra.
@@ -804,32 +806,29 @@ const PLAN=[
   {t:"18:30",id:"house",d:"已訂位 3 人；必點炸魚、椰奶咖哩蝦、西瓜涼拌"},
   {t:"20:30",id:"riflesso",d:"開心果口味，開到 22:00"},
   {t:"21:15",hotel:"jhaban",d:"回住宿，早點休息"}]},
- {date:"2026-10-16",title:"西郊寺廟、藝術村、尼曼",stops:[
-  {t:"08:30",hotel:"jhaban",d:"出發"},
-  {t:"08:45",id:"umong",d:"林間古寺與隧道，早上較涼"},
-  {t:"10:00",id:"bkw",d:"藝術家村，車程約 8 分鐘，早上人少"},
-  {t:"12:00",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
-  {t:"13:30",id:"ristr8to",d:"拉花咖啡；也可改 Roast8ry、Joost 山竹冰沙"},
-  {t:"14:30",id:"maya",d:"吹冷氣逛街，4 樓美食街、頂樓看景"},
-  {t:"16:00",id:"7senses",d:"手作義式冰淇淋，可先試吃"},
-  {t:"17:00",hotel:"jhaban",d:"回住宿休息、換衣服"},
-  {t:"19:00",id:"blackitch",d:"主廚套餐需提早訂位；訂不到改 Kiew Kai Ka 或 GINGER FARM（One Nimman）"},
-  {t:"21:00",id:"kadnamor",d:"清大學生夜市",opt:true},
+ {date:"2026-10-16",title:"瑜伽、尼曼咖啡、學生夜市",stops:[
+  {t:"09:15",hotel:"jhaban",d:"出發"},
+  {t:"09:45",id:"wildrose",d:"早上那堂瑜伽，先上網預約"},
+  {t:"11:30",id:"maesai",d:"雞腿咖哩麵，先拿號碼牌；週日休所以排今天"},
+  {t:"13:00",id:"ristr8to",d:"拉花咖啡；也可改 Roast8ry"},
+  {t:"14:00",id:"7senses",d:"手作義式冰淇淋，可先試吃"},
+  {t:"15:00",hotel:"jhaban",d:"回住宿避開最熱的時段"},
+  {t:"18:00",id:"kadnamor",d:"清大對面的學生夜市，便宜好逛"},
+  {t:"19:30",id:"kiewkai",d:"One Nimman 的泰北菜；同一棟也有 GINGER FARM"},
   {t:"21:30",id:"warmup",d:"老牌 Live 夜店",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
  {date:"2026-10-17",title:"週六限定：真心市集＋Wua Lai 夜市",stops:[
   {t:"07:00",hotel:"jhaban",d:"出發"},
   {t:"07:30",id:"jingjai",d:"週末手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤"},
-  {t:"10:30",id:"khunyai",d:"北門附近，只做午餐、會賣完；週日休"},
-  {t:"11:30",id:"lokmoli",d:"紅磚古塔，散步過去"},
-  {t:"12:00",id:"chiangman",d:"大象佛塔"},
-  {t:"12:45",id:"akhaama",d:"阿卡族咖啡＋香蕉蛋糕"},
-  {t:"13:30",id:"phrasingh",d:"需遮肩過膝"},
-  {t:"14:15",id:"kalm",d:"有冷氣的咖啡館，頂樓看柴迪隆寺"},
-  {t:"15:15",id:"khunkae",d:"水果碗、果昔消暑"},
+  {t:"10:30",id:"lokmoli",d:"紅磚古塔"},
+  {t:"11:00",id:"chiangman",d:"大象佛塔"},
+  {t:"11:45",id:"chum",d:"泰北菜午餐，有冷氣；想吃咖哩麵可改 Khao Soi Khun Yai（14:00 收）"},
+  {t:"13:00",id:"akhaama",d:"阿卡族咖啡＋香蕉蛋糕"},
+  {t:"13:45",id:"phrasingh",d:"需遮肩過膝"},
+  {t:"14:30",id:"kalm",d:"有冷氣的咖啡館，頂樓看柴迪隆寺"},
+  {t:"15:30",id:"khunkae",d:"水果碗、果昔消暑"},
   {t:"16:00",hotel:"jhaban",d:"回住宿休息，傍晚再出門"},
-  {t:"17:30",id:"silver",d:"週六開到 23:00，點燈最美；女性不能進主殿"},
-  {t:"18:30",id:"wualai",d:"週六夜市，邊逛邊吃晚餐"},
+  {t:"17:30",id:"wualai",d:"週六夜市，邊逛邊吃晚餐"},
   {t:"21:00",id:"jazz",d:"想坐室內 20:00 前到",opt:true},
   {t:"21:30",id:"mooyim",d:"宵夜香茅陶鍋，開到 03:00",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
@@ -842,20 +841,19 @@ const PLAN=[
   {t:"12:30",id:"sp",d:"烤雞、烤豬肋排；只收現金"},
   {t:"14:00",hotel:"thee",d:"入住、休息"},
   {t:"16:00",id:"maekha",d:"運河邊散步，16:00 後攤位陸續開"},
-  {t:"17:00",id:"chedi",d:"傍晚光線最好"},
+  {t:"17:00",id:"chedi",d:"傍晚光線最好，就在週日夜市旁"},
   {t:"17:30",id:"sunday",d:"週日限定，逛約 2 小時"},
   {t:"20:00",id:"rotipadae",d:"自己寫單、等叫號"},
   {t:"21:00",hotel:"thee",d:"回新住宿"}]},
- {date:"2026-10-19",title:"素帖山、北區、尼曼；晚上河邊",stops:[
+ {date:"2026-10-19",title:"北區早午、尼曼；晚上河邊",stops:[
   {t:"07:30",hotel:"thee",d:"出發"},
-  {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完"},
-  {t:"08:30",id:"phalat",d:"包車上山，森林古寺"},
-  {t:"10:00",id:"doisuthep",d:"金色佛塔、俯瞰市區；包車來回約 800 銖"},
+  {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完；週日休所以排今天"},
+  {t:"09:00",id:"magic",d:"泰奶、手沖；週三休，15:30 關"},
+  {t:"10:00",id:"onepct",d:"普拉提要先預約"},
   {t:"12:30",id:"kaosoy",d:"推泰北香腸咖哩麵"},
-  {t:"14:00",id:"onepct",d:"普拉提要先預約；或改 Magic Brew 喝泰奶（15:30 關）"},
-  {t:"15:30",id:"joost",d:"山竹、酪梨冰沙，下午 3 點半後水果較齊"},
-  {t:"16:30",hotel:"thee",d:"回住宿休息"},
-  {t:"19:00",id:"ekachan",d:"河邊柚木屋晚餐，Google 地圖訂位；或留尼曼吃 PARI-（需訂位）"},
+  {t:"14:00",id:"joost",d:"山竹、酪梨冰沙"},
+  {t:"15:00",hotel:"thee",d:"回住宿休息"},
+  {t:"19:00",id:"ekachan",d:"河邊柚木屋晚餐，Google 地圖訂位"},
   {t:"20:30",id:"bazaar",d:"清邁夜市"},
   {t:"22:00",hotel:"thee",d:"回住宿"}]},
  {date:"2026-10-20",title:"料理課、伴手禮、回程",stops:[
@@ -922,7 +920,7 @@ const LIVE={}, liveTried=new Set();
 const MAX_PHOTOS=5;   // at least 4 per place after skips; each photo is one billable request
 // Google photos reviewed by hand and left out (position in Google's list + author, so a reorder can't hide the wrong one).
 const SKIP_PHOTOS={reliever:[[0,"Reliever Health massage"]],gex:[[4,"chloe mo"]],maekha:[[2,"Deborah Long"]]};
-const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id);
+const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id)||SPA.find(x=>x.id===id);
 const mediaUrl=(name,w)=>`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${w}&key=${GMAPS_KEY}`;
 const phList=p=>LIVE[p.id]||(IMG[p.id]||[]).map(u=>({src:u,thumb:u,by:null}));
 const photosOf=p=>phList(p).map(x=>x.src);
@@ -1246,6 +1244,12 @@ function releaseLanterns(){
 const WD="日一二三四五六";
 const md=iso=>{const d=new Date(iso+"T00:00:00");return `${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）`;};
 const nights=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const utilCard=p=>`<article class="util-card">
+        <div class="util-h"><span class="tcatin">${catIcon(p.c)}<b>${esc(p.n)}</b></span>${p.sub?`<span class="tag">${esc(p.sub)}</span>`:""}</div>
+        <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}${p.ll?`<dt>${ICON_HOME}住宿</dt><dd>${distLine(p)}</dd>`:""}</dl>
+        ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}${p.note?`<p class="note">${esc(p.note)}</p>`:""}
+        ${p.pid||p.ll?`<a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a>`:""}
+      </article>`;
 function renderStay(){
   const first=LODGING[0].in, last=LODGING[LODGING.length-1].out, total=nights(first,last);
   $("#stayPanel").innerHTML=`
@@ -1279,13 +1283,13 @@ function renderStay(){
     <section class="util" aria-labelledby="utilH">
       <h2 id="utilH">實用地點</h2>
       <p class="util-lead">換匯所與朋友住處，不用挑、需要時查。</p>
-      <div class="util-grid">${UTIL.map(p=>`<article class="util-card">
-        <div class="util-h"><span class="tcatin">${catIcon(p.c)}<b>${esc(p.n)}</b></span>${p.sub?`<span class="tag">${esc(p.sub)}</span>`:""}</div>
-        <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}${p.ll?`<dt>${ICON_HOME}住宿</dt><dd>${distLine(p)}</dd>`:""}</dl>
-        ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}${p.note?`<p class="note">${esc(p.note)}</p>`:""}
-        ${p.pid||p.ll?`<a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a>`:""}
-      </article>`).join("")}</div>
+      <div class="util-grid">${UTIL.map(utilCard).join("")}</div>
     </section>
+    ${SPA.length?`<section class="util" aria-labelledby="spaH">
+      <h2 id="spaH">按摩店</h2>
+      <p class="util-lead">不排進行程、不用按愛心；有空檔想按摩時從這裡挑，熱門的店記得先預約。</p>
+      <div class="util-grid">${SPA.map(utilCard).join("")}</div>
+    </section>`:""}
     <section class="cheat" aria-labelledby="cheatH">
       <h2 id="cheatH">出發前小抄</h2>
       <dl>
@@ -1544,11 +1548,11 @@ let ADDED={}, REMOVED={}, INBOX={}, inboxBlocked=false;
 const validAdded=p=>p&&typeof p==="object"&&typeof p.n==="string"&&typeof p.c==="string"&&typeof p.id==="string";
 function mergeAdded(){
   for(let i=P.length-1;i>=0;i--) if(P[i].added) P.splice(i,1);
-  for(let i=UTIL.length-1;i>=0;i--) if(UTIL[i].added) UTIL.splice(i,1);
+  for(const L of [UTIL,SPA]) for(let i=L.length-1;i>=0;i--) if(L[i].added) L.splice(i,1);
   Object.values(ADDED).forEach(p=>{
     if(!validAdded(p)||REMOVED[p.id]||P.some(x=>x.id===p.id)) return;
     const q={...p,added:true,m:false};
-    (q.c==="其他"?UTIL:P).push(q);
+    (q.c==="其他"?UTIL:q.c==="按摩"?SPA:P).push(q);
   });
   render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
 }
@@ -1567,7 +1571,7 @@ function renderInbox(){
   const items=Object.entries(INBOX).filter(([,x])=>x&&typeof x.text==="string").sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,40);
   if(inboxBlocked){el.innerHTML=`<li class="inbox-empty">收件匣還沒開放（資料庫權限），設定好之後就能使用。</li>`; return;}
   if(!items.length){el.innerHTML=`<li class="inbox-empty">還沒有人送出地點。</li>`; return;}
-  el.innerHTML=items.map(([iid,x])=>{const st=INBOX_STATUS[x.status]||INBOX_STATUS.new, p=x.placeId?(P.find(q=>q.id===x.placeId)||UTIL.find(q=>q.id===x.placeId)):null, rm=x.placeId&&REMOVED[x.placeId];
+  el.innerHTML=items.map(([iid,x])=>{const st=INBOX_STATUS[x.status]||INBOX_STATUS.new, p=x.placeId?placeById(x.placeId):null, rm=x.placeId&&REMOVED[x.placeId];
     return `<li class="inbox-i"><div class="inbox-main"><b>${esc(x.text)}</b>${x.note?`<span class="local">${esc(x.note)}</span>`:""}<span class="local">${esc((WHO[x.who]||{name:x.who||"?"}).name)}・${ago(x.ts||0)}</span>${x.msg?`<span class="inbox-msg">${esc(x.msg)}</span>`:""}</div>
       <div class="inbox-side"><span class="opennow ${rm?"off":st[1]==="ok"?"on":"off"}">${rm?"已移除":st[0]}</span>
       ${x.placeId&&x.status==="added"?(rm?`<button type="button" class="linkbtn" data-restore="${esc(x.placeId)}">恢復</button>`:`${p&&P.includes(p)?`<button type="button" class="linkbtn" data-gocard="${esc(x.placeId)}">看卡片</button>`:""}<button type="button" class="linkbtn" data-remove="${esc(x.placeId)}">移除</button>`):""}</div></li>`;}).join("");
