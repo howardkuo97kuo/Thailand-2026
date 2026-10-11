@@ -293,17 +293,6 @@ tr.detail .notes{border-top:0;max-width:760px}
 .cheat h2{font-family:var(--f-display);font-size:18px;margin:0 0 8px}
 .cheat dl{grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
 .cheat dt{font-weight:700;color:var(--ink);letter-spacing:0}
-.routes{display:flex;gap:8px;align-items:center;margin:0 0 10px;min-width:0}
-.routes .chips{flex:1;min-width:0}
-@media (max-width:640px){.routes{flex-direction:column;align-items:stretch;gap:6px}.routes .chips{flex:none}}
-.route-pin{background:none;border:0}
-.route-pin span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#f0b628;color:#231f1c;font:700 13px/1 var(--f-mono);border:2px solid #231f1c;box-shadow:0 2px 6px -1px rgba(0,0,0,.4)}
-.route-steps{list-style:none;margin:10px 0 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:8px}
-.route-steps li{display:flex;gap:10px;align-items:flex-start;font-size:13px}
-.route-steps .route-when{color:var(--muted);font-size:12px}
-.route-steps .rn{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--saffron);color:#231f1c;font:700 12px/1 var(--f-mono)}
-.route-steps .linkbtn{font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none;padding:0}
-.route-steps .local{display:block}
 .nowtoggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;white-space:nowrap}
 .notice .chip.small{min-height:30px}
 .whodlg{border:0;border-radius:14px;background:var(--card);color:var(--ink);padding:20px;max-width:min(360px,calc(100vw - 32px));box-shadow:0 12px 28px -10px rgba(0,0,0,.4)}
@@ -493,6 +482,8 @@ img.img-fail{visibility:hidden}
 button.ps-name:hover{text-decoration:underline}
 .ps.opt .ps-name{color:var(--muted)}
 .pday-map{min-height:420px;border-left:1px solid var(--line);background:var(--paper)}
+.route-pin{background:none;border:0}
+.route-pin span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#f0b628;color:#231f1c;font:700 13px/1 var(--f-mono);border:2px solid #231f1c;box-shadow:0 2px 6px -1px rgba(0,0,0,.4)}
 .route-pin.base span{background:var(--ink);color:var(--card);border-color:var(--card)}
 .route-pin.opt span{background:#fff;border-style:dashed;color:#6b6358}
 @media (max-width:760px){.pday-body{grid-template-columns:1fr}.pday-map{min-height:300px;border-left:0;border-top:1px solid var(--line)}.ps-list{max-height:none}.ps{grid-template-columns:30px 44px 1fr auto;padding:8px 12px}}
@@ -599,7 +590,6 @@ header.top>.side{order:2}
       <div class="more" id="more">
         <select id="region" aria-label="地區"></select>
         <select id="heartF" aria-label="愛心"></select>
-        <select id="declF" aria-label="我的表態"></select>
         <span class="sortctl"><select id="sortKey" aria-label="排序依據"></select><button type="button" id="sortDir" class="sortdir"></button></span>
       </div>
       <div class="seg" role="group" aria-label="檢視方式">
@@ -645,10 +635,8 @@ header.top>.side{order:2}
         <label class="nowtoggle"><input type="checkbox" id="openNowT"> 現在營業中</label>
       </div>
     </div>
-    <div class="routes"><span class="sublabel">路線靈感</span><div class="chips" id="routeChips" role="group" aria-label="路線靈感"></div></div>
     <div id="map" role="region" aria-label="清邁地點地圖"><p class="map-msg">地圖載入中…</p></div>
-    <ol class="route-steps" id="routeSteps" hidden></ol>
-    <p class="map-note"><span id="mapDay"></span>住宿以黑色房子標示；有人按愛心的地點會加上金色外框。點標記可看簡介與 Google 地圖連結。</p>
+    <p class="map-note"><span id="mapDay"></span>黑色房子是住宿，金色外框是有人按愛心的地點；點標記看簡介與 Google 地圖連結。</p>
     <h2 class="trip-h">行程資訊</h2>
     <p class="trip-lead">旅途中用的速查表，跟上方地圖顯示同一批地點：營業時間、評分、離住宿多遠，一鍵開 Google 地圖。點欄位標題可排序。</p>
     <p class="count" id="tripCount"></p>
@@ -658,8 +646,6 @@ header.top>.side{order:2}
   <footer>
     <div class="band" aria-hidden="true"></div>
     <p><b>來源</b>：「團隊挑的」是大家原本清單裡的地點；標「AI 建議」的是 AI 依評價與地點另外推薦的。</p>
-    <p><b>地圖</b>：可選看誰的愛心；下方「行程資訊」表格與地圖顯示同一批地點，「現在營業中」以清邁時間即時篩選。</p>
-    <p><b>愛心</b>：先在上方選「我是誰」，就能按自己的愛心；其他人的愛心以名字縮寫顯示。Charlie 一開始的愛心是依清單備註、有人指名、米其林與時間限定先勾的，可以直接取消。</p>
     <p>地址、營業時間與評分：Google 地圖，2026-10-09 查詢。營業時間可能異動，出發前請再確認。照片來自 Google 地圖上店家與旅客上傳的圖片，左下角標示上傳者；點「更多照片」可在 Google 搜尋看更多。</p>
   </footer>
 </div>
@@ -873,7 +859,7 @@ const LODGING=[
   {id:"jhaban",n:"Jhaban Home",r:"古城",a:"17/1 Jhaban Rd, Old City",in:"2026-10-15",out:"2026-10-18",rt:"",rv:"",note:"Google 地圖位置在古城正中間，比行程表先前推估的東北角更靠中心",pid:"ChIJK5Xqm0872jARw61a71nET9U",ll:[18.791161,98.986093]},
   {id:"thee",n:"THEE Vijit Lanna",r:"古城東・塔佩門",a:"82/1 Soi 2, Chang Moi",in:"2026-10-18",out:"2026-10-20",rt:"4.7",rv:"714",note:"有泳池，下午有免費飲料",pid:"ChIJJde5dQo72jARyQ3vQlxWk9o",ll:[18.792089,98.993925]}
 ];
-const state={sub:"全部",cat:"全部",region:"全部",heartF:"",decl:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
+const state={sub:"全部",cat:"全部",region:"全部",heartF:"",sortKey:"",sortDir:"asc",q:"",view:"cards"};
 // Each person's hearts live at their own Firebase path. Charlie keeps the original /must data.
 const PEOPLE=[{key:"charlie",name:"Charlie",path:"must"},{key:"howard",name:"Howard",path:"hearts/howard"},{key:"lindsay",name:"Lindsay",path:"hearts/lindsay"}];
 const WHO=Object.fromEntries(PEOPLE.map(x=>[x.key,x]));
@@ -944,7 +930,7 @@ async function loadLive(id){
 // change can move places in or out of the list or reorder it (heart filter or heart sort active).
 function updatePlaces(ids){
   ids=[...new Set(ids)].filter(Boolean); if(!ids.length) return;
-  if(state.heartF||state.sortKey==="must"||state.decl){render(); return;}
+  if(state.heartF||state.sortKey==="must"){render(); return;}
   ids.forEach(id=>{
     const p=P.find(x=>x.id===id); if(!p) return;
     const c=document.querySelector(`#out [data-card="${CSS.escape(id)}"]`); if(c){c.outerHTML=card(p); return;}
@@ -979,7 +965,6 @@ function buildControls(){
   $("#region").innerHTML=["全部",...REGIONS].map(r=>`<option value="${r}">${r==="全部"?"所有地區":r}</option>`).join("");
   $("#region").onchange=e=>{state.region=e.target.value;render();};
   $("#heartF").onchange=e=>{state.heartF=e.target.value;render();};
-  $("#declF").onchange=e=>{state.decl=e.target.value;render();};
   $("#qpOpen").onclick=()=>openQuickPick();
   $("#me").innerHTML=PEOPLE.map(x=>`<button type="button" data-me="${x.key}" aria-pressed="${me===x.key}">${x.name}</button>`).join("");
   syncMe();
@@ -1003,8 +988,6 @@ function syncMe(){
     .map(([v,l])=>`<option value="${v}"${v==="mine"&&!me?" disabled":""}>${l}</option>`).join("");
   if(state.heartF==="mine"&&!me) state.heartF="";
   loadSeen();
-  $("#declF").innerHTML=[["","看過的也顯示"],["todo","只看我還沒看過的"]].map(([v,l])=>`<option value="${v}">${l}</option>`).join("");
-  $("#declF").hidden=!me; $("#declF").value=state.decl;
   $("#heartF").value=state.heartF;
 }
 function setMe(k){me=WHO[k]?k:null; try{me?localStorage.setItem("cnxMe",me):localStorage.removeItem("cnxMe");}catch(e){} syncMe(); note(""); render();}
@@ -1034,19 +1017,18 @@ const tripState={now:false,q:"",sortKey:"",sortDir:"asc"};
 const planDate=()=>tripState.now&&TRIP_DAYS.includes(cmToday())?cmToday():"";
 const dayPass=p=>!tripState.now||openNow(p)!==false;
 // 我還沒看過的: places not yet hearted or passed with 之後再說.
-const declPass=p=>!me||state.decl!=="todo"||!seen(p);
 const heartPass=p=>!state.heartF||(state.heartF==="mine"?(me&&hearted(p,me)):state.heartF==="any"?isMust(p):allHearted(p));
-function activeFilters(){return (state.region!=="全部")+(!!state.heartF)+(!!state.decl);}
+function activeFilters(){return (state.region!=="全部")+(!!state.heartF);}
 function clearFilters(){
-  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",heartF:"",decl:"",q:""});
-  $("#q").value=""; $("#region").value="全部"; $("#heartF").value=""; $("#declF").value="";
+  Object.assign(state,{cat:"全部",sub:"全部",region:"全部",heartF:"",q:""});
+  $("#q").value=""; $("#region").value="全部"; $("#heartF").value="";
   syncChips(); render();
 }
 function setView(v,quiet){state.view=v;$("#vCards").setAttribute("aria-pressed",String(v==="cards"));$("#vTable").setAttribute("aria-pressed",String(v==="table"));try{localStorage.setItem("cnxView",v);}catch(e){} if(!quiet)render();}
 
 function filtered(){
   return P.filter(p=>(state.cat==="全部"||p.c===state.cat)&&(state.sub==="全部"||p.sub===state.sub)&&(state.region==="全部"||p.r===state.region)
-    &&heartPass(p)&&declPass(p)
+    &&heartPass(p)
     &&(!state.q||[p.n,p.loc,p.a,p.note,p.tip,p.c,p.r,p.sub].join(" ").toLowerCase().includes(state.q.toLowerCase())))
    .sort((a,b)=>sortCmp(a,b)||CATS.indexOf(a.c)-CATS.indexOf(b.c));
 }
@@ -1356,22 +1338,6 @@ async function deleteComment(id,cid){
   catch(e){showToast("留言沒有刪除，請稍後再試。");}
 }
 // Map tab: every place with coordinates, colored by category; hotels as black houses.
-// Route ideas: nearby places in a sensible order, checked against opening hours and closed days.
-const ROUTES=[
-  {id:"oldtemples",name:"古城寺廟散步",when:"上午・約 4 小時（週日 Khun Yai 休）",stops:[["chiangman","08:30 最古老的大象佛塔寺"],["lokmoli","09:15 護城河外的紅磚古塔"],["khunyai","10:00 開門就吃泰北咖哩麵"],["chedi","11:00 古城中心的大佛塔"],["akhaama","12:00 帕辛寺旁喝咖啡"],["phrasingh","12:45 古城最大的寺廟"]]},
-  {id:"suthep",name:"素帖山半日",when:"下午到傍晚・約 5 小時，包車最方便",stops:[["phalat","14:00 森林裡的古寺（17:30 關）"],["doisuthep","16:00 雙龍寺看夕陽與夜景"],["tongtemtoh","19:00 下山到尼曼吃泰北菜"]]},
-  {id:"west",name:"西郊藝術村",when:"上午・約 4 小時（週一 Baan Kang Wat 休、週日 Maesai 休）",stops:[["umong","09:00 林間古寺與地下隧道"],["bkw","10:00 藝術家村，早上人少"],["maesai","12:00 必比登泰北咖哩麵"],["ristr8to","13:00 尼曼的冠軍拉花咖啡"]]},
-  {id:"sat",name:"週六夜：銀廟＋夜市",when:"只有週六（10/17）・17:30 起",stops:[["silver","17:30 銀廟點燈"],["wualai","18:30 Wua Lai 週六夜市"],["cmgate","20:00 清邁門夜間小吃"],["calm","21:00 清邁門旁按摩"]]},
-  {id:"sun",name:"週日夜：步行街",when:"只有週日（10/18）・17:00 起",stops:[["chedi","17:00 傍晚的柴迪隆寺"],["sunday","17:30 週日夜市，逛約 2 小時"],["rotipadae","20:00 塔佩門附近的香蕉煎餅"],["ziri","20:30 古城按摩（10:00–22:00，要先約）"]]},
-  {id:"river",name:"濱河晚餐＋夜市",when:"任一天晚上・17:00 起",stops:[["ekachan","17:30 河邊柚木屋晚餐（要訂位）"],["bazaar","19:30 清邁夜市"],["makkhanb","21:00 夜市旁按摩，送芒果糯米"]]}
-];
-let activeRoute=null;
-function renderRoutes(){
-  $("#routeChips").innerHTML=ROUTES.map(r=>`<button type="button" class="chip small" data-route="${r.id}" aria-pressed="${activeRoute===r.id}">${esc(r.name)}</button>`).join("");
-  const r=ROUTES.find(x=>x.id===activeRoute), ol=$("#routeSteps");
-  ol.hidden=!r; if(!r){ol.innerHTML="";return;}
-  ol.innerHTML=`<li class="route-when">${esc(r.when)}</li>`+r.stops.map(([id,t],i)=>{const p=placeById(id); return p?`<li><span class="rn">${i+1}</span><div><button type="button" class="linkbtn" data-gocard="${id}">${esc(p.n)}</button><span class="local">${esc(t)}</span></div></li>`:"";}).join("");
-}
 const CAT_COLOR={"景點":"#1f6f5c","美食":"#b0281c","咖啡甜點":"#8a5d00","按摩":"#7b4fa0","課程體驗":"#1f5fa8","購物市集":"#c2570c","其他":"#5c564c"};
 // Whose hearts the map and the trip table show: pick people (none = every place), then "任一人" (any of them) or "都要" (all of them).
 const mapState={cats:new Set(CATS),people:new Set(PEOPLE.map(x=>x.key)),mode:"any"};
@@ -1381,58 +1347,29 @@ function syncWho(){
   $("#mapPeople").innerHTML=PEOPLE.map(x=>`<button type="button" class="chip whochip" data-wpick="${x.key}" aria-pressed="${mapState.people.has(x.key)}"><span class="who${mapState.people.has(x.key)?" on":""}" aria-hidden="true">${x.name[0]}</span>${x.name}</button>`).join("");
   document.querySelectorAll("[data-wmode]").forEach(b=>{b.setAttribute("aria-pressed",String(b.dataset.wmode===mapState.mode)); b.disabled=mapState.people.size<2;});
 }
-let gmap=null, mapReady=false, mapMarkers=[], infoWin=null, mapEngine="google", lmap=null, lLayer=null;
-// If Google Maps can't load (API not enabled, key or network problem), fall back to OpenStreetMap via Leaflet.
-function loadLeaflet(){
-  if(mapEngine==="leaflet") return;
-  mapEngine="leaflet"; mapReady=false; gmap=null;
-  $("#map").innerHTML=`<p class="map-msg">地圖載入中…</p>`;
-  const css=document.createElement("link"); css.rel="stylesheet"; css.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"; document.head.appendChild(css);
-  const sc=document.createElement("script"); sc.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
-  sc.onload=()=>{
-    $("#map").innerHTML="";
-    lmap=L.map("map",{scrollWheelZoom:!matchMedia("(pointer:coarse)").matches}).setView([18.7883,98.9853],13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(lmap);
-    lLayer=L.layerGroup().addTo(lmap); mapReady=true; drawMarkers(true);
-  };
-  sc.onerror=()=>{$("#map").innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;};
-  document.head.appendChild(sc);
-}
+let mapReady=false, lmap=null, lLayer=null, leafletReady=null;
 function openMap(){
   if(!$("#mapCats").innerHTML){
     $("#mapCats").innerHTML=CATS.map(c=>`<button type="button" class="chip" data-mapcat="${esc(c)}" aria-pressed="true"><span class="dot" style="background:${CAT_COLOR[c]}"></span>${esc(c)}</button>`).join("");
     syncWho();
-    renderRoutes();
   }
-  if(gmap||window.__mapsLoading) return;
+  if(lmap||window.__mapsLoading) return;
   window.__mapsLoading=true;
-  window.__initMap=()=>{
-    gmap=new google.maps.Map($("#map"),{center:{lat:18.7883,lng:98.9853},zoom:13,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,clickableIcons:false,gestureHandling:matchMedia("(pointer:coarse)").matches?"cooperative":"greedy"});
-    infoWin=new google.maps.InfoWindow(); mapReady=true; drawMarkers(true);
-  };
-  window.gm_authFailure=()=>loadLeaflet();
-  const sc=document.createElement("script");
-  sc.src=`https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&callback=__initMap&loading=async&language=zh-TW&region=TW`;
-  sc.async=true; sc.onerror=()=>loadLeaflet();
-  document.head.appendChild(sc);
+  ensureLeaflet().then(()=>{
+    $("#map").innerHTML="";
+    lmap=L.map("map",{scrollWheelZoom:!matchMedia("(pointer:coarse)").matches}).setView([18.7883,98.9853],13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(lmap);
+    lLayer=L.layerGroup().addTo(lmap); mapReady=true; drawMarkers(true);
+  }).catch(()=>{window.__mapsLoading=false; $("#map").innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
-const pinIcon=(color,ring)=>({path:google.maps.SymbolPath.CIRCLE,scale:ring?9:7,fillColor:color,fillOpacity:1,strokeColor:ring?"#f0b628":"#ffffff",strokeWeight:ring?3:2});
-const HOUSE_PATH="M-8 1 0-7 8 1M-6 -1V8H6V-1";
 // Initial view frames the city (within 8 km of the old city); far-out places stay reachable by zooming out.
 const CITY=[18.7883,98.9853];
 const nearCity=ll=>km(ll,CITY)<=8;
 const tripQ=p=>{const q=tripState.q.toLowerCase(); return !q||[p.n,p.loc,p.a,p.c,p.sub,p.r,p.tip].join(" ").toLowerCase().includes(q);};
 const mapPlaces=()=>P.filter(p=>p.ll&&mapState.cats.has(p.c)&&whoPass(p)&&dayPass(p)&&tripQ(p));
 const HOUSE_SVG='<svg viewBox="-10 -9 20 19" width="26" height="25" aria-hidden="true"><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="#231f1c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="none" stroke="#231f1c" stroke-width="1.4" stroke-linejoin="round"/></svg>';
-const routeStops=()=>{const r=ROUTES.find(x=>x.id===activeRoute); return r?r.stops.map(([id])=>placeById(id)).filter(p=>p&&p.ll):null;};
 function drawLeaflet(fit){
   lLayer.clearLayers(); const pts=[];
-  const rs=routeStops();
-  if(rs){
-    rs.forEach((p,i)=>{L.marker(p.ll,{icon:L.divIcon({html:`<span>${i+1}</span>`,className:"route-pin",iconSize:[26,26],iconAnchor:[13,13]}),title:p.n}).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); pts.push(p.ll);});
-    L.polyline(rs.map(p=>p.ll),{color:"#f0b628",weight:3,dashArray:"6 6",opacity:.9}).addTo(lLayer);
-    if(pts.length) lmap.fitBounds(pts,{padding:[40,40],maxZoom:16}); return;
-  }
   mapPlaces().forEach(p=>{const ring=isMust(p);
     L.circleMarker(p.ll,{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1}).bindTooltip(p.n).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
   LODGING.filter(h=>h.ll).forEach(h=>{
@@ -1443,28 +1380,7 @@ function drawLeaflet(fit){
 function drawMarkers(fit){
   const md0=$("#mapDay"); if(md0) md0.textContent=tripState.now?"目前只顯示現在營業中的地點。":"";
   if(!mapReady) return;
-  if(mapEngine==="leaflet"){drawLeaflet(fit); return;}
-  mapMarkers.forEach(m=>m.setMap(null)); mapMarkers=[];
-  const bounds=new google.maps.LatLngBounds();
-  const rs=routeStops();
-  if(rs){
-    rs.forEach((p,i)=>{const m=new google.maps.Marker({map:gmap,position:{lat:p.ll[0],lng:p.ll[1]},title:p.n,label:{text:String(i+1),color:"#231f1c",fontWeight:"700"},icon:{path:google.maps.SymbolPath.CIRCLE,scale:12,fillColor:"#f0b628",fillOpacity:1,strokeColor:"#231f1c",strokeWeight:2}});
-      m.addListener("click",()=>{infoWin.setContent(mapCard(p)); infoWin.open({map:gmap,anchor:m});}); mapMarkers.push(m); bounds.extend(m.getPosition());});
-    mapMarkers.push(new google.maps.Polyline({map:gmap,path:rs.map(p=>({lat:p.ll[0],lng:p.ll[1]})),strokeColor:"#f0b628",strokeWeight:3,strokeOpacity:.9}));
-    gmap.fitBounds(bounds,60); return;
-  }
-  mapPlaces().forEach(p=>{
-    const m=new google.maps.Marker({map:gmap,position:{lat:p.ll[0],lng:p.ll[1]},title:p.n,icon:pinIcon(CAT_COLOR[p.c]||"#5c564c",isMust(p)),zIndex:isMust(p)?2:1});
-    m.addListener("click",()=>{infoWin.setContent(mapCard(p)); infoWin.open({map:gmap,anchor:m});});
-    mapMarkers.push(m); if(nearCity(p.ll)) bounds.extend(m.getPosition());
-  });
-  LODGING.filter(h=>h.ll).forEach(h=>{
-    const m=new google.maps.Marker({map:gmap,position:{lat:h.ll[0],lng:h.ll[1]},title:h.n,zIndex:3,icon:{path:HOUSE_PATH,scale:1.4,strokeColor:"#ffffff",strokeWeight:4,fillColor:"#231f1c",fillOpacity:1}});
-    const m2=new google.maps.Marker({map:gmap,position:{lat:h.ll[0],lng:h.ll[1]},clickable:false,zIndex:4,icon:{path:HOUSE_PATH,scale:1.4,strokeColor:"#231f1c",strokeWeight:2}});
-    m.addListener("click",()=>{infoWin.setContent(`<div class="mc"><b>${esc(h.n)}</b><div class="mc-m">住宿・${md(h.in)} 入住 → ${md(h.out)} 退房</div><a href="${mapsUrl(h)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`); infoWin.open({map:gmap,anchor:m});});
-    mapMarkers.push(m,m2); bounds.extend(m.getPosition());
-  });
-  if(fit&&!bounds.isEmpty()) gmap.fitBounds(bounds,40);
+  drawLeaflet(fit);
 }
 function mapCard(p){
   return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}<div class="mc-a"><button type="button" data-gocard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
@@ -1618,7 +1534,7 @@ function renderPlan(){
     </section>`;}).join("");
   watchPlanMaps();
 }
-let leafletReady=null;
+
 function ensureLeaflet(){
   if(window.L) return Promise.resolve();
   if(leafletReady) return leafletReady;
@@ -1671,8 +1587,6 @@ document.addEventListener("click",async e=>{
   if(cs){sendComment(cs.dataset.csend); return;}
   const cd=e.target.closest("[data-cdel]");
   if(cd){deleteComment(cd.dataset.cdel,cd.dataset.cid); return;}
-  const rt=e.target.closest("[data-route]");
-  if(rt){activeRoute=activeRoute===rt.dataset.route?null:rt.dataset.route; renderRoutes(); drawMarkers(!activeRoute); return;}
   const wp=e.target.closest("[data-wpick]");
   if(wp){const k=wp.dataset.wpick; mapState.people.has(k)?mapState.people.delete(k):mapState.people.add(k); syncWho(); drawMarkers(); renderTrip(); return;}
   const wm=e.target.closest("[data-wmode]");
