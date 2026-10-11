@@ -1022,7 +1022,7 @@ function updatePlaces(ids){
   });
   $("#sMust").textContent=P.filter(isMust).length; $("#sAll").textContent=P.filter(allHearted).length;
   releaseLanterns(); watchPhotos(); renderProgress(); renderBanner();
-  if(mapReady) drawMarkers();
+  if(mapReady) drawMarkers(); else refreshPlanOthers();
   if(!$("#mapPanel").hidden) renderTrip();
 }
 // 行程: tapping a place opens its card in a pop-up instead of jumping to the 地點 tab.
@@ -1310,7 +1310,7 @@ function render(){
   watchPhotos();
   renderProgress(); renderBanner();
   if(keep){const t=document.querySelector(`[data-draft="${keep.id}"]`); if(t){t.focus({preventScroll:true}); t.setSelectionRange(keep.pos,keep.pos);}}
-  if(mapReady) drawMarkers();
+  if(mapReady) drawMarkers(); else refreshPlanOthers();
   if(!$("#mapPanel").hidden) renderTrip();
 }
 // Release a lantern once, only when a place newly reaches all three hearts (not on load or re-render).
@@ -1480,8 +1480,9 @@ const mapPlaces=()=>P.filter(p=>p.ll&&mapState.cats.has(p.c)&&whoPass(p)&&dayPas
 const HOUSE_SVG='<svg viewBox="-10 -9 20 19" width="26" height="25" aria-hidden="true"><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="#231f1c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="none" stroke="#231f1c" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 function drawLeaflet(fit){
   lLayer.clearLayers(); const pts=[], di=mapState.planDay, stops=di==null?null:dayStops(di), onRoute=new Set((stops||[]).map(st=>st.id).filter(Boolean));
-  mapPlaces().forEach(p=>{if(onRoute.has(p.id)) return; const ring=isMust(p), dim=di!=null;
-    L.circleMarker(p.ll,{radius:dim?(ring?7:5):(ring?9:7),color:ring?"#f0b628":"#ffffff",weight:ring?(dim?2:3):2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:dim?.45:1,opacity:dim?.6:1}).bindTooltip(p.n).bindPopup(()=>mapCard(p,di),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
+  if(stops) pts.push(...addOthers(lLayer,di,stops));
+  else mapPlaces().forEach(p=>{const ring=isMust(p);
+    L.circleMarker(p.ll,{radius:ring?9:7,color:ring?"#f0b628":"#ffffff",weight:ring?3:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:1}).bindTooltip(p.n).bindPopup(mapCard(p),{maxWidth:280}).addTo(lLayer); if(nearCity(p.ll)) pts.push(p.ll);});
   LODGING.filter(h=>h.ll).forEach(h=>{
     L.marker(h.ll,{icon:L.divIcon({html:HOUSE_SVG,className:"house-pin",iconSize:[26,25],iconAnchor:[13,13]}),zIndexOffset:1000,title:h.n})
       .bindPopup(`<div class="mc"><b>${esc(h.n)}</b><div class="mc-m">住宿・${md(h.in)} 入住 → ${md(h.out)} 退房</div><a href="${mapsUrl(h)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div>`).addTo(lLayer); pts.push(h.ll);});
@@ -1489,12 +1490,13 @@ function drawLeaflet(fit){
   if(fit&&pts.length) lmap.fitBounds(pts,{padding:[30,30]});
 }
 function drawMarkers(fit){
+  refreshPlanOthers();
   const md0=$("#mapDay"); if(md0) md0.textContent=tripState.now?"目前只顯示現在營業中的地點。":"";
   if(!mapReady) return;
   drawLeaflet(fit);
 }
 function mapCard(p,di){
-  const add=di==null?"":dayStops(di).some(st=>st.id===p.id)?`<span class="mc-in">已在 ${md(PLAN[di].date)} 行程</span>`:`<button type="button" class="mc-add" data-addday="${p.id}">加到 ${md(PLAN[di].date)}</button>`;
+  const add=di==null?"":dayStops(di).some(st=>st.id===p.id)?`<span class="mc-in">已在 ${md(PLAN[di].date)} 行程</span>`:`<button type="button" class="mc-add" data-addday="${p.id}" data-day="${di}">加到 ${md(PLAN[di].date)}</button>`;
   return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
 }
 // First heart or comment without a name: ask right there, then finish what they tapped.
@@ -1677,7 +1679,7 @@ function daySection(di){
 function renderPlan(){
   const el=$("#planPanel"); planTick(); if(el.dataset.done) return; el.dataset.done="1";
   const ti=PLAN.findIndex(d=>d.date===todayCM());
-  el.innerHTML=`<p class="plan-lead">依 ${md(PLAN_ASOF)} 大家的愛心、已訂的住宿與餐廳、營業時間與公休日排的建議行程；標「可選」的是有空再去。按「編輯行程」可以調整順序、時間、加減地點，三個人都會即時看到。地圖上的虛線是順序示意，實際路線請按「Google 地圖路線」導航。</p>
+  el.innerHTML=`<p class="plan-lead">依 ${md(PLAN_ASOF)} 大家的愛心、已訂的住宿與餐廳、營業時間與公休日排的建議行程；標「可選」的是有空再去。按「編輯行程」可以調整順序、時間、加減地點，三個人都會即時看到。地圖上的虛線是順序示意，實際路線請按「Google 地圖路線」導航；變淡的點是其他候選地點（跟「地圖」分頁的篩選一致），點了可以加到這天。</p>
   <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
@@ -1756,10 +1758,21 @@ function drawPlanMap(box){
   ensureLeaflet().then(()=>{
     const m=L.map(box,{scrollWheelZoom:false,dragging:!matchMedia("(pointer:coarse)").matches,tap:false});
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(m);
+    const others=L.layerGroup().addTo(m);
     const all=addRoute(m,d.stops);
-    if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15});
+    if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15}); else m.setView(CITY,13);
+    addOthers(others,di,d.stops); planMaps[di]={m,others};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
+// The other places (same filters as the 地圖 tab), dimmed under a day's route; their popups offer 加到這天.
+function addOthers(target,di,stops){
+  const onRoute=new Set(stops.map(st=>st.id).filter(Boolean)), pts=[];
+  mapPlaces().forEach(p=>{if(onRoute.has(p.id)) return; const ring=isMust(p);
+    L.circleMarker(p.ll,{radius:ring?7:5,color:ring?"#f0b628":"#ffffff",weight:2,fillColor:CAT_COLOR[p.c]||"#5c564c",fillOpacity:.45,opacity:.6}).bindTooltip(p.n).bindPopup(()=>mapCard(p,di),{maxWidth:280}).addTo(target); if(nearCity(p.ll)) pts.push(p.ll);});
+  return pts;
+}
+const planMaps={};   // day index -> {m, others} so filter changes on the 地圖 tab reach the day maps too
+function refreshPlanOthers(){Object.entries(planMaps).forEach(([di,x])=>{if(!x.m._container.isConnected){delete planMaps[di]; return;} x.others.clearLayers(); addOthers(x.others,+di,dayStops(+di));});}
 // Numbered pins (宿/機 for hotel/airport, 可選 for extras) and a dashed line through the main stops. Returns all points.
 function addRoute(target,stops){
   const line=[], all=[]; let k=0;
@@ -1784,7 +1797,7 @@ document.addEventListener("click",async e=>{
   const pjd=e.target.closest("[data-pjumpday]");
   if(pjd){setTab("plan"); const d=$("#pday"+(+pjd.dataset.pjumpday+1)); if(d) d.scrollIntoView(); return;}
   const add=e.target.closest("[data-addday]");
-  if(add){if(mapState.planDay==null) return; if(lmap) lmap.closePopup(); addStop(mapState.planDay,add.dataset.addday); return;}
+  if(add){const di=add.dataset.day!==undefined?+add.dataset.day:mapState.planDay; if(di==null||!PLAN[di]) return; if(lmap) lmap.closePopup(); Object.values(planMaps).forEach(x=>x.m.closePopup()); addStop(di,add.dataset.addday); return;}
   const pe=e.target.closest("[data-pedit]");
   if(pe){const di=+pe.dataset.pedit; if(planEditing.has(di)) planEditing.delete(di); else{if(!me){askWho(()=>pe.click()); return;} planEditing.add(di);} renderDay(di); return;}
   const pmv=e.target.closest("[data-pmv]");
