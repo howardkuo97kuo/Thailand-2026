@@ -545,6 +545,9 @@ button.ps-name:hover{text-decoration:underline}
   .maptools #tq{flex:1;min-width:0}
 }
 .mc-plan{margin-top:6px;font-size:12px;font-weight:700;color:#b0281c}
+.mc-who{margin-top:6px;font-size:12px;font-weight:700;color:#b0281c}
+.mc-who.none{font-weight:400;color:#6b6358}
+.mc-who+.mc-plan{margin-top:2px}
 .pc-plan{padding:8px 14px;font-size:13px;font-weight:700;color:var(--heart);background:var(--heart-soft);border-bottom:1px solid var(--line)}
 .ps-ed .popt{width:auto;padding:0 8px;font-size:12px}
 .ps-ed .popt[aria-pressed="true"]{background:var(--ink);color:var(--card);border-color:var(--ink)}
@@ -1450,8 +1453,10 @@ const plannedDays=(id,skip)=>PLAN.map((d,i)=>i).filter(i=>i!==skip&&dayStops(i).
 const plannedLine=(id,skip)=>{const ds=plannedDays(id,skip); return ds.length?`已規劃於 ${ds.map(i=>md(PLAN[i].date)).join("、")}`:"";};
 function mapCard(p,di){
   const pl=plannedLine(p.id,di);
+  const fans=PEOPLE.filter(x=>hearted(p,x.key)).map(x=>x.name);
+  const who=!heartable(p)?`<div class="mc-who none">按摩、課程不用投票</div>`:fans.length?`<div class="mc-who">❤ ${fans.join("、")} 想去</div>`:`<div class="mc-who none">還沒有人按愛心</div>`;
   const add=di==null?"":dayStops(di).some(st=>st.id===p.id)?`<span class="mc-in">已在 ${md(PLAN[di].date)} 行程</span>`:`<button type="button" class="mc-add" data-addday="${p.id}" data-day="${di}">加到 ${md(PLAN[di].date)}</button>`;
-  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}${pl?`<div class="mc-plan">${pl}</div>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
+  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}${who}${pl?`<div class="mc-plan">${pl}</div>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
 }
 // First heart or itinerary edit without a name: ask right there, then finish what they tapped.
 let whoThen=null;
