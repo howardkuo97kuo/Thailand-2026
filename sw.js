@@ -1,7 +1,8 @@
 // Offline support: the page, its libraries and the last-seen data (itinerary, hearts, comments, photos, map tiles)
 // are kept on the device, so the site still opens where Chiang Mai reception is poor. Fresh data always wins online.
-const V = "cnx-v1";
-const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-180.png"];
+const V = "cnx-v2";
+const WAIT = 2500;   // on a weak signal, how long the page waits for the network before showing the saved copy
+const SHELL = ["./", "index.html", "places.json", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-180.png"];
 const LIMITS = { "cnx-photos": 400, "cnx-tiles": 600 };
 
 self.addEventListener("install", e => {
@@ -30,6 +31,17 @@ async function networkFirst(req, name) {
     throw err;
   }
 }
+// The page itself: network first too, but a slow network (one bar of signal) gets WAIT ms before the saved copy is
+// shown instead. The request keeps going in the background, so the next visit has the fresh copy.
+function networkFirstFast(e, name) {
+  const req = e.request;
+  const net = caches.open(name).then(c => fetch(req).then(r => { if (r.ok) c.put(req, r.clone()); return r; }));
+  e.waitUntil(net.catch(() => {}));
+  return caches.open(name).then(c => c.match(req, { ignoreSearch: true })).then(hit => {
+    if (!hit) return net;
+    return Promise.race([net.catch(() => hit), new Promise(ok => setTimeout(() => ok(hit), WAIT))]);
+  });
+}
 // Cache first for things that never change at the same URL (library versions, photos, map tiles).
 // Images are fetched again with CORS so the cached copy isn't an opaque response (those count as ~7 MB each
 // against storage); if a host refuses CORS, the image is just shown and not kept.
@@ -48,7 +60,7 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET") return;
   if ((req.headers.get("accept") || "").includes("text/event-stream")) return;   // live streams stay live
   const u = new URL(req.url);
-  if (u.origin === location.origin) { e.respondWith(networkFirst(req, V)); return; }
+  if (u.origin === location.origin) { e.respondWith(networkFirstFast(e, V)); return; }
   if (u.hostname.endsWith("firebasedatabase.app")) { e.respondWith(networkFirst(req, "cnx-data")); return; }
   if (u.hostname === "places.googleapis.com") {
     e.respondWith(u.pathname.endsWith("/media") ? cacheFirst(req, "cnx-photos") : networkFirst(req, "cnx-data"));

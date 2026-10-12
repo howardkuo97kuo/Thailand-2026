@@ -8,45 +8,28 @@ The site's 新增地點 tab writes submissions to Firebase /inbox. A scheduled C
   python tools/inbox_agent.py dup <inboxId> <placeId>
   python tools/inbox_agent.py fail <inboxId> "<reason shown to people>"
 
-Writing needs the Firebase database secret in %USERPROFILE%\\.cnx\\firebase_secret.txt (never commit it).
-The Google key is read from index.html; requests send the site's allowed Referer.
+Firebase access and the secret file are in cnx_common.py. Categories, regions and the built-in places come from
+places.json. The Google key is read from index.html; requests send the site's allowed Referer.
 """
 import io, json, os, re, sys, time, urllib.parse, urllib.request
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FB = "https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app"
+from cnx_common import ROOT, fb, site_data
+
 REFERER = "http://localhost:8765/"
-CATS = ["景點", "美食", "咖啡甜點", "按摩", "課程體驗", "購物市集", "其他"]
-REGIONS = ["古城", "古城東・塔佩門", "夜市・濱河", "尼曼", "北區", "西郊", "城南", "郊區"]
+SITE = site_data()
+CATS = SITE["cats"] + ["其他"]  # 其他 = practical stops, listed on the 已訂 tab instead of among the places
+REGIONS = SITE["regions"]
 WD = "日一二三四五六"
 GOOGLE_DAY = [1, 2, 3, 4, 5, 6, 0]  # weekdayDescriptions are Monday-first; convert to Sunday=0
 
 
-def secret():
-    p = os.path.join(os.path.expanduser("~"), ".cnx", "firebase_secret.txt")
-    try:
-        return io.open(p, encoding="utf-8").read().strip()
-    except OSError:
-        sys.exit(f"Missing Firebase secret file: {p}")
-
-
 def gkey():
     s = io.open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
-    m = re.search(r'const GMAPS_KEY="([^"]+)"', s)
-    return m.group(1), s
-
-
-def fb(path, method="GET", data=None):
-    url = f"{FB}/{path}.json?auth={urllib.parse.quote(secret())}"
-    body = None if data is None else json.dumps(data, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(url, data=body, method=method, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode("utf-8") or "null")
+    return re.search(r'const GMAPS_KEY="([^"]+)"', s).group(1)
 
 
 def google(url, body=None, mask=None):
-    key, _ = gkey()
-    headers = {"Referer": REFERER, "X-Goog-Api-Key": key}
+    headers = {"Referer": REFERER, "X-Goog-Api-Key": gkey()}
     if body is not None:
         headers["Content-Type"] = "application/json"
         headers["X-Goog-FieldMask"] = mask
@@ -92,13 +75,12 @@ def search(q):
 
 
 def known_pids():
-    _, s = gkey()
-    pids = {v: k for k, v in re.findall(r'\{id:"([^"]+)",[^\n]*?pid:"([^"]+)"', s)}
+    pids = {p["pid"]: p["id"] for p in SITE["places"] if p.get("pid")}
     added = fb("places") or {}
     for pid_, p in added.items():
         if isinstance(p, dict) and p.get("pid"):
             pids[p["pid"]] = p.get("id", pid_)
-    ids = set(re.findall(r'\{id:"([^"]+)",', s)) | set(added.keys())
+    ids = {p["id"] for p in SITE["places"]} | set(added.keys())
     return pids, ids
 
 
