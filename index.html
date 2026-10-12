@@ -1769,12 +1769,13 @@ function chatContext(){
 // AI chat: POSTs the question + chatContext() to the Worker and streams the SSE answer into the panel (text only, never markup).
 const CHAT_URL="https://cnx-chat.howardkuo97.workers.dev";
 const CHAT_ERR={rate:"問得有點快，等一下再試。",quota:"今天的免費額度用完了，明天再問。"}, CHAT_DOWN="現在連不上，稍後再試。";
+const CHAT_MAX=500;  // server limit per message; also the input's maxlength
 let chatMsgs=[], chatBusy=false;
 const chatBottom=()=>{const l=$("#chatLog"); l.scrollTop=l.scrollHeight;};
 function chatBubble(cls,text){const b=document.createElement("div"); b.className="cb "+cls; b.textContent=text; $("#chatLog").appendChild(b); chatBottom(); return b;}
 function chatOpen(on){
   $("#chatPanel").hidden=!on; $("#chatFab").hidden=on;
-  if(on){$("#chatIn").focus(); chatBottom();} else $("#chatFab").focus();
+  if(on){chatGrow(); $("#chatIn").focus(); chatBottom();} else $("#chatFab").focus();
 }
 async function chatSend(text){
   text=text.trim(); if(!text||chatBusy) return;
@@ -1793,7 +1794,7 @@ async function chatSend(text){
   };
   const line=l=>{l=l.replace(/\r$/,""); if(!l.startsWith("data:")) return; try{onData(JSON.parse(l.slice(5)));}catch{}};
   try{
-    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:chatMsgs.slice(-12).filter((m,i,a)=>i||m.role==="user"),context:chatContext()}),signal:ac.signal});
+    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:chatMsgs.slice(-12).filter((m,i,a)=>i||m.role==="user").map(m=>({role:m.role,text:m.text.slice(0,CHAT_MAX)})),context:chatContext()}),signal:ac.signal});
     if(!res.ok||!res.body){let j={}; try{j=await res.json();}catch{} code=String(j.error||"http");}
     else{
       const rd=res.body.getReader(), dec=new TextDecoder(); let buf="";
@@ -1818,6 +1819,7 @@ async function chatSend(text){
   chatBusy=false; $("#chatSend").disabled=false;
 }
 function chatGrow(){const t=$("#chatIn"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight+2,120)+"px";}
+$("#chatIn").maxLength=CHAT_MAX;
 $("#chatFab").addEventListener("click",()=>chatOpen(true));
 $("#chatClose").addEventListener("click",()=>chatOpen(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.isComposing&&!$("#chatPanel").hidden&&!document.querySelector("dialog[open]")){e.preventDefault(); chatOpen(false);}});
