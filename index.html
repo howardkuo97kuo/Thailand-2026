@@ -1729,7 +1729,8 @@ function chatContext(){
   const booked=BOOKINGS.map(b=>[(placeById(b.id)||{}).n||b.id,b.kind,md(b.date),bkTime(b),b.people&&`${b.people} 人`,b.note].filter(Boolean).join("｜"));
   const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",md(f.date),f.time,f.note].filter(Boolean).join("｜"));
   const place=(p,tip)=>[p.n+(p.loc?`（${p.loc}）`:""),[p.c,p.sub].filter(Boolean).join("/"),p.r,p.a,p.h,p.rt&&`評分 ${p.rt}${p.rv?`（${p.rv} 則）`:""}`,p.note,tip&&p.tip].filter(Boolean).join("｜");
-  const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,"【地點】",...P.map(p=>place(p,tip))].join("\n");
+  const util=UTIL.length?["【實用地點】",...UTIL.map(p=>place(p,true))]:[];  // shown on the 已訂 tab; keeps its tips
+  const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,...util,"【地點】",...P.map(p=>place(p,tip))].join("\n");
   let s=build(true); if(s.length>MAX) s=build(false);
   return s.length>MAX?s.slice(0,MAX):s;
 }
