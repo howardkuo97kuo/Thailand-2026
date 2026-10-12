@@ -48,15 +48,16 @@ function valid(b) {
   return m.every(x => x && (x.role === "user" || x.role === "model") && typeof x.text === "string" && x.text && x.text.length <= MAX_MSG) && m[m.length - 1].role === "user";
 }
 
-// Why Gemini refused, for the error body: its error.status and message, or the start of the raw text. Never throws.
-async function reason(up) {
+// Gemini's refusal body as text; never throws.
+async function bodyText(up) {
+  try { return await up.text(); } catch (err) { return ""; }
+}
+// The short reason for the error body: error.status and message, or the start of the raw text.
+function reason(t) {
   try {
-    const t = await up.text();
-    try {
-      const e = JSON.parse(t).error;
-      return [e.status, e.message].filter(Boolean).join(": ").slice(0, 200);
-    } catch (err) { return t.slice(0, 200); }
-  } catch (err) { return ""; }
+    const e = JSON.parse(t).error;
+    return [e.status, e.message].filter(Boolean).join(": ").slice(0, 200);
+  } catch (err) { return t.slice(0, 200); }
 }
 
 // Turns Gemini's SSE into {text} lines, then {sources} and {done}; a stream with no text at all counts as a failure.
@@ -132,7 +133,7 @@ export default {
 
     // First model that answers wins; an overloaded or refusing one just hands over to the next.
     const notes = [];
-    let status = 0, all429 = true;
+    let status = 0, all429 = true, allDaily = true;   // a 429 is the daily quota only if its body says PerDay
     for (const model of MODELS) {
       let up;
       try { up = await ask(env, body, model); } catch (err) {
@@ -148,10 +149,13 @@ export default {
           headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store", "X-Model": model, ...cors(origin) },
         });
       }
+      const text = up.ok ? "" : await bodyText(up);
       if (up.status !== 429) all429 = false;
-      notes.push(up.ok ? `${model} no_body` : `${model} ${up.status} ${await reason(up)}`);
+      else if (!text.includes("PerDay")) allDaily = false;
+      notes.push(up.ok ? `${model} no_body` : `${model} ${up.status} ${reason(text)}`);
     }
     const extra = { status, detail: notes.join(" | ").slice(0, 400) };
-    return all429 ? fail(429, "quota", origin, extra) : fail(502, "upstream", origin, extra);
+    if (!all429) return fail(502, "upstream", origin, extra);
+    return fail(429, allDaily ? "quota" : "rate", origin, extra);
   },
 };
