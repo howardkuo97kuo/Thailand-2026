@@ -28,8 +28,8 @@ function cors(origin) {
     "Vary": "Origin",
   };
 }
-function fail(status, error, origin) {
-  return new Response(JSON.stringify({ error }), { status, headers: { "Content-Type": "application/json", ...cors(origin) } });
+function fail(status, error, origin, extra) {
+  return new Response(JSON.stringify({ error, ...extra }), { status, headers: { "Content-Type": "application/json", ...cors(origin) } });
 }
 function limited(ip) {
   const now = Date.now();
@@ -45,6 +45,17 @@ function valid(b) {
   const m = b.messages;
   if (m.length < 1 || m.length > MAX_MSGS) return false;
   return m.every(x => x && (x.role === "user" || x.role === "model") && typeof x.text === "string" && x.text && x.text.length <= MAX_MSG) && m[m.length - 1].role === "user";
+}
+
+// Why Gemini refused, for the error body: its error.status and message, or the start of the raw text. Never throws.
+async function reason(up) {
+  try {
+    const t = await up.text();
+    try {
+      const e = JSON.parse(t).error;
+      return [e.status, e.message].filter(Boolean).join(": ").slice(0, 200);
+    } catch (err) { return t.slice(0, 200); }
+  } catch (err) { return ""; }
 }
 
 // Turns Gemini's SSE into {text} lines, then {sources} and {done}; a stream with no text at all counts as a failure.
@@ -101,7 +112,7 @@ export default {
     try { body = await request.json(); } catch (err) { return fail(400, "bad_request", origin); }
     if (!valid(body)) return fail(400, "bad_request", origin);
     if (limited(request.headers.get("CF-Connecting-IP") || "unknown")) return fail(429, "rate", origin);
-    if (!env.GEMINI_API_KEY) return fail(502, "upstream", origin);
+    if (!env.GEMINI_API_KEY) return fail(502, "upstream", origin, { detail: "no_key" });
 
     let up;
     try {
@@ -115,9 +126,12 @@ export default {
           generationConfig: { maxOutputTokens: 1024, temperature: 0.3, thinkingConfig: { thinkingBudget: 0 } },
         }),
       });
-    } catch (err) { return fail(502, "upstream", origin); }
-    if (up.status === 429) return fail(429, "quota", origin);
-    if (!up.ok || !up.body) return fail(502, "upstream", origin);
+    } catch (err) { return fail(502, "upstream", origin, { detail: "fetch_failed" }); }
+    if (!up.ok) {
+      const extra = { status: up.status, detail: await reason(up) };
+      return up.status === 429 ? fail(429, "quota", origin, extra) : fail(502, "upstream", origin, extra);
+    }
+    if (!up.body) return fail(502, "upstream", origin, { detail: "no_body" });
 
     const { readable, writable } = new TransformStream();
     const job = relay(up, writable.getWriter());
