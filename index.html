@@ -665,6 +665,30 @@ header.top>.side{order:2}
 @media (max-width:640px){.hero-art{max-width:300px;margin-left:auto}}
 @media (prefers-reduced-motion:reduce){.hero-art .lanterns g,.khomloi{animation:none}.khomloi{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* AI chat: floating button (above .rail, below .toast) + a bottom sheet on phones / a corner card on wide screens */
+.leaflet-container{isolation:isolate}  /* Leaflet panes use z-index up to 1000; keep them under the chat button and toast */
+.chatfab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:8;font:inherit;font-size:14px;font-weight:700;background:var(--primary);color:var(--card);border:0;border-radius:999px;padding:0 18px;min-height:44px;cursor:pointer;box-shadow:0 8px 20px -6px rgba(0,0,0,.4)}
+.chatpanel{position:fixed;left:0;right:0;bottom:0;height:85dvh;z-index:9;display:flex;flex-direction:column;background:var(--card);color:var(--ink);border:1px solid var(--line);border-bottom:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 28px -10px rgba(0,0,0,.45);overflow:hidden}
+@media (min-width:640px){.chatpanel{left:auto;right:16px;bottom:16px;width:380px;height:560px;max-height:calc(100dvh - 32px);border-bottom:1px solid var(--line);border-radius:16px}}
+.chat-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 6px 16px;border-bottom:1px solid var(--line);flex:none}
+.chat-bar h2{font-family:var(--f-display);font-size:17px;margin:0}
+.chat-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:14px 14px 6px;display:flex;flex-direction:column;gap:10px}
+.cb{max-width:85%;padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.cb.u{align-self:flex-end;background:var(--primary);color:var(--card);border-bottom-right-radius:4px}
+.cb.a{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.cb.a.wait{color:var(--muted)}
+.cb.a.err{color:var(--heart);border-color:var(--heart-line);background:var(--heart-soft)}
+.cb-src{align-self:flex-start;max-width:85%;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px;margin-top:-4px;overflow-wrap:anywhere}
+.cb-src a{color:var(--primary);text-underline-offset:3px}
+.chat-empty{margin:auto 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.chat-empty p{margin:0 0 4px;color:var(--muted);font-size:13px}
+.chat-empty button{font:inherit;font-size:14px;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer;text-align:left}
+.chat-empty button:hover{border-color:var(--primary)}
+.chat-form{display:flex;gap:8px;align-items:flex-end;padding:8px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line);flex:none}
+.chat-form textarea{flex:1;min-width:0;font:inherit;font-size:16px;line-height:1.4;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:9px 12px;resize:none;max-height:120px}
+.chat-form button{font:inherit;font-size:14px;font-weight:700;background:var(--primary);color:var(--card);border:0;border-radius:12px;padding:0 16px;min-height:44px;cursor:pointer}
+.chat-form button:disabled{opacity:.5;cursor:default}
+@media (min-width:640px){.chat-form{padding-bottom:10px}}
 </style>
 </head><body>
 <dialog id="qp" class="qp" aria-labelledby="qpName"><div class="qp-in" id="qpIn"></div></dialog>
@@ -680,6 +704,14 @@ header.top>.side{order:2}
   </form>
 </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">復原</button></div>
+<button type="button" id="chatFab" class="chatfab" aria-haspopup="dialog">問 AI</button>
+<div id="chatPanel" class="chatpanel" role="dialog" aria-label="問 AI" hidden>
+  <div class="chat-bar"><h2>問 AI</h2><button type="button" id="chatClose" class="linkbtn">關閉</button></div>
+  <div id="chatLog" class="chat-log" aria-live="polite">
+    <div id="chatEmpty" class="chat-empty"><p>問清邁行程相關的問題：</p><button type="button" data-chatq="明天的行程是什麼？">明天的行程是什麼？</button><button type="button" data-chatq="住宿附近有什麼按摩？">住宿附近有什麼按摩？</button><button type="button" data-chatq="清邁現在天氣如何？">清邁現在天氣如何？</button></div>
+  </div>
+  <form id="chatForm" class="chat-form"><textarea id="chatIn" rows="1" maxlength="500" placeholder="輸入問題…" aria-label="輸入問題"></textarea><button type="submit" id="chatSend">送出</button></form>
+</div>
 
 <div class="wrap">
   <header class="top">
@@ -1734,6 +1766,65 @@ function chatContext(){
   let s=build(true); if(s.length>MAX) s=build(false);
   return s.length>MAX?s.slice(0,MAX):s;
 }
+// AI chat: POSTs the question + chatContext() to the Worker and streams the SSE answer into the panel (text only, never markup).
+const CHAT_URL="https://cnx-chat.howardkuo97.workers.dev";
+const CHAT_ERR={rate:"問得有點快，等一下再試。",quota:"今天的免費額度用完了，明天再問。"}, CHAT_DOWN="現在連不上，稍後再試。";
+let chatMsgs=[], chatBusy=false;
+const chatBottom=()=>{const l=$("#chatLog"); l.scrollTop=l.scrollHeight;};
+function chatBubble(cls,text){const b=document.createElement("div"); b.className="cb "+cls; b.textContent=text; $("#chatLog").appendChild(b); chatBottom(); return b;}
+function chatOpen(on){
+  $("#chatPanel").hidden=!on; $("#chatFab").hidden=on;
+  if(on){$("#chatIn").focus(); chatBottom();} else $("#chatFab").focus();
+}
+async function chatSend(text){
+  text=text.trim(); if(!text||chatBusy) return;
+  const inp=$("#chatIn"), restore=()=>{if(!inp.value) inp.value=text; chatGrow();};
+  $("#chatEmpty").hidden=true; chatBubble("u",text);
+  if(!navigator.onLine){chatBubble("a err","需要網路才能問。"); restore(); return;}
+  chatBusy=true; $("#chatSend").disabled=true;
+  chatMsgs.push({role:"user",text});
+  const bub=chatBubble("a wait","…"), ac=new AbortController(), timer=setTimeout(()=>ac.abort(),60000);
+  let got="", code="", done=false, srcs=null;
+  const onData=j=>{
+    if(typeof j.text==="string"&&j.text){if(!got) bub.className="cb a"; got+=j.text; bub.textContent=got; chatBottom();}
+    else if(Array.isArray(j.sources)) srcs=j.sources;
+    else if(j.done) done=true;
+    else if(j.error) code=String(j.error);
+  };
+  const line=l=>{l=l.replace(/\r$/,""); if(!l.startsWith("data:")) return; try{onData(JSON.parse(l.slice(5)));}catch{}};
+  try{
+    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:chatMsgs.slice(-12).filter((m,i,a)=>i||m.role==="user"),context:chatContext()}),signal:ac.signal});
+    if(!res.ok||!res.body){let j={}; try{j=await res.json();}catch{} code=String(j.error||"http");}
+    else{
+      const rd=res.body.getReader(), dec=new TextDecoder(); let buf="";
+      for(;;){
+        const r=await rd.read(); buf+=dec.decode(r.value,{stream:!r.done});
+        const ls=buf.split("\n"); buf=ls.pop(); ls.forEach(line);
+        if(r.done) break;
+      }
+      line(buf);
+    }
+  }catch{code=code||"net";}
+  clearTimeout(timer);
+  if(!done||code||!got){
+    if(got) bub.textContent=got+"（回答中斷）";
+    else{bub.className="cb a err"; bub.textContent=CHAT_ERR[code]||CHAT_DOWN;}
+    chatMsgs.pop(); restore();
+  }else{
+    chatMsgs.push({role:"model",text:got});
+    const ok=(srcs||[]).filter(s=>s&&typeof s.url==="string"&&s.url.startsWith("https://"));
+    if(ok.length){const d=document.createElement("div"); d.className="cb-src"; d.innerHTML=ok.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title||s.url)}</a>`).join(""); $("#chatLog").appendChild(d); chatBottom();}
+  }
+  chatBusy=false; $("#chatSend").disabled=false;
+}
+function chatGrow(){const t=$("#chatIn"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight+2,120)+"px";}
+$("#chatFab").addEventListener("click",()=>chatOpen(true));
+$("#chatClose").addEventListener("click",()=>chatOpen(false));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.isComposing&&!$("#chatPanel").hidden&&!document.querySelector("dialog[open]")){e.preventDefault(); chatOpen(false);}});
+$("#chatForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#chatIn"), v=t.value; if(!v.trim()||chatBusy) return; t.value=""; chatGrow(); chatSend(v);});
+$("#chatIn").addEventListener("input",chatGrow);
+$("#chatIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault(); $("#chatForm").requestSubmit();}});
+$("#chatEmpty").addEventListener("click",e=>{const b=e.target.closest("[data-chatq]"); if(b&&!chatBusy) chatSend(b.dataset.chatq);});
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
 const todayCM=()=>cmToday();
 // Times are picked in half-hour steps (05:00–24:00); an older off-grid time (e.g. 19:45) stays selectable until changed.
