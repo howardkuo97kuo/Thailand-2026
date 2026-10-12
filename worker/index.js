@@ -1,6 +1,6 @@
 // Chat proxy for the trip site: checks the caller, adds the rules and the API key, and streams Gemini's answer back.
 // Single file, pasted into the Cloudflare dashboard editor. The key is the Worker secret GEMINI_API_KEY.
-const MODEL = "gemini-2.5-flash";   // the only change needed if Google renames or retires the model
+const MODEL = "gemini-3.8-flash";   // the only change needed if Google renames or retires the model
 const ORIGINS = ["https://howardkuo97kuo.github.io", "http://localhost:8765"];
 const MAX_MSGS = 12, MAX_MSG = 500, MAX_CTX = 30000;
 const RATE = 10;   // requests per IP per minute
@@ -101,6 +101,23 @@ async function relay(up, writer) {
   try { await writer.close(); } catch (err) { /* client is gone */ }
 }
 
+// Search grounding may be missing on the free tier; after one refusal the Worker answers without it for a while.
+let searchOffUntil = 0, searchWhy = "";
+
+function ask(env, body, search) {
+  const req = {
+    systemInstruction: { parts: [{ text: `${RULES}\n\n<網站資料>\n${body.context}\n</網站資料>` }] },
+    contents: body.messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+    generationConfig: { maxOutputTokens: 2048, thinkingConfig: { thinkingLevel: "low" } },
+  };
+  if (search) req.tools = [{ google_search: {} }];
+  return fetch(UPSTREAM, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+    body: JSON.stringify(req),
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
@@ -114,30 +131,29 @@ export default {
     if (limited(request.headers.get("CF-Connecting-IP") || "unknown")) return fail(429, "rate", origin);
     if (!env.GEMINI_API_KEY) return fail(502, "upstream", origin, { detail: "no_key" });
 
-    let up;
+    let up, search = Date.now() >= searchOffUntil, searchFailed = false;
     try {
-      up = await fetch(UPSTREAM, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: `${RULES}\n\n<網站資料>\n${body.context}\n</網站資料>` }] },
-          contents: body.messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
-          tools: [{ google_search: {} }],
-          generationConfig: { maxOutputTokens: 1024, temperature: 0.3, thinkingConfig: { thinkingBudget: 0 } },
-        }),
-      });
+      up = await ask(env, body, search);
+      if (search && !up.ok) {
+        searchWhy = up.status + " " + await reason(up);
+        searchOffUntil = Date.now() + 10 * 60000;
+        searchFailed = true;
+        search = false;
+        up = await ask(env, body, false);
+      }
     } catch (err) { return fail(502, "upstream", origin, { detail: "fetch_failed" }); }
     if (!up.ok) {
       const extra = { status: up.status, detail: await reason(up) };
+      if (searchFailed) extra.search_detail = searchWhy;
       return up.status === 429 ? fail(429, "quota", origin, extra) : fail(502, "upstream", origin, extra);
     }
     if (!up.body) return fail(502, "upstream", origin, { detail: "no_body" });
 
+    const headers = { "Content-Type": "text/event-stream", "Cache-Control": "no-store", "X-Search": search ? "on" : "off", ...cors(origin) };
+    if (!search && searchWhy) headers["X-Search-Detail"] = searchWhy.replace(/[^\x20-\x7E]/g, "?").slice(0, 150);
     const { readable, writable } = new TransformStream();
     const job = relay(up, writable.getWriter());
     if (ctx && ctx.waitUntil) ctx.waitUntil(job);
-    return new Response(readable, {
-      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-store", ...cors(origin) },
-    });
+    return new Response(readable, { headers });
   },
 };
