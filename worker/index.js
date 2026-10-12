@@ -43,8 +43,8 @@ function limited(ip) {
 function valid(b) {
   if (!b || !Array.isArray(b.messages) || typeof b.context !== "string" || b.context.length > MAX_CTX) return false;
   const m = b.messages;
-  if (m.length < 1 || m.length > MAX_MSGS || m[m.length - 1].role !== "user") return false;
-  return m.every(x => x && (x.role === "user" || x.role === "model") && typeof x.text === "string" && x.text && x.text.length <= MAX_MSG);
+  if (m.length < 1 || m.length > MAX_MSGS) return false;
+  return m.every(x => x && (x.role === "user" || x.role === "model") && typeof x.text === "string" && x.text && x.text.length <= MAX_MSG) && m[m.length - 1].role === "user";
 }
 
 // Turns Gemini's SSE into {text} lines, then {sources} and {done}; a stream with no text at all counts as a failure.
@@ -112,7 +112,7 @@ export default {
           systemInstruction: { parts: [{ text: `${RULES}\n\n<網站資料>\n${body.context}\n</網站資料>` }] },
           contents: body.messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
           tools: [{ google_search: {} }],
-          generationConfig: { maxOutputTokens: 1024, temperature: 0.3 },
+          generationConfig: { maxOutputTokens: 1024, temperature: 0.3, thinkingConfig: { thinkingBudget: 0 } },
         }),
       });
     } catch (err) { return fail(502, "upstream", origin); }
