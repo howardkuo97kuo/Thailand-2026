@@ -1718,6 +1718,21 @@ function dayStops(di){
   if(f&&!stops.some(st=>st.at)) f.kind==="arrive"?stops.unshift({t:f.time,d:f.note,at:AIRPORT}):stops.push({t:toAirport(f),d:f.note,at:AIRPORT});
   return stops;
 }
+// Plain-text summary of the site's data for the AI chat; never longer than 30,000 characters.
+// Order matters: 行程 comes first and 地點 last, so any cut only eats places (tips go first).
+function chatContext(){
+  const MAX=30000, now=new Date(), pad=n=>String(n).padStart(2,"0");
+  const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}（週${WD[now.getDay()]}）`;
+  const stopName=st=>st.id?(placeById(st.id)||{}).n:st.hotel?(LODGING.find(x=>x.id===st.hotel)||{}).n:st.at&&st.at.n;
+  const plan=PLAN.flatMap((d,di)=>[`${md(d.date)}${d.title}`,...dayStops(di).filter(stopName).map(st=>`${st.t||"未定"} ${st.opt?"（可選）":""}${stopName(st)}${st.d?"｜"+st.d:""}`)]);
+  const stay=LODGING.map(l=>[l.n,l.r,l.a,`入住 ${md(l.in)}`,`退房 ${md(l.out)}`,l.note].filter(Boolean).join("｜"));
+  const booked=BOOKINGS.map(b=>[(placeById(b.id)||{}).n||b.id,b.kind,md(b.date),bkTime(b),b.people&&`${b.people} 人`,b.note].filter(Boolean).join("｜"));
+  const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",md(f.date),f.time,f.note].filter(Boolean).join("｜"));
+  const place=(p,tip)=>[p.n+(p.loc?`（${p.loc}）`:""),[p.c,p.sub].filter(Boolean).join("/"),p.r,p.a,p.h,p.rt&&`評分 ${p.rt}${p.rv?`（${p.rv} 則）`:""}`,p.note,tip&&p.tip].filter(Boolean).join("｜");
+  const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,"【地點】",...P.map(p=>place(p,tip))].join("\n");
+  let s=build(true); if(s.length>MAX) s=build(false);
+  return s.length>MAX?s.slice(0,MAX):s;
+}
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
 const todayCM=()=>cmToday();
 // Times are picked in half-hour steps (05:00–24:00); an older off-grid time (e.g. 19:45) stays selectable until changed.
