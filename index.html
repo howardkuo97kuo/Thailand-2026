@@ -704,7 +704,7 @@ header.top>.side{order:2}
   </form>
 </dialog>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden><span id="toastMsg"></span><button type="button" id="toastUndo">復原</button></div>
-<button type="button" id="chatFab" class="chatfab" aria-haspopup="dialog">問 AI</button>
+<button type="button" id="chatFab" class="chatfab" aria-haspopup="dialog" hidden>問 AI</button>
 <div id="chatPanel" class="chatpanel" role="dialog" aria-label="問 AI" hidden>
   <div class="chat-bar"><h2>問 AI</h2><button type="button" id="chatClose" class="linkbtn">關閉</button></div>
   <div id="chatLog" class="chat-log" aria-live="polite">
@@ -1753,8 +1753,8 @@ function dayStops(di){
 // Plain-text summary of the site's data for the AI chat; never longer than 30,000 characters.
 // Order matters: 行程 comes first and 地點 last, so any cut only eats places (tips go first).
 function chatContext(){
-  const MAX=30000, now=new Date(), pad=n=>String(n).padStart(2,"0");
-  const today=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}（週${WD[now.getDay()]}）`;
+  const MAX=30000, now=cmNow(), pad=n=>String(n).padStart(2,"0");   // Chiang Mai clock, like the rest of the site
+  const today=`${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())}（週${WD[now.getUTCDay()]}）`;
   const stopName=st=>st.id?(placeById(st.id)||{}).n:st.hotel?(LODGING.find(x=>x.id===st.hotel)||{}).n:st.at&&st.at.n;
   const plan=PLAN.flatMap((d,di)=>[`${md(d.date)}${d.title}`,...dayStops(di).filter(stopName).map(st=>`${st.t||"未定"} ${st.opt?"（可選）":""}${stopName(st)}${st.d?"｜"+st.d:""}`)]);
   const stay=LODGING.map(l=>[l.n,l.r,l.a,`入住 ${md(l.in)}`,`退房 ${md(l.out)}`,l.note].filter(Boolean).join("｜"));
@@ -1794,7 +1794,7 @@ async function chatSend(text){
   };
   const line=l=>{l=l.replace(/\r$/,""); if(!l.startsWith("data:")) return; try{onData(JSON.parse(l.slice(5)));}catch{}};
   try{
-    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:chatMsgs.slice(-12).filter((m,i,a)=>i||m.role==="user").map(m=>({role:m.role,text:m.text.slice(0,CHAT_MAX)})),context:chatContext()}),signal:ac.signal});
+    const res=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:chatMsgs.slice(-12).filter((m,i,a)=>i||m.role==="user").map(m=>({role:m.role,text:m.text.slice(0,CHAT_MAX).replace(/[\uD800-\uDBFF]$/,"")})),context:chatContext()}),signal:ac.signal});
     if(!res.ok||!res.body){let j={}; try{j=await res.json();}catch{} code=String(j.error||"http");}
     else{
       const rd=res.body.getReader(), dec=new TextDecoder(); let buf="";
@@ -1821,6 +1821,7 @@ async function chatSend(text){
 function chatGrow(){const t=$("#chatIn"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight+2,120)+"px";}
 $("#chatIn").maxLength=CHAT_MAX;
 $("#chatFab").addEventListener("click",()=>chatOpen(true));
+$("#chatFab").hidden=false;   // shown only once the chat code has loaded
 $("#chatClose").addEventListener("click",()=>chatOpen(false));
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!e.isComposing&&!$("#chatPanel").hidden&&!document.querySelector("dialog[open]")){e.preventDefault(); chatOpen(false);}});
 $("#chatForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#chatIn"), v=t.value; if(!v.trim()||chatBusy) return; t.value=""; chatGrow(); chatSend(v);});

@@ -61,11 +61,18 @@
 | 允許的來源 | `https://howardkuo97kuo.github.io`、`http://localhost:8765` |
 
 限制：每次 1–12 則訊息、每則最多 500 字（網頁重送舊訊息時會截到 500 字）、網站資料最多 30,000 字；
-每個 IP 每分鐘 10 次（算在 Worker 的記憶體裡，盡力而為）。問清邁以外的事，固定回「這個我幫不上忙，我只回答清邁行程相關的問題。」
+Worker 裡寫了每個 IP 每分鐘 10 次，但計數是每個 Worker 實例各算各的，實測連續 11 次請求都過了，所以不能靠它擋人。
+真正的上限只有 Gemini 免費層的每日額度（全部模型合計約 1,060 次回答）。偽造 `Origin` 標頭的人可以用光當天的額度，
+也能自己帶任意的網站資料，等於把這個 Worker 當成用這把金鑰的 Gemini 代理；但他們讀不到金鑰，也不會產生費用（沒有綁付款方式）。
+要有持久的限流，得用 Cloudflare KV 或 rate-limit binding。問清邁以外的事，固定回「這個我幫不上忙，我只回答清邁行程相關的問題。」
 
 改了 `worker/index.js` 之後要手動重新部署（這台電腦沒有 Node.js，不用 wrangler）：
 Cloudflare 主控台 → Workers & Pages → `cnx-chat` → Edit code → 貼上整個檔案 → Deploy。
 網頁不用跟著改，除非 Worker 網址變了（`index.html` 的 `CHAT_URL`）。
+部署後到網站問一個問題確認：瀏覽器開發者工具 → Network，回應標頭 `X-Model` 會顯示是哪個模型回答的。
+
+**換金鑰。** 到 Google AI Studio 建一把新金鑰 → 在 Cloudflare 的 Settings → Variables and Secrets 把 `GEMINI_API_KEY`
+改成新的並 Deploy → 回 AI Studio 刪掉舊金鑰 → 到網站問一個問題確認還答得出來。
 
 **模型。** Worker 依序試 `MODELS` 裡的模型，遇到過載、額度用完或被拒絕就換下一個：
 `gemini-3.5-flash-lite`、`gemini-3.1-flash-lite`、`gemini-3.8-flash`、`gemini-3.6-flash`、`gemini-3-flash-preview`。
