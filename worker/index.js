@@ -1,8 +1,8 @@
 // Chat proxy for the trip site: checks the caller, adds the rules and the API key, and streams Gemini's answer back.
 // Single file, pasted into the Cloudflare dashboard editor. The key is the Worker secret GEMINI_API_KEY.
 // Models are tried in order; the next one is used when a model is overloaded, out of quota or refuses.
-// Free-tier daily limits (2026-10): 3.1 Flash-Lite 500, the Flash models 20 each, so the Lite model leads.
-const MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.6-flash"];
+// Free-tier daily limits (2026-10): the two Flash-Lite models 500 each, every Flash model 20, so the Lite models lead.
+const MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.8-flash", "gemini-3.6-flash", "gemini-3-flash-preview"];
 const SEARCH = false;   // Google Search grounding has no free-tier quota on 3.x models; set true once billing is on
 const ORIGINS = ["https://howardkuo97kuo.github.io", "http://localhost:8765"];
 const MAX_MSGS = 12, MAX_MSG = 500, MAX_CTX = 30000;
