@@ -854,7 +854,7 @@ header.top>.side{order:2}
 <script>
 // Places, categories and regions live in places.json (the inbox agent reads the same file), so the page starts once it has loaded.
 (async()=>{
-let DATA; try{const r=await fetch("places.json"); if(!r.ok) throw r.status; DATA=await r.json();}
+let DATA; try{const r=await fetch("places.json",{cache:"no-cache"}); /* revalidate: GitHub Pages lets browsers keep it 10 min, and new bookings need the new places */ if(!r.ok) throw r.status; DATA=await r.json();}
 catch(e){const n=document.getElementById("notice"); n.textContent="地點資料沒有載入，請檢查網路後重新整理。"; n.hidden=false; return;}
 const CATS=DATA.cats, REGIONS=DATA.regions, P=DATA.places;
 // Category icons: one line family (24px grid, round joins) drawn for this trip — chedi, khao soi bowl, coffee,
