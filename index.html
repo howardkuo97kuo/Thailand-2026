@@ -959,7 +959,8 @@ const PLAN=[
 // Bookings already made (restaurants, classes): listed on the 住宿 tab, badged on the place, and locked in 行程.
 const BOOKINGS=[
   {id:"house",kind:"餐廳",date:"2026-10-15",time:"18:30",people:3},
-  {id:"asiascenic",kind:"課程",date:"2026-10-16",time:"09:00",end:"14:00",note:"約 5 小時，含午餐"}
+  {id:"asiascenic",kind:"課程",date:"2026-10-16",time:"09:00",end:"14:00",note:"約 5 小時，含午餐"},
+  {id:"baanlandai",kind:"餐廳",date:"2026-10-15",time:"12:00",people:2,note:"古城分店；Charlie 名義訂位（Howard、Charlie）"}
 ];
 const bkTime=b=>b.time+(b.end?"–"+b.end:"");
 // Flights. The arrival stop shows the landing time; the next stop starts after immigration and the ride (ready).
@@ -1711,7 +1712,7 @@ function renderSpa(){
 const navUrl=pt=>pt.p&&pt.p.pid?`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(pt.n)}&destination_place_id=${pt.p.pid}`:pt.ll?`https://www.google.com/maps/dir/?api=1&destination=${pt.ll.join(",")}`:pt.url;
 // 這天提醒: what still needs doing (todo) and the few things worth remembering, per day.
 const DAY_TIPS={
-  "2026-10-15":{tips:["早班機帶行李先寄放 Jhaban，問問能不能提早入住","午餐只有果昔，餓了在古城隨便補一餐"]},
+  "2026-10-15":{tips:["早班機帶行李先寄放 Jhaban，問問能不能提早入住","中午 Baan Landai 已訂 2 位（Howard、Charlie），Charlie 名義"]},
   "2026-10-16":{todo:["確認料理課的接送時間"],tips:["料理課前不要吃早餐，份量很多"]},
   "2026-10-17":{tips:["穿長褲、遮肩，帶現金（寺廟門票每間約 50 銖）"]},
   "2026-10-18":{tips:["09:00 退房帶著行李","週日夜市人很多，顧好包包"]},
