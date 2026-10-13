@@ -965,14 +965,14 @@ const bkTime=b=>b.time+(b.end?"–"+b.end:"");
 // Flights. The arrival stop shows the landing time; the next stop starts after immigration and the ride (ready).
 // The departure stop is when to be at the airport: 2.5 hours before take-off, on the half hour.
 const FLIGHTS=[
-  {date:"2026-10-15",kind:"arrive",time:"10:25",ready:"11:00",note:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
-  {date:"2026-10-20",kind:"depart",time:"17:20",note:"17:20 起飛；國際線建議 2.5 小時前到機場"},
+  {date:"2026-10-15",kind:"arrive",time:"10:25",ready:"11:00",no:"BR257",airline:"長榮航空",people:"Howard、Charlie",note:"Howard、Charlie 搭長榮 BR257，10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
+  {date:"2026-10-20",kind:"depart",time:"17:20",people:"三個人一起",note:"三個人一起回程，17:20 起飛；國際線建議 2.5 小時前到機場"},
   // A person flying separately (who): listed on 已訂 and in that day's reminders, but not a stop on the group route.
   {date:"2026-10-15",kind:"arrive",time:"16:05",who:"lindsay",no:"JX751",airline:"星宇航空",note:"Lindsay 另外搭星宇 JX751，16:05 落地；出關、領行李後 Grab 到古城約 20 分鐘，大約 17:00 會合"}
 ];
 const flightOn=date=>FLIGHTS.find(f=>f.date===date&&!f.who);   // the group's flight that day
 const groupFlight=kind=>FLIGHTS.find(f=>f.kind===kind&&!f.who);
-const flightTitle=f=>(f.kind==="arrive"?"抵達清邁":"從清邁起飛")+(f.who?`（${(WHO[f.who]||{name:f.who}).name}）`:"")+(f.no?`・${f.airline?f.airline+" ":""}${f.no}`:"");
+const flightTitle=f=>(f.kind==="arrive"?"抵達清邁":"從清邁起飛")+(f.who?`（${(WHO[f.who]||{name:f.who}).name}）`:f.people?`（${f.people}）`:"")+(f.no?`・${f.airline?f.airline+" ":""}${f.no}`:"");
 const toAirport=f=>{const [h,m]=f.time.split(":").map(Number), t=Math.floor((h*60+m-150)/30)*30; return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");};
 const bookingOf=p=>BOOKINGS.find(b=>b.id===p.id);
 // Lodging is booked, so it lives on its own tab as a fixed itinerary, not a choice.
@@ -1764,7 +1764,7 @@ function chatContext(){
   const plan=PLAN.flatMap((d,di)=>[`${md(d.date)}${d.title}`,...dayStops(di).filter(stopName).map(st=>`${st.t||"未定"} ${st.opt?"（可選）":""}${stopName(st)}${st.d?"｜"+st.d:""}`)]);
   const stay=LODGING.map(l=>[l.n,l.r,l.a,`入住 ${md(l.in)}`,`退房 ${md(l.out)}`,l.note].filter(Boolean).join("｜"));
   const booked=BOOKINGS.map(b=>[(placeById(b.id)||{}).n||b.id,b.kind,md(b.date),bkTime(b),b.people&&`${b.people} 人`,b.note].filter(Boolean).join("｜"));
-  const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",f.who?(WHO[f.who]||{name:f.who}).name+" 另外搭":"全團",f.no&&`${f.airline||""} ${f.no}`.trim(),md(f.date),f.time,f.note].filter(Boolean).join("｜"));
+  const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",f.who?(WHO[f.who]||{name:f.who}).name+" 另外搭":f.people||"全團",f.no&&`${f.airline||""} ${f.no}`.trim(),md(f.date),f.time,f.note].filter(Boolean).join("｜"));
   const place=(p,tip)=>[p.n+(p.loc?`（${p.loc}）`:""),[p.c,p.sub].filter(Boolean).join("/"),p.r,p.a,p.h,p.rt&&`評分 ${p.rt}${p.rv?`（${p.rv} 則）`:""}`,p.note,tip&&p.tip].filter(Boolean).join("｜");
   const util=UTIL.length?["【實用地點】",...UTIL.map(p=>place(p,true))]:[];  // shown on the 已訂 tab; keeps its tips
   const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,...util,"【地點】",...P.map(p=>place(p,tip))].join("\n");
