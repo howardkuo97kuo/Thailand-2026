@@ -51,8 +51,11 @@ This file adds how to work with Howard and what has gone wrong before.
   their text with `textContent`. `?now=2026-10-16T13:50` previews a trip moment (下一站, today).
 - Commit messages end with a `Co-Authored-By:` line for Claude.
 
-## Open items (as of 10/13)
+## Open items (as of 10/13 night)
 - The `/feedback` rule must be published before the 意見 tab can save.
-- Bookings still to make: Ziri (10/17 17:00), CHUM (10/17), Ekachan (10/18), Makkha (10/20 11:00, KKday/Klook),
-  Kiew Kai Ka (10/16); confirm the cooking-class pickup.
-- Lindsay has no hearts yet.
+- Booked: THE HOUSE (10/15 18:30, 3), Baan Landai Old Town (10/15 12:00, 2, under Charlie), cooking class (10/16).
+- Still to book: Reliever (10/15 14:00), Kiew Kai Ka (10/16 18:30), CHUM (10/17 12:00), Ziri (10/17 16:00),
+  Ekachan (10/18 12:30), 1% Pilates and Muse Forestias (10/19), Makkha (10/20 11:00, KKday/Klook);
+  confirm the cooking-class pickup. Each day's 這天提醒 lists these automatically.
+- Flights: Howard and Charlie EVA BR257 (10/15 10:25), Lindsay STARLUX JX751 (10/15 16:05); all three fly
+  back together 10/20 17:20 (flight number not given yet).
