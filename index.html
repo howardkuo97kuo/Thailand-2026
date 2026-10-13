@@ -966,9 +966,13 @@ const bkTime=b=>b.time+(b.end?"–"+b.end:"");
 // The departure stop is when to be at the airport: 2.5 hours before take-off, on the half hour.
 const FLIGHTS=[
   {date:"2026-10-15",kind:"arrive",time:"10:25",ready:"11:00",note:"10:25 落地；出關、領行李約 30–45 分鐘，Grab 到古城約 20 分鐘"},
-  {date:"2026-10-20",kind:"depart",time:"17:20",note:"17:20 起飛；國際線建議 2.5 小時前到機場"}
+  {date:"2026-10-20",kind:"depart",time:"17:20",note:"17:20 起飛；國際線建議 2.5 小時前到機場"},
+  // A person flying separately (who): listed on 已訂 and in that day's reminders, but not a stop on the group route.
+  {date:"2026-10-15",kind:"arrive",time:"16:05",who:"lindsay",no:"JX751",airline:"星宇航空",note:"Lindsay 另外搭星宇 JX751，16:05 落地；出關、領行李後 Grab 到古城約 20 分鐘，大約 17:00 會合"}
 ];
-const flightOn=date=>FLIGHTS.find(f=>f.date===date);
+const flightOn=date=>FLIGHTS.find(f=>f.date===date&&!f.who);   // the group's flight that day
+const groupFlight=kind=>FLIGHTS.find(f=>f.kind===kind&&!f.who);
+const flightTitle=f=>(f.kind==="arrive"?"抵達清邁":"從清邁起飛")+(f.who?`（${(WHO[f.who]||{name:f.who}).name}）`:"")+(f.no?`・${f.airline?f.airline+" ":""}${f.no}`:"");
 const toAirport=f=>{const [h,m]=f.time.split(":").map(Number), t=Math.floor((h*60+m-150)/30)*30; return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0");};
 const bookingOf=p=>BOOKINGS.find(b=>b.id===p.id);
 // Lodging is booked, so it lives on its own tab as a fixed itinerary, not a choice.
@@ -1374,7 +1378,7 @@ function renderStay(){
   const first=LODGING[0].in, last=LODGING[LODGING.length-1].out, total=nights(first,last);
   $("#stayPanel").innerHTML=`
     <p class="tab-lead">已經訂好、不用再選的：住宿、餐廳訂位、課程，加上換匯所和出發前小抄。</p>
-    <p class="stay-lead">共 ${total} 晚、${LODGING.length} 間住宿；${md(FLIGHTS[0].date)} ${FLIGHTS[0].time} 抵達、${md(FLIGHTS[1].date)} ${FLIGHTS[1].time} 起飛${BOOKINGS.length?`；${BOOKINGS.length} 個餐廳、課程已預訂，行程會照這些時間排`:""}。</p>
+    <p class="stay-lead">共 ${total} 晚、${LODGING.length} 間住宿；${md(groupFlight("arrive").date)} ${groupFlight("arrive").time} 抵達、${md(groupFlight("depart").date)} ${groupFlight("depart").time} 起飛${BOOKINGS.length?`；${BOOKINGS.length} 個餐廳、課程已預訂，行程會照這些時間排`:""}。</p>
     <div class="stay-line" role="img" aria-label="${LODGING.map(h=>`${h.n} ${md(h.in)} 入住、${md(h.out)} 退房`).join("；")}">
       ${LODGING.map(h=>`<div class="seg-night" style="flex:${nights(h.in,h.out)}"><span class="seg-name">${esc(h.n)}</span><span class="seg-n">${nights(h.in,h.out)} 晚</span></div>`).join("")}
     </div>
@@ -1398,7 +1402,7 @@ function renderStay(){
       </article>`;}).join("")}</div>
     <section class="booked" aria-labelledby="flightH">
       <h2 id="flightH">航班</h2>
-      <ol class="booked-list">${FLIGHTS.map(f=>`<li><div class="bk-when"><b>${md(f.date)}</b><span>${esc(f.time)}</span></div><div class="bk-what"><b>${f.kind==="arrive"?"抵達清邁":"從清邁起飛"}</b><span class="tag">${f.kind==="arrive"?"抵達":"回程"}</span><div class="local">${esc(AIRPORT.n)}${f.kind==="depart"?`・${toAirport(f)} 前到機場`:""}</div><p class="tip"><span class="tip-k">小提醒</span>${esc(f.note)}</p></div></li>`).join("")}</ol>
+      <ol class="booked-list">${FLIGHTS.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(f=>`<li><div class="bk-when"><b>${md(f.date)}</b><span>${esc(f.time)}</span></div><div class="bk-what"><b>${esc(flightTitle(f))}</b><span class="tag">${f.kind==="arrive"?"抵達":"回程"}</span><div class="local">${esc(AIRPORT.n)}${f.kind==="depart"?`・${toAirport(f)} 前到機場`:""}</div><p class="tip"><span class="tip-k">小提醒</span>${esc(f.note)}</p></div></li>`).join("")}</ol>
     </section>
     ${BOOKINGS.length?`<section class="booked" aria-labelledby="bookedH">
       <h2 id="bookedH">已訂餐廳與課程</h2>
@@ -1721,7 +1725,8 @@ function dayTodos(di){
   return dayStops(di).filter(st=>st.id&&!bookedOn(st,date)).map(st=>({st,p:placeById(st.id)})).filter(x=>x.p&&needsBooking(x.p))
     .map(x=>`預約 ${x.p.n}（${x.st.t||"時間未定"}）${x.st.opt?"・彈性，想去才訂":""}`);
 }
-const dayTipsHTML=(date,di)=>{const t=DAY_TIPS[date]||{}, todo=[...dayTodos(di),...(t.todo||[])];
+const dayTipsHTML=(date,di)=>{const t0=DAY_TIPS[date]||{}, solo=FLIGHTS.filter(f=>f.who&&f.date===date).map(f=>`${(WHO[f.who]||{name:f.who}).name} ${f.time} ${f.kind==="arrive"?"落地":"起飛"}（${f.airline||""} ${f.no||""}）${f.kind==="arrive"?"，大約 17:00 到古城會合；在那之前的行程她不在":""}`.replace(/（\s*）/,""));
+  const t={...t0,tips:[...solo,...(t0.tips||[])]}, todo=[...dayTodos(di),...(t.todo||[])];
   if(!todo.length&&!(t.tips||[]).length) return "";
   return `<div class="day-tips"><b>這天提醒</b><ul>${todo.map(x=>`<li class="todo">${esc(x)}</li>`).join("")}${(t.tips||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`;};
 // Edits to the itinerary live in Firebase /plan/{date} = {stops,by,ts}; a day without an entry uses the suggested PLAN.
@@ -1759,7 +1764,7 @@ function chatContext(){
   const plan=PLAN.flatMap((d,di)=>[`${md(d.date)}${d.title}`,...dayStops(di).filter(stopName).map(st=>`${st.t||"未定"} ${st.opt?"（可選）":""}${stopName(st)}${st.d?"｜"+st.d:""}`)]);
   const stay=LODGING.map(l=>[l.n,l.r,l.a,`入住 ${md(l.in)}`,`退房 ${md(l.out)}`,l.note].filter(Boolean).join("｜"));
   const booked=BOOKINGS.map(b=>[(placeById(b.id)||{}).n||b.id,b.kind,md(b.date),bkTime(b),b.people&&`${b.people} 人`,b.note].filter(Boolean).join("｜"));
-  const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",md(f.date),f.time,f.note].filter(Boolean).join("｜"));
+  const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",f.who?(WHO[f.who]||{name:f.who}).name+" 另外搭":"全團",f.no&&`${f.airline||""} ${f.no}`.trim(),md(f.date),f.time,f.note].filter(Boolean).join("｜"));
   const place=(p,tip)=>[p.n+(p.loc?`（${p.loc}）`:""),[p.c,p.sub].filter(Boolean).join("/"),p.r,p.a,p.h,p.rt&&`評分 ${p.rt}${p.rv?`（${p.rv} 則）`:""}`,p.note,tip&&p.tip].filter(Boolean).join("｜");
   const util=UTIL.length?["【實用地點】",...UTIL.map(p=>place(p,true))]:[];  // shown on the 已訂 tab; keeps its tips
   const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,...util,"【地點】",...P.map(p=>place(p,tip))].join("\n");
