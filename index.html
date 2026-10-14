@@ -521,6 +521,7 @@ button.ps-name:hover{text-decoration:underline}
 .pday.editing{border-color:var(--saffron)}
 .foot .addplan{margin-left:auto}
 .foot .addplan+.mini{margin-left:0}
+.acts{display:flex;gap:8px;padding:10px 14px 0}
 .pk[open]{display:flex;flex-direction:column}
 .pk-in{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px;overflow:hidden;min-height:0}
 .pk-h{font-family:var(--f-display);font-size:18px;margin:0}
@@ -1257,9 +1258,9 @@ function heartBtn(p,compact){
 function card(p){
   const ph=phList(p), n=heartCount(p);
   return `<article class="card${isMust(p)?" must":""}" data-card="${p.id}" data-photos="${p.id}">
-    <div class="ph">${n?`<span class="badge${n===PEOPLE.length?" all":""}" data-badge="${p.id}">${n===PEOPLE.length?ICON_LANTERN+"三人都愛":ICON_HEART+n+'<span class="vh"> 個愛心</span>'}</span>`:""}${ph.length?`<img src="${ph[0].src}" alt="${esc(p.n)} 照片" loading="lazy" decoding="async" data-ph="${p.id}" data-i="0">${credit(ph[0])}`:`<span class="glyph">${catIcon(p.c,"ic-big")}<span>${esc(p.c)}</span></span>`}
-      ${ph.length>1?`<button type="button" class="phnav prev" data-phstep="-1" aria-label="上一張照片">${CHEV_L}</button><button type="button" class="phnav next" data-phstep="1" aria-label="下一張照片">${CHEV_R}</button><div class="dots" aria-hidden="true">${ph.map((_,i)=>`<span${i===0?' class="on"':""}></span>`).join("")}</div>`:""}
-      <div class="phbtns"><a class="mini" href="${imgUrl(p)}" target="_blank" rel="noopener">更多照片</a></div></div>
+    <div class="ph">${n?`<span class="badge${n===PEOPLE.length?" all":""}" data-badge="${p.id}">${n===PEOPLE.length?ICON_LANTERN+"三人都愛":ICON_HEART+n+'<span class="vh"> 個愛心</span>'}</span>`:""}${ph.length?`<img src="${ph[0].src}" alt="${esc(p.n)} 照片" loading="lazy" decoding="async" data-ph="${p.id}" data-i="0">`:`<span class="glyph">${catIcon(p.c,"ic-big")}<span>${esc(p.c)}</span></span>`}
+      ${ph.length>1?`<button type="button" class="phnav prev" data-phstep="-1" aria-label="上一張照片">${CHEV_L}</button><button type="button" class="phnav next" data-phstep="1" aria-label="下一張照片">${CHEV_R}</button><div class="dots" aria-hidden="true">${ph.map((_,i)=>`<span${i===0?' class="on"':""}></span>`).join("")}</div>`:""}</div>
+    <div class="acts"><button type="button" class="mini addplan" data-addplan="${p.id}">加入行程</button><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div>
     <div class="body">
       <div><h3 class="name">${esc(p.n)}</h3>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}</div>
       <div class="tags">${tags(p)}</div>
@@ -1267,7 +1268,7 @@ function card(p){
       ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}
       ${notesBlock(p)}
     </div>
-    <div class="foot">${heartBtn(p)}${whoDots(p)}<button type="button" class="mini addplan" data-addplan="${p.id}">加入行程</button><a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></article>`;
+    <div class="foot">${heartBtn(p)}${whoDots(p)}</div></article>`;
 }
 const pickRow=p=>`<tr class="${isMust(p)?"must":""}" data-row="${p.id}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<a class="mini tmap" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="tsrc">${p.src==="建議"?`<span class="tag rec">AI 建議</span>`:`<span class="tag">團隊挑的</span>`}${bookingOf(p)?`<div><span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span></div>`:""}</td><td class="ttip">${p.tip?esc(p.tip):""}</td><td class="tnotes">${notesBlock(p)}</td></tr>`;
 const thumb=p=>phList(p)[0]?`<img class="thumb" src="${phList(p)[0].thumb}" alt="" loading="lazy"${phList(p)[0].by?` title="Google 地圖 · ${esc(phList(p)[0].by.displayName||"")}"`:""}>`:"";
@@ -1583,7 +1584,6 @@ function stepPhoto(c,step){
   const p=placeById(c.dataset.card), ph=phList(p), img=c.querySelector(".ph img"); if(!img||ph.length<2) return;
   const i=((+img.dataset.i||0)+step+ph.length)%ph.length, x=ph[i];
   img.src=x.src; img.dataset.i=i;
-  const old=c.querySelector(".ph .credit"); if(old) old.remove(); img.insertAdjacentHTML("afterend",credit(x));
   c.querySelectorAll(".dots span").forEach((d,k)=>d.classList.toggle("on",k===i));
 }
 let swipe=null, swiped=false;
@@ -2199,7 +2199,7 @@ document.addEventListener("click",async e=>{
   if(ps){const c=ps.closest("[data-card]"); if(c) stepPhoto(c,+ps.dataset.phstep); return;}
   const sw=e.target.closest("[data-sw]");
   if(sw){const card=sw.closest(".card,.stay-card"), img=card.querySelector(".ph img"), i=+sw.dataset.i, x=phList(placeById(sw.dataset.sw))[i]; if(!img||!x) return;
-    img.src=x.src; img.dataset.i=i; const old=card.querySelector(".ph .credit"); if(old) old.remove(); img.insertAdjacentHTML("afterend",credit(x));
+    img.src=x.src; img.dataset.i=i; if(card.classList.contains("stay-card")){const old=card.querySelector(".ph .credit"); if(old) old.remove(); img.insertAdjacentHTML("afterend",credit(x));}
     card.querySelectorAll(".sw").forEach(b=>b.classList.toggle("on",b===sw)); return;}
 });
 
