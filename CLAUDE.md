@@ -52,7 +52,7 @@ This file adds how to work with Howard and what has gone wrong before.
 - Commit messages end with a `Co-Authored-By:` line for Claude.
 
 ## Open items (as of 10/13 night)
-- The `/feedback` rule must be published before the 意見 tab can save.
+- 意見 box is live: `/feedback` rule published 10/14 and tested end to end (submit, proposal, reject, blocked edits).
 - Booked: THE HOUSE (10/15 18:30, 3), Baan Landai Old Town (10/15 12:00, 2, under Charlie), cooking class (10/16).
 - Still to book: Reliever (10/15 14:00), Kiew Kai Ka (10/16 18:30), CHUM (10/17 12:00), Ziri (10/17 16:00),
   Ekachan (10/18 12:30), 1% Pilates and Muse Forestias (10/19), Makkha (10/20 11:00, KKday/Klook);
