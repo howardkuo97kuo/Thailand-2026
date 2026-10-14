@@ -137,6 +137,8 @@ input[type=search]{flex:1 1 200px;max-width:320px}
 .tag.cat{color:var(--primary);border-color:transparent;background:var(--primary-soft)}
 .tag.skip{color:var(--skip);text-decoration:line-through}
 .tag.rec{color:var(--saffron-ink);background:var(--saffron-soft);border-color:transparent}
+.tag.mich{color:#fff;background:#b0281c;border-color:transparent;display:inline-flex;align-items:center;gap:3px}
+.tag.mich .ic{width:12px;height:12px}
 dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px}
 dt{display:flex;align-items:center;gap:4px;color:var(--muted);letter-spacing:.04em}
 dt svg{flex:none}
@@ -293,6 +295,7 @@ td.tnotes{min-width:180px;max-width:280px}
 .mlabel{display:none}
 td.tnotes .notes{border-top:0;padding-top:0}
 td.tname .tag.rec{display:inline-block;margin-top:4px}
+td.tmich{white-space:nowrap}
 td.thours{min-width:130px}
 .opennow{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px}
 .opennow.on{color:var(--ok);background:var(--ok-soft)}
@@ -1184,9 +1187,10 @@ const SORT_COLS=[
   {key:"cat",label:"分類",get:p=>idxOrNull(CATS,p.c)},
   {key:"sub",label:"子分類",get:p=>txt(p.sub)},
   {key:"region",label:"地區",get:p=>idxOrNull(REGIONS,p.r)},
-  {key:"src",label:"來源",get:p=>p.src==="建議"?1:0}
+  {key:"src",label:"來源",get:p=>p.src==="建議"?1:0},
+  {key:"mich",label:"米其林",get:p=>p.mich==="必比登"?0:p.mich?1:null}
 ];
-const PICK_COLS=[SORT_COLS[0],SORT_COLS[1],SORT_COLS[2],SORT_COLS[4],SORT_COLS[5],{key:"",label:"小提醒"},{key:"",label:"我們的備註"}];
+const PICK_COLS=[SORT_COLS[0],SORT_COLS[1],SORT_COLS[2],SORT_COLS[4],SORT_COLS[5],SORT_COLS[6],{key:"",label:"小提醒"},{key:"",label:"我們的備註"}];
 // 速查表 (地圖 tab): practical columns for during the trip.
 const TRIP_COLS=[
   {key:"must",label:"愛心",get:p=>-heartCount(p)},
@@ -1237,9 +1241,13 @@ function th(col,st=state,attr="data-sort"){
   return `<th class="sortable"${on?` aria-sort="${st.sortDir==="desc"?"descending":"ascending"}"`:""}><button type="button" ${attr}="${col.key}">${col.label}<span class="arr" aria-hidden="true">${on?(st.sortDir==="desc"?"▼":"▲"):""}</span></button></th>`;
 }
 
+// MICHELIN Guide Thailand 2026 (Chiang Mai listing): "必比登" = Bib Gourmand, "入選" = in the guide without an award.
+const MICH_ICON='<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 8.2l1.7 1.7 3.3-3.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const michLabel=p=>p.mich==="必比登"?"必比登推介（Bib Gourmand）":p.mich?"指南入選":"";
 function tags(p){
   let t=`<span class="tag cat">${catIcon(p.c)}${esc(p.c)}${p.sub?" · "+esc(p.sub):""}</span><span class="tag">${esc(p.r)}</span>`;
   if(closedLabel(p)) t+=`<span class="tag closed">${closedLabel(p)}</span>`;
+  if(p.mich) t+=`<span class="tag mich">${MICH_ICON}米其林${p.mich==="必比登"?"必比登":"入選"}</span>`;
   if(p.src==="建議") t+=`<span class="tag rec">AI 建議</span>`;
   if(p.added) t+=`<span class="tag new">新加入</span>`;
   if(bookingOf(p)){const b=bookingOf(p); t+=`<span class="tag booked">已訂 ${md(b.date)} ${esc(bkTime(b))}</span>`;}
@@ -1266,13 +1274,13 @@ function card(p){
     <div class="body">
       <div><h3 class="name">${esc(p.n)}</h3>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}</div>
       <div class="tags">${tags(p)}</div>
-      <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}${distFrom(p)!=null?`<dt>${ICON_HOME}住宿</dt><dd>${distLine(p)}</dd>`:""}</dl>
+      <dl><dt>${ICON_PIN}地址</dt><dd>${esc(p.a)}</dd>${p.h?`<dt>${ICON_CLOCK}營業</dt><dd>${esc(p.h)}</dd>`:""}${p.rt?`<dt>${ICON_STAR}評分</dt><dd class="rating">${p.rt} · ${p.rv} 則</dd>`:""}${p.mich?`<dt>${MICH_ICON}米其林</dt><dd>${michLabel(p)}・2026</dd>`:""}${distFrom(p)!=null?`<dt>${ICON_HOME}住宿</dt><dd>${distLine(p)}</dd>`:""}</dl>
       ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}
       ${notesBlock(p)}
     </div>
     <div class="foot">${heartBtn(p)}${whoDots(p)}</div></article>`;
 }
-const pickRow=p=>`<tr class="${isMust(p)?"must":""}" data-row="${p.id}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<a class="mini tmap" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="tsrc">${p.src==="建議"?`<span class="tag rec">AI 建議</span>`:`<span class="tag">團隊挑的</span>`}${bookingOf(p)?`<div><span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span></div>`:""}</td><td class="ttip">${p.tip?esc(p.tip):""}</td><td class="tnotes">${notesBlock(p)}</td></tr>`;
+const pickRow=p=>`<tr class="${isMust(p)?"must":""}" data-row="${p.id}"><td class="thearts">${heartBtn(p,true)}${whoDots(p)}</td><td class="tname" data-photos="${p.id}"><div class="tn">${thumb(p)}<div><b>${esc(p.n)}</b>${p.loc?`<div class="local">${esc(p.loc)}</div>`:""}<a class="mini tmap" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a></div></div></td><td class="tcat"><span class="tcatin">${catIcon(p.c)}${esc(p.c)}</span>${p.sub?`<div class="local">${esc(p.sub)}</div>`:""}</td><td class="treg">${esc(p.r)}</td><td class="tsrc">${p.src==="建議"?`<span class="tag rec">AI 建議</span>`:`<span class="tag">團隊挑的</span>`}${bookingOf(p)?`<div><span class="tag booked">已訂 ${md(bookingOf(p).date)} ${esc(bookingOf(p).time)}</span></div>`:""}</td><td class="tmich">${p.mich?`<span class="tag mich">${MICH_ICON}${p.mich}</span>`:""}</td><td class="ttip">${p.tip?esc(p.tip):""}</td><td class="tnotes">${notesBlock(p)}</td></tr>`;
 const thumb=p=>phList(p)[0]?`<img class="thumb" src="${phList(p)[0].thumb}" alt="" loading="lazy"${phList(p)[0].by?` title="Google 地圖 · ${esc(phList(p)[0].by.displayName||"")}"`:""}>`:"";
 function table(list){
   return `<div class="tablebox"><table class="pick"><thead><tr>${PICK_COLS.map(c=>th(c)).join("")}</tr></thead><tbody>${
@@ -1726,7 +1734,7 @@ const needsBooking=p=>/預約|訂位/.test((p.tip||"")+(p.note||""))&&!/不用�
 function dayTodos(di){
   const date=PLAN[di].date;
   return dayStops(di).filter(st=>st.id&&!bookedOn(st,date)).map(st=>({st,p:placeById(st.id)})).filter(x=>x.p&&needsBooking(x.p))
-    .map(x=>`預約 ${x.p.n}（${x.st.t||"時間未定"}）${x.st.opt?"・彈性，想去才訂":""}`);
+    .map(x=>/等回覆/.test(x.st.d||"")?`等 ${x.p.n} 回覆訂位（${x.st.t||"時間未定"}）`:`預約 ${x.p.n}（${x.st.t||"時間未定"}）${x.st.opt?"・彈性，想去才訂":""}`);
 }
 const dayTipsHTML=(date,di)=>{const t0=DAY_TIPS[date]||{}, solo=FLIGHTS.filter(f=>f.who&&f.date===date).map(f=>`${(WHO[f.who]||{name:f.who}).name} ${f.time} ${f.kind==="arrive"?"落地":"起飛"}（${f.airline||""} ${f.no||""}）${f.kind==="arrive"?"，大約 17:00 到古城會合；在那之前的行程她不在":""}`.replace(/（\s*）/,""));
   const t={...t0,tips:[...solo,...(t0.tips||[])]}, todo=[...dayTodos(di),...(t.todo||[])];
