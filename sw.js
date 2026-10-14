@@ -1,8 +1,8 @@
 // Offline support: the page, its libraries and the last-seen data (itinerary, hearts, comments, photos, map tiles)
 // are kept on the device, so the site still opens where Chiang Mai reception is poor. Fresh data always wins online.
-const V = "cnx-v2";
+const V = "cnx-v3";
 const WAIT = 2500;   // on a weak signal, how long the page waits for the network before showing the saved copy
-const SHELL = ["./", "index.html", "places.json", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-180.png"];
+const SHELL = ["./", "index.html", "places.json", "michelin-bib.svg", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-180.png"];
 const LIMITS = { "cnx-photos": 400, "cnx-tiles": 600 };
 
 self.addEventListener("install", e => {

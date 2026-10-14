@@ -13,6 +13,7 @@
 | `places.json` | 分類 `cats`、地區 `regions`、內建地點 `places`；網頁與 inbox agent 讀同一份 |
 | `sw.js` | 離線支援：頁面、函式庫、上次看到的資料、照片與地圖圖磚都存在裝置上 |
 | `manifest.webmanifest`、`icon-*.png`、`og.png` | 加到主畫面與分享預覽用 |
+| `michelin-bib.svg` | 米其林指南的 Bibendum 標誌（取自 guide.michelin.com），標示必比登／入選 |
 | `worker/index.js` | 「問 AI」的後端（Cloudflare Worker），整個檔案貼到 Cloudflare 主控台部署 |
 | `tools/inbox_agent.py` | 處理「新地點推薦」分頁送出的地點 |
 | `tools/feedback_agent.py` | 處理「意見」分頁的建議 |
@@ -126,5 +127,5 @@ python -m http.server 8765
 
 ## 改版注意
 
-- 改了 `sw.js` 的快取規則或 `SHELL` 清單時，把 `V`（`cnx-v2`）加一號，舊快取才會清掉。
+- 改了 `sw.js` 的快取規則或 `SHELL` 清單時，把 `V`（`cnx-v3`）加一號，舊快取才會清掉。
 - 新增網站會用到的同網域檔案時，記得加進 `sw.js` 的 `SHELL`，否則第一次離線開啟會缺檔。
