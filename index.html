@@ -639,6 +639,9 @@ button.ps-name:hover{text-decoration:underline}
 .idea-p{margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--paper);font-size:13px;white-space:pre-wrap}
 .idea-p .tip-k{display:block;margin-bottom:2px}
 .idea-a{display:flex;gap:8px;margin-top:8px}
+.ps-mich{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 6px;border-radius:999px;font-size:11px;font-weight:700;color:#ba0b2f;background:#fff;border:1px solid #f0c4cb;white-space:nowrap;vertical-align:1px}
+.ps-mich .mich-ic{width:12px;height:11px}
+.mc .ps-mich{margin-left:6px}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -1242,6 +1245,8 @@ function th(col,st=state,attr="data-sort"){
 
 // MICHELIN Guide Thailand 2026 (Chiang Mai listing): "必比登" = Bib Gourmand, "入選" = in the guide without an award.
 const MICH_ICON='<img class="mich-ic" src="michelin-bib.svg" alt="" width="15" height="14" loading="lazy">';   // MICHELIN Guide's Bibendum mark, from guide.michelin.com
+// Small MICHELIN mark next to a name (行程 rows, map popups).
+const michMark=p=>p&&p.mich?`<span class="ps-mich" title="米其林${p.mich==="必比登"?"必比登推介":"指南入選"}（2026）">${MICH_ICON}${p.mich}</span>`:"";
 const michLabel=p=>p.mich==="必比登"?"必比登推介（Bib Gourmand）":p.mich?"指南入選":"";
 function tags(p){
   let t=`<span class="tag cat">${catIcon(p.c)}${esc(p.c)}${p.sub?" · "+esc(p.sub):""}</span><span class="tag">${esc(p.r)}</span>`;
@@ -1526,7 +1531,7 @@ function mapCard(p,di){
   const fans=PEOPLE.filter(x=>hearted(p,x.key)).map(x=>x.name);
   const who=!heartable(p)?`<div class="mc-who none">按摩、課程不用投票</div>`:fans.length?`<div class="mc-who">❤ ${fans.join("、")} 想去</div>`:`<div class="mc-who none">還沒有人按愛心</div>`;
   const add=di==null?"":dayStops(di).some(st=>st.id===p.id)?`<span class="mc-in">已在 ${md(PLAN[di].date)} 行程</span>`:`<button type="button" class="mc-add" data-addday="${p.id}" data-day="${di}">加到 ${md(PLAN[di].date)}</button>`;
-  return `<div class="mc"><b>${esc(p.n)}</b><div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}${who}${pl?`<div class="mc-plan">${pl}</div>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
+  return `<div class="mc"><b>${esc(p.n)}</b>${michMark(p)}<div class="mc-m">${esc(p.c)}${p.sub?"・"+esc(p.sub):""}・${esc(p.r)}${p.rt?`・★ ${p.rt}`:""}</div>${p.h?`<div class="mc-m">${esc(p.h)}${closedLabel(p)?`（${closedLabel(p)}）`:""}</div>`:""}${p.tip?`<p>${esc(p.tip)}</p>`:""}${who}${pl?`<div class="mc-plan">${pl}</div>`:""}<div class="mc-a">${add}<button type="button" data-pcard="${p.id}">看卡片</button><a href="${mapsUrl(p)}" target="_blank" rel="noopener">在 Google 地圖開啟</a></div></div>`;
 }
 // First heart or itinerary edit without a name: ask right there, then finish what they tapped.
 let whoThen=null;
@@ -1868,7 +1873,7 @@ function daySection(di){
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"O":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
     const hl=pt.p&&pt.p.c==="按摩"?" k-spa":pt.p&&pt.p.c==="課程體驗"?" k-class":"";
-    const name=`<span class="ps-nm">${pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`}${heartMarks(pt.p)}</span>`;
+    const name=`<span class="ps-nm">${pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`}${michMark(pt.p)}${heartMarks(pt.p)}</span>`;
     if(ed&&bk) return `<li class="ps edit fixed${hl}" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
       <div class="ps-b"><div class="ps-top">${name}${lock}</div><span class="local">${esc(time)}・${bk.flight?"航班時間固定":"已預訂，時間固定"}；要改請看「已訂」分頁</span></div></li>`;
     if(ed) return `<li class="ps edit${st.opt?" opt":""}${pt.hotel||pt.airport?" base":""}${hl}" data-i="${i}"><span class="ps-drag" title="按住拖拉調整順序" aria-hidden="true">⠿</span><span class="ps-n">${num}</span>
