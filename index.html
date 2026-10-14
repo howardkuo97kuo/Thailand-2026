@@ -1726,18 +1726,18 @@ function renderSpa(){
 const navUrl=pt=>pt.p&&pt.p.pid?`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(pt.n)}&destination_place_id=${pt.p.pid}`:pt.ll?`https://www.google.com/maps/dir/?api=1&destination=${pt.ll.join(",")}`:pt.url;
 // 這天提醒: what still needs doing (todo) and the few things worth remembering, per day.
 const DAY_TIPS={
-  "2026-10-15":{tips:["早班機帶行李先寄放 Jhaban，問問能不能提早入住","中午 Baan Landai 已訂 2 位（Howard、Charlie），Charlie 名義"]},
-  "2026-10-16":{todo:["確認料理課的接送時間"],tips:["料理課前不要吃早餐，份量很多"]},
-  "2026-10-17":{tips:["穿長褲、遮肩，帶現金（寺廟門票每間約 50 銖）"]},
-  "2026-10-18":{tips:["09:00 退房帶著行李","週日夜市人很多，顧好包包"]},
-  "2026-10-19":{tips:["Lung Khajohn、Mooyim 只收現金；Lung Khajohn 不要晚於 09:00"]},
-  "2026-10-20":{tips:["SP Chicken 只收現金","13:30 回 THEE 拿行李，14:30 到機場","剩下的泰銖今天花掉"]}
+  "2026-10-15":{tips:["Lindsay 到之前的午餐、按摩、清曼寺她不在，Howard、Charlie 先走","訂位名字：Baan Landai 12:00 是 Charlie、Reliever 14:00 是 Howard、THE HOUSE 18:30 三位","早班機帶行李先寄放 Jhaban，問問能不能提早入住"]},
+  "2026-10-16":{todo:["確認料理課的接送時間"],tips:["料理課前不要吃早餐，份量很多；約 14:00 結束，課後很飽，14:30 的 7 Senses 可以只試吃","10 月可能有午後雷陣雨，帶小傘；尼曼的 One Nimman、MAYA 可以躲雨"]},
+  "2026-10-17":{tips:["穿長褲、遮肩，帶現金（寺廟門票每間約 50 銖）","Ziri 16:30 訂不到的備案：Oasis +66 53 920 111、Lila +66 53 327 243、Calm +66 82 559 7733（都在古城）"]},
+  "2026-10-18":{tips:["09:00 退房帶著行李","週日夜市人很多，顧好包包；晚上若下雨，Big C、清邁夜市美食廣場可以躲雨"]},
+  "2026-10-19":{tips:["Lung Khajohn、Mooyim 只收現金；Lung Khajohn 不要晚於 09:00","1% Pilates 盡量訂 12:00 那堂，MADAM 才逛得完；午後雷陣雨時 Kalm、MAYA 可以躲雨"]},
+  "2026-10-20":{tips:["SP Chicken 只收現金","13:30 回 THEE 拿行李，14:30 到機場；國際線櫃檯通常起飛前 3 小時開，可以先在 THEE 用長榮 App 或官網線上報到","剩下的泰銖今天花掉"]}
 };
 // Booking to-dos are worked out from the day's stops (a place whose notes say to book), so they follow edits.
-const needsBooking=p=>/預約|訂位/.test((p.tip||"")+(p.note||""))&&!/不用訂位|不用預約/.test((p.note||""));
+const needsBooking=(p,st)=>/預約|訂位/.test((p.tip||"")+(p.note||"")+((st&&st.d)||""))&&!/不用訂位|不用預約/.test((p.note||""));
 function dayTodos(di){
   const date=PLAN[di].date;
-  return dayStops(di).filter(st=>st.id&&!bookedOn(st,date)).map(st=>({st,p:placeById(st.id)})).filter(x=>x.p&&needsBooking(x.p))
+  return dayStops(di).filter(st=>st.id&&!bookedOn(st,date)).map(st=>({st,p:placeById(st.id)})).filter(x=>x.p&&needsBooking(x.p,x.st))
     .map(x=>/等回覆/.test(x.st.d||"")?`等 ${x.p.n} 回覆訂位（${x.st.t||"時間未定"}）`:`預約 ${x.p.n}（${x.st.t||"時間未定"}）${x.st.opt?"・彈性，想去才訂":""}`);
 }
 const dayTipsHTML=(date,di)=>{const t0=DAY_TIPS[date]||{}, solo=FLIGHTS.filter(f=>f.who&&f.date===date).map(f=>`${(WHO[f.who]||{name:f.who}).name} ${f.time} ${f.kind==="arrive"?"落地":"起飛"}（${f.airline||""} ${f.no||""}）${f.kind==="arrive"?"，大約 17:00 到古城會合；在那之前的行程她不在":""}`.replace(/（\s*）/,""));
