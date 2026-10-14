@@ -642,6 +642,21 @@ button.ps-name:hover{text-decoration:underline}
 .ps-mich{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 6px;border-radius:999px;font-size:11px;font-weight:700;color:#ba0b2f;background:#fff;border:1px solid #f0c4cb;white-space:nowrap;vertical-align:1px}
 .ps-mich .mich-ic{width:12px;height:11px}
 .mc .ps-mich{margin-left:6px}
+/* 行李清單 */
+.pack{margin-top:20px;max-width:820px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.pack-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.pack-h h2{font-family:var(--f-display);font-size:18px;margin:0}
+.pack-sum{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pack-h .linkbtn{margin-left:auto;font-size:12.5px}
+.pack-lead{font-size:12.5px;color:var(--muted);margin:4px 0 8px}
+.pack-g{border-top:1px solid var(--line);padding:2px 0}
+.pack-g summary{cursor:pointer;font-weight:700;font-size:14px;padding:8px 0;list-style:none;display:flex;justify-content:space-between;gap:8px}
+.pack-g summary::-webkit-details-marker{display:none}
+.pack-n{font-family:var(--f-mono);font-size:12px;font-weight:400;color:var(--muted)}
+.pack-g ul{list-style:none;margin:0;padding:0 0 8px;display:flex;flex-direction:column;gap:2px}
+.pack-g label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.5;padding:6px 0;cursor:pointer}
+.pack-g input{width:20px;height:20px;flex:none;margin-top:1px;accent-color:var(--primary)}
+.pack-g input:checked+span{color:var(--muted);text-decoration:line-through}
 /* Illustrations */
 header.top>.title{order:0}
 header.top>.side{order:2}
@@ -1390,6 +1405,33 @@ const utilCard=p=>`<article class="util-card">
         ${p.tip?`<p class="tip"><span class="tip-k">小提醒</span>${esc(p.tip)}</p>`:""}${p.note?`<p class="note">${esc(p.note)}</p>`:""}
         ${p.pid||p.ll?`<a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a>`:""}
       </article>`;
+// 行李清單: tick-off list saved on this device only (per 我是誰). Clothing counts assume 6 days / 5 nights with a laundry option.
+const PACK=[
+  {t:"證件與錢",open:true,items:["護照（效期 6 個月以上）","機票或登機證截圖：Howard、Charlie 長榮 BR257；Lindsay 星宇 JX751；回程 10/20 17:20 起飛","住宿與訂位確認信截圖（Jhaban、THEE、Baan Landai、Reliever、THE HOUSE、Ekachan、料理課）","信用卡 1–2 張（小店多只收現金，刷卡常加 3%）","泰銖現金，小鈔多帶：先換約 3,000–5,000 銖，不夠再提款或換匯","旅遊保險資料"]},
+  {t:"衣物（6 天 5 夜，不用一天一套，可送洗）",open:true,items:["上衣 4–5 件：透氣快乾的 T 恤為主","長褲或長裙 2 件：10/17 整天寺廟、10/15 清曼寺要過膝","短褲或輕便褲 1–2 件：其他天和夜市","有袖薄外套、襯衫或大圍巾 1 件：遮肩進寺廟，也擋冷氣","內衣褲 6 套","襪子 3–4 雙：進寺廟要脫鞋，鞋子悶時換穿","睡衣 1–2 套","泳衣 1 套：THEE 有泳池，下午有免費飲料","10/16 料理課穿不怕弄髒的衣服 1 套","晚餐好看一點的 1–2 套：THE HOUSE、Ekachan 比較精緻（非必要）"]},
+  {t:"鞋與配件",open:false,items:["好走的球鞋 1 雙：每天走 6–13 公里","好穿脫的涼鞋或拖鞋 1 雙：進寺廟、按摩、料理課","小傘或輕便雨衣：十月雨季尾聲，午後可能有雷陣雨","帽子、墨鏡","防水袋或夾鏈袋：下雨保護手機和證件","小摺疊購物袋：10/18 在瓦洛洛、Big C 買伴手禮"]},
+  {t:"盥洗與藥品",open:false,items:["防曬乳","防蚊液：夜市、河邊蚊子多","腸胃藥、止痛藥、過敏藥","OK 繃：走路多容易磨腳","個人慢性病藥物（原包裝）","牙刷牙膏、卸妝等個人盥洗用品（住宿不一定提供）"]},
+  {t:"電子用品",open:false,items:["手機與充電線","行動電源（要放隨身行李）：全程靠手機看行程和導航","電源轉接頭：泰國 220V、插座多為兩圓孔或兩扁孔","eSIM 或 SIM 卡：Grab 叫車一定要有網路","耳機","Grab App 先下載、綁好信用卡","出發前在有網路時打開本網站，把行程、地圖、按摩頁都滑一遍（離線也看得到）"]},
+  {t:"回程",open:false,items:["行李箱留空間給伴手禮：果乾、腰果、泰奶","液體超過 100 ml 的要托運","生鮮水果、肉類不能帶回台灣；乾燥的果乾可以","10/20 14:30 到機場，17:20 起飛；先線上報到"]}
+];
+const packKey=()=>"cnxPack_"+(me||"guest");
+function packState(){try{return JSON.parse(localStorage.getItem(packKey())||"{}")||{};}catch(e){return {};}}
+function packHTML(){
+  const st=packState(), total=PACK.reduce((n,g)=>n+g.items.length,0), done=Object.values(st).filter(Boolean).length;
+  return `<section class="pack" aria-labelledby="packH"><div class="pack-h"><h2 id="packH">行李清單</h2><span class="pack-sum" id="packSum">${me?esc(WHO[me].name)+" ":""}已帶 ${done}／${total}</span><button type="button" class="linkbtn" data-packreset>全部取消勾選</button></div>
+    <p class="pack-lead">打勾只存在這支手機上，每個人各自打勾，不會互相影響。</p>
+    ${PACK.map((g,gi)=>`<details class="pack-g"${g.open?" open":""}><summary>${esc(g.t)}<span class="pack-n" data-packn="${gi}">${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}</span></summary><ul>${g.items.map((x,ii)=>`<li><label><input type="checkbox" data-pack="g${gi}i${ii}"${st["g"+gi+"i"+ii]?" checked":""}><span>${esc(x)}</span></label></li>`).join("")}</ul></details>`).join("")}</section>`;
+}
+function packRecount(){
+  const st=packState(), total=PACK.reduce((n,g)=>n+g.items.length,0), el=$("#packSum"); if(!el) return;
+  el.textContent=(me?WHO[me].name+" ":"")+`已帶 ${Object.values(st).filter(Boolean).length}／${total}`;
+  PACK.forEach((g,gi)=>{const n=document.querySelector(`[data-packn="${gi}"]`); if(n) n.textContent=`${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}`;});
+}
+document.addEventListener("change",e=>{const c=e.target.closest("[data-pack]"); if(!c) return;
+  const st=packState(); if(c.checked) st[c.dataset.pack]=true; else delete st[c.dataset.pack];
+  try{localStorage.setItem(packKey(),JSON.stringify(st));}catch(x){} packRecount();});
+document.addEventListener("click",e=>{if(!e.target.closest("[data-packreset]")) return; if(!confirm("把行李清單全部取消勾選？")) return;
+  try{localStorage.removeItem(packKey());}catch(x){} document.querySelectorAll("[data-pack]").forEach(i=>i.checked=false); packRecount();});
 function renderStay(){
   const first=LODGING[0].in, last=LODGING[LODGING.length-1].out, total=nights(first,last);
   $("#stayPanel").innerHTML=`
@@ -1441,7 +1483,8 @@ function renderStay(){
         <dt>天氣</dt><dd>10 月中是雨季尾聲，白天約 30°C、偶有午後陣雨，帶把小傘；室內冷氣常很強</dd>
         <dt>小費</dt><dd>不強制；按摩常給 50–100 銖，餐廳若已收服務費就不用再給</dd>
       </dl>
-    </section>`;
+    </section>
+    ${packHTML()}`;
 }
 const TABS=[["places","tabPlaces","placesPanel",""],["stay","tabStay","stayPanel","#stay"],["map","tabMap","mapPanel","#map"],["spa","tabSpa","spaPanel","#spa"],["plan","tabPlan","planPanel","#plan"],["add","tabAdd","addPanel","#add"],["idea","tabIdea","ideaPanel","#idea"]];
 function setTab(t,focus){
