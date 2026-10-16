@@ -990,6 +990,8 @@ const BOOKINGS=[
   {id:"asiascenic",kind:"課程",date:"2026-10-16",time:"09:00",end:"14:00",note:"約 5 小時，含午餐"},
   {id:"baanlandai",kind:"餐廳",date:"2026-10-15",time:"12:00",people:2,note:"古城分店；Charlie 名義訂位（Howard、Charlie）"},
   {id:"chum",kind:"餐廳",date:"2026-10-17",time:"12:00",people:3,note:"室內 1 樓；Howard 用 Messenger 訂的，店家已確認"},
+  {id:"abby",kind:"課程",date:"2026-10-17",time:"09:30",end:"10:30",note:"瑜伽課；結束時間先抓 1 小時"},
+  {id:"raintree",kind:"行程",date:"2026-10-19",time:"05:30",end:"13:00",people:3,note:"05:30 在 THEE 大廳等接送（導遊會先聯絡確認時間）；英語團；12:30–13:30 送到自選地址"},
   {id:"ekachan",kind:"餐廳",date:"2026-10-18",time:"11:30",people:3,note:"樓上座位；Howard 用 Google 地圖訂的，預約編號在 Howard 的確認信"},
   {id:"reliever",kind:"按摩",date:"2026-10-15",time:"14:00",people:2,note:"Howard 用 Messenger 訂的；不用訂金，要取消請先跟店家說；療程到店再選（推草藥熱壓＋熱椰子油 90 分）"}
 ];
@@ -1779,9 +1781,9 @@ const navUrl=pt=>pt.p&&pt.p.pid?`https://www.google.com/maps/dir/?api=1&destinat
 const DAY_TIPS={
   "2026-10-15":{tips:["Lindsay 到之前的午餐、按摩、清曼寺她不在，Howard、Charlie 先走","訂位名字：Baan Landai 12:00 是 Charlie、Reliever 14:00 是 Howard、THE HOUSE 18:30 三位","早班機帶行李先寄放 Jhaban，問問能不能提早入住"]},
   "2026-10-16":{todo:["確認料理課的接送時間"],tips:["料理課前不要吃早餐，份量很多；約 14:00 結束，課後很飽，14:30 的 7 Senses 可以只試吃","10 月可能有午後雷陣雨，帶小傘；尼曼的 One Nimman、MAYA 可以躲雨"]},
-  "2026-10-17":{tips:["穿長褲、遮肩，帶現金（寺廟門票每間約 50 銖）","Ziri 16:30 訂不到的備案：Oasis +66 53 920 111、Lila +66 53 327 243、Calm +66 82 559 7733（都在古城）"]},
+  "2026-10-17":{tips:["09:30 Abby 瑜伽：穿運動服，寺廟要再套長褲、遮肩","穿長褲、遮肩，帶現金（寺廟門票每間約 50 銖）","Ziri 16:30 訂不到的備案：Oasis +66 53 920 111、Lila +66 53 327 243、Calm +66 82 559 7733（都在古城）"]},
   "2026-10-18":{tips:["09:00 退房帶著行李","週日夜市人很多，顧好包包；晚上若下雨，Big C、清邁夜市美食廣場可以躲雨"]},
-  "2026-10-19":{tips:["Lung Khajohn、Mooyim 只收現金；Lung Khajohn 不要晚於 09:00","1% Pilates 盡量訂 12:00 那堂，MADAM 才逛得完；午後雷陣雨時 Kalm、MAYA 可以躲雨"]},
+  "2026-10-19":{tips:["05:30 在 THEE 大廳等半日遊接送；帶薄外套、防曬，穿可以濕的鞋，帶換洗衣物和毛巾（黏黏瀑布會爬水）","回程跟導遊說直接送到尼曼 Kao Soy Nimman；午後雷陣雨時 MAYA 可以躲雨"]},
   "2026-10-20":{tips:["SP Chicken 只收現金","13:30 回 THEE 拿行李，14:30 到機場；國際線櫃檯通常起飛前 3 小時開，可以先在 THEE 用長榮 App 或官網線上報到","剩下的泰銖今天花掉"]}
 };
 // Booking to-dos are worked out from the day's stops (a place whose notes say to book), so they follow edits.
@@ -1814,15 +1816,29 @@ const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 // One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
 // there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
 const SUGGEST={
-  "2026-10-18":st=>{const what=[], i=st.findIndex(x=>x.id==="sapa");
-    if(i>=0&&!st.some(x=>x.id==="kati")){st[i]={...st[i],id:"kati",d:"早午餐，離 Jhaban 走路約 6 分鐘；可刷卡，週日開到 14:00"}; what.push("早餐 Sapa（城南，要搭車）改成 Kati，走路就到");}
-    const j=st.findIndex(x=>x.id==="sp"); if(j>=0){st.splice(j,1); what.push("拿掉 SP Chicken：11:30 已訂 Ekachan，10/20 還會吃 SP");}
-    return what.length?{stops:st,what}:null;},
-  "2026-10-19":st=>{const i=st.findIndex(x=>x.id==="ekachan"); if(i<0) return null; st.splice(i,1);
-    const b=st.find(x=>x.id==="bazaar"); if(b){b.d="晚餐直接在夜市吃，邊逛邊吃"; if(toMin(b.t)>toMin("19:00")) b.t="19:00";}
-    return {stops:st,what:["Ekachan 已改訂 10/18 午餐，拿掉這天晚上的 Ekachan",b?"晚餐改在清邁夜市吃，19:00 出發":"晚餐時間空出來"]};}
+  "2026-10-17":st=>{const j=st.find(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(!j||(j.t==="07:30"&&lm<0)) return null;
+    const what=[]; if(j.t!=="07:30"){const h=st[0]; if(h&&h.hotel) h.t="07:00"; j.t="07:30"; j.d="週六手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤，就在這裡買（10/19 去不了店裡）；09:10 前搭 Grab 去瑜伽"; what.push("真心市集提早到 07:30，09:10 前出發去 09:30 的瑜伽；MADAM 包包在市集攤位買");}
+    if(lm>=0){st.splice(lm,1); what.push("拿掉羅摩利寺（彈性），瑜伽後直接去 Akha Ama");}
+    return {stops:st,what};},
+  "2026-10-18":st=>{const bz=st.findIndex(x=>x.id==="bazaar"); if(bz<0) return null; st.splice(bz,1);
+    const bc=st.find(x=>x.id==="bigc"); if(bc){bc.t="20:30"; bc.d="最後採買伴手禮，可退稅；明早 05:30 要接送，買完就回去";}
+    const h=st[st.length-1]; if(h&&h.hotel){h.t=bc?"21:30":"21:00"; h.d="早點睡，明天 05:30 在 THEE 大廳等接送";}
+    return {stops:st,what:["拿掉清邁夜市，Big C 提早到 20:30","21:30 前回住宿，因為明天 05:30 就要出發"]};},
+  "2026-10-19":st=>{if(!st.some(x=>["lung","madam","onepct","magic"].includes(x.id))) return null;
+    const keep=id=>(st.find(x=>x.id===id)||{}).d;
+    return {stops:[{t:"05:30",d:"",id:"raintree"},
+      {t:"13:30",id:"kaosoy",d:"請導遊直接送到尼曼 Kao Soy Nimman；推泰北香腸咖哩麵，每人約 200–250 銖"},
+      {t:"14:30",id:"joost",d:keep("joost")||"走路 2 分鐘；山竹、酪梨冰沙"},
+      {t:"15:00",id:"roast8ry",opt:true,d:"自家烘豆精品咖啡，17:00 關；累了就跳過"},
+      {t:"16:00",id:"museforest",d:keep("museforest")||"按摩 90 分鐘，早起後放鬆；建議預約"},
+      {t:"18:00",id:"moonim",d:"三個人都按愛心的泰式炭火火鍋；開店就排隊，Grab 約 10 分鐘"},
+      {t:"20:00",hotel:"thee",d:"早點回去整理行李，明天最後一天"}],
+     what:["半日遊 05:30–13:00，回來後請導遊直接送到尼曼吃 Kao Soy","拿掉 Lung Khajohn（改 10/20）、MADAM（改 10/17 市集買）、1% Pilates、Magic","晚餐改成三個人都愛的หมูนิ่ม火鍋，取代 Mooyim"]};},
+  "2026-10-20":st=>{const i=st.findIndex(x=>x.id==="maesai"); if(i<0||st.some(x=>x.id==="lung")) return null;
+    st[i]={...st[i],id:"lung",d:"必比登椰奶蒸米皮捲（10/19 去不了）；離 THEE 走路約 12 分鐘，常在 11 點前賣完；10:40 前出發去按摩；只收現金"};
+    return {stops:st,what:["Maesai 換成 Lung Khajohn：三個人都按了愛心、離 THEE 走路就到，10/19 去不了"]};}
 };
-const sugOff=()=>{try{return JSON.parse(localStorage.getItem("cnxSugOff")||"{}");}catch(e){return {};}};
+const sugOff=()=>{try{return JSON.parse(localStorage.getItem("cnxSugOff2")||"{}");}catch(e){return {};}};
 function sugFor(di){const d=PLAN[di], fn=SUGGEST[d.date]; if(!fn||sugOff()[d.date]||d.date<todayCM()) return null;
   const st=dayStops(di), r=fn(st.map(x=>({...x}))); const fixed=a=>a.filter(x=>isFixed(x,di)).length;
   return r&&fixed(r.stops)===fixed(st)?r:null;}   // never drop a booking
@@ -2208,7 +2224,7 @@ document.addEventListener("click",async e=>{
   const sg=e.target.closest("[data-sug]");
   if(sg){const di=+sg.dataset.sug, r=sugFor(di); if(r) saveDay(di,r.stops,`已套用 ${md(PLAN[di].date)} 的建議調整`); return;}
   const sgo=e.target.closest("[data-sugoff]");
-  if(sgo){const di=+sgo.dataset.sugoff, o=sugOff(); o[PLAN[di].date]=1; try{localStorage.setItem("cnxSugOff",JSON.stringify(o));}catch(e){} renderDay(di); return;}
+  if(sgo){const di=+sgo.dataset.sugoff, o=sugOff(); o[PLAN[di].date]=1; try{localStorage.setItem("cnxSugOff2",JSON.stringify(o));}catch(e){} renderDay(di); return;}
   const pf=e.target.closest("[data-pfold]");
   if(pf){const di=+pf.dataset.pfold; if(pastOpen.has(di)){pastOpen.delete(di); const x=planMaps[di]; if(x){x.m.remove(); delete planMaps[di];}} else pastOpen.add(di);
     renderDay(di); const b=document.querySelector(`[data-pfold="${di}"]`); if(b) b.focus({preventScroll:true}); return;}
