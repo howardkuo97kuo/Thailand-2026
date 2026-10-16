@@ -492,6 +492,9 @@ button.ps-name:hover{text-decoration:underline}
 .pnav .chip{flex:none}
 .pnav .chip[aria-current="date"]{background:var(--heart);color:var(--on-heart);border-color:transparent}
 .pday{scroll-margin-top:64px}
+.pday-past{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);padding:1px 8px;border-radius:999px}
+.pday.folded .pday-h{border-bottom:0}
+.pday.past .pday-h h2{color:var(--muted)}
 .pday-today{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--on-heart);background:var(--heart);padding:2px 8px;border-radius:999px}
 @media (max-width:760px){.pday-map{order:-1;min-height:260px;border-top:0;border-bottom:1px solid var(--line)}}
 /* place card pop-up (from 行程) */
@@ -1795,6 +1798,7 @@ let PLAN_LIVE=(()=>{try{const v=JSON.parse(localStorage.getItem(PLAN_KEY)||"null
 let planBlocked=false, planLoaded=false, planHadCache=(()=>{try{return localStorage.getItem(PLAN_KEY)!==null;}catch(e){return false;}})();
 function savePlanCache(){try{localStorage.setItem(PLAN_KEY,JSON.stringify(PLAN_LIVE));}catch(e){}}
 const planEditing=new Set();
+const pastOpen=new Set();   // past days the viewer expanded this visit (past days start folded)
 const fromFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at==="airport") o.at=AIRPORT; return o;};
 const toFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at) o.at="airport"; return o;};
 const bookedOn=(st,date)=>{
@@ -1912,6 +1916,7 @@ function hoursWarn(st,date){
 }
 function daySection(di){
   const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
+  const past=d.date<todayCM(), fold=past&&!ed&&!pastOpen.has(di);
   const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"O":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
@@ -1929,9 +1934,14 @@ function daySection(di){
       <div class="ps-b"><div class="ps-top">${name}${lock}</div>${wl}<span class="local">${esc(st.d||"")}</span></div>
       <a class="mini" href="${navUrl(pt)}" target="_blank" rel="noopener">導航</a></li>`+gap(i);}).join("");
   const main=stops.filter(st=>!st.opt).map(planPoint).filter(Boolean), links=dayRouteLinks(main);
-  return `<section class="pday${ed?" editing":""}" id="pday${di+1}">
-    <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
-      <span class="pday-links">${ed?"":links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}
+  const foldBtn=past&&!ed?`<button type="button" class="chip small" data-pfold="${di}" aria-expanded="${!fold}">${fold?"展開":"收合"}</button>`:"";
+  if(fold) return `<section class="pday past folded" id="pday${di+1}">
+    <header class="pday-h"><span class="pday-d">Day ${di+1}</span><span class="pday-past">已結束</span><h2>${md(d.date)}・${esc(d.title)}</h2>
+      <span class="pday-links">${foldBtn}</span></header>
+  </section>`;
+  return `<section class="pday${ed?" editing":""}${past?" past":""}" id="pday${di+1}">
+    <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}${past?`<span class="pday-past">已結束</span>`:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
+      <span class="pday-links">${foldBtn}${ed?"":links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}
         <button type="button" class="chip small${ed?" send":""}" data-pedit="${di}">${ed?"完成":"編輯行程"}</button></span>
       ${ed&&live&&live.by?`<span class="pday-mod">${esc((WHO[live.by]||{name:live.by}).name)} 修改於 ${ago(live.ts||0)}</span>`:""}</header>
     <div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>${ed?"":dayTipsHTML(d.date,di)}
@@ -1947,7 +1957,7 @@ function renderPlan(){
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
   <p class="plan-lead">O 是彈性（時間夠再去）；紫色是按摩、藍色是課程；地圖上淡化的點可以點了加到這天。</p>${MAP_LEGEND}
   <div id="nextStop" hidden></div>
-  <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
+  <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":d.date<todayCM()?"✓ ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
   renderNext();
@@ -2028,7 +2038,8 @@ function renderDay(di){
     if(pts.length&&!pts.every(ll=>x.m.getBounds().contains(ll))) x.m.fitBounds(pts,{padding:[28,28],maxZoom:15});   // refit only if a stop is off-screen
   }else{
     sec.replaceWith(n);
-    const box=n.querySelector("[data-pmap]"); if(window.L) drawPlanMap(box); else if(planObserver) planObserver.observe(box); else drawPlanMap(box);
+    const box=n.querySelector("[data-pmap]");   // a folded past day has no map
+    if(box){if(window.L) drawPlanMap(box); else if(planObserver) planObserver.observe(box); else drawPlanMap(box);}
   }
   if(planEditing.has(di)) initSort(di);
 }
@@ -2171,6 +2182,9 @@ document.addEventListener("click",async e=>{
   if(add){const di=add.dataset.day!==undefined?+add.dataset.day:mapState.planDay; if(di==null||!PLAN[di]) return; if(lmap) lmap.closePopup(); Object.values(planMaps).forEach(x=>x.m.closePopup()); addStop(di,add.dataset.addday); return;}
   const dc=e.target.closest("[data-decide]");
   if(dc){decideIdea(dc.dataset.idea,dc.dataset.decide); return;}
+  const pf=e.target.closest("[data-pfold]");
+  if(pf){const di=+pf.dataset.pfold; if(pastOpen.has(di)){pastOpen.delete(di); const x=planMaps[di]; if(x){x.m.remove(); delete planMaps[di];}} else pastOpen.add(di);
+    renderDay(di); const b=document.querySelector(`[data-pfold="${di}"]`); if(b) b.focus({preventScroll:true}); return;}
   const pe=e.target.closest("[data-pedit]");
   if(pe){const di=+pe.dataset.pedit; if(planEditing.has(di)) planEditing.delete(di); else{if(!me){askWho(()=>pe.click()); return;} planEditing.add(di);} renderDay(di); return;}
   const pmv=e.target.closest("[data-pmv]");

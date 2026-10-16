@@ -40,6 +40,7 @@ This file adds how to work with Howard and what has gone wrong before.
 - 彈性 (`opt`) stops show as **O** and stay off the route line; massage numbers/pins purple, classes blue;
   route pins carry a ♥n badge, list rows ♥ marks; day-map candidate dots are plain (no heart ring).
 - Stops warn when the place is closed that weekday or not open at that time (`hoursWarn`).
+- Days before today (Asia/Bangkok) show 已結束 and start folded (header only, no map); 展開/收合 is per visit (`pastOpen`).
 
 ## Changing things safely
 - Edit with small patch scripts that replace exact strings and assert each match count; then extract the last
