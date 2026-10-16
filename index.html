@@ -1816,14 +1816,10 @@ const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 // One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
 // there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
 const SUGGEST={
-  "2026-10-17":st=>{const j=st.find(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(!j||(j.t==="07:30"&&lm<0)) return null;
-    const what=[]; if(j.t!=="07:30"){const h=st[0]; if(h&&h.hotel) h.t="07:00"; j.t="07:30"; j.d="週六手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤，就在這裡買（10/19 去不了店裡）；09:10 前搭 Grab 去瑜伽"; what.push("真心市集提早到 07:30，09:10 前出發去 09:30 的瑜伽；MADAM 包包在市集攤位買");}
-    if(lm>=0){st.splice(lm,1); what.push("拿掉羅摩利寺（彈性），瑜伽後直接去 Akha Ama");}
+  "2026-10-17":st=>{const ji=st.findIndex(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(ji<0&&lm<0) return null;
+    const what=[]; if(ji>=0){st.splice(ji,1); const h=st[0]; if(h&&h.hotel){h.t="09:00"; h.d="走路約 5 分鐘到 Abby 瑜伽；上課前早餐吃輕一點";} what.push("拿掉真心市集，09:00 從住宿走去瑜伽");}
+    if(st.findIndex(x=>x.id==="lokmoli"&&x.opt)>=0){st.splice(st.findIndex(x=>x.id==="lokmoli"&&x.opt),1); what.push("拿掉羅摩利寺（彈性），瑜伽 10:30 結束後直接去 Akha Ama");}
     return {stops:st,what};},
-  "2026-10-18":st=>{const bz=st.findIndex(x=>x.id==="bazaar"); if(bz<0) return null; st.splice(bz,1);
-    const bc=st.find(x=>x.id==="bigc"); if(bc){bc.t="20:30"; bc.d="最後採買伴手禮，可退稅；明早 05:30 要接送，買完就回去";}
-    const h=st[st.length-1]; if(h&&h.hotel){h.t=bc?"21:30":"21:00"; h.d="早點睡，明天 05:30 在 THEE 大廳等接送";}
-    return {stops:st,what:["拿掉清邁夜市，Big C 提早到 20:30","21:30 前回住宿，因為明天 05:30 就要出發"]};},
   "2026-10-19":st=>{if(!st.some(x=>["lung","madam","onepct","magic"].includes(x.id))) return null;
     const keep=id=>(st.find(x=>x.id===id)||{}).d;
     return {stops:[{t:"05:30",d:"",id:"raintree"},
