@@ -492,6 +492,10 @@ button.ps-name:hover{text-decoration:underline}
 .pnav .chip{flex:none}
 .pnav .chip[aria-current="date"]{background:var(--heart);color:var(--on-heart);border-color:transparent}
 .pday{scroll-margin-top:64px}
+.sug{margin:0;padding:10px 16px 12px;border-bottom:1px solid var(--line);background:var(--saffron-soft);font-size:13px}
+.sug b{font-size:12px;letter-spacing:.04em}
+.sug ul{margin:4px 0 8px;padding-left:18px}
+.sug-btns{display:flex;gap:12px;align-items:center}
 .pday-past{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);padding:1px 8px;border-radius:999px}
 .pday.folded .pday-h{border-bottom:0}
 .pday.past .pday-h h2{color:var(--muted)}
@@ -1806,6 +1810,27 @@ const bookedOn=(st,date)=>{
   return !!st.id&&BOOKINGS.find(b=>b.id===st.id&&b.date===date);
 };
 const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
+// One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
+// there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
+const SUGGEST={
+  "2026-10-17":st=>{const i=st.findIndex(x=>x.id==="chum"); if(i<0||st.some(x=>x.id==="linlaowu")) return null;
+    st[i]={...st[i],id:"linlaowu",d:"魚丸麵午餐，不用訂位、只收現金；CHUM 回覆了想去的話可以改回"};
+    return {stops:st,what:["午餐 CHUM（還沒訂到）改成林老五，就在 200 公尺外"]};},
+  "2026-10-18":st=>{const what=[], i=st.findIndex(x=>x.id==="sapa");
+    if(i>=0&&!st.some(x=>x.id==="kati")){st[i]={...st[i],id:"kati",d:"早午餐，離 Jhaban 走路約 6 分鐘；可刷卡，週日開到 14:00"}; what.push("早餐 Sapa（城南，要搭車）改成 Kati，走路就到");}
+    const j=st.findIndex(x=>x.id==="sp"); if(j>=0){st.splice(j,1); what.push("拿掉 SP Chicken：11:30 已訂 Ekachan，10/20 還會吃 SP");}
+    return what.length?{stops:st,what}:null;},
+  "2026-10-19":st=>{const i=st.findIndex(x=>x.id==="ekachan"); if(i<0) return null; st.splice(i,1);
+    const b=st.find(x=>x.id==="bazaar"); if(b){b.d="晚餐直接在夜市吃，邊逛邊吃"; if(toMin(b.t)>toMin("19:00")) b.t="19:00";}
+    return {stops:st,what:["Ekachan 已改訂 10/18 午餐，拿掉這天晚上的 Ekachan",b?"晚餐改在清邁夜市吃，19:00 出發":"晚餐時間空出來"]};}
+};
+const sugOff=()=>{try{return JSON.parse(localStorage.getItem("cnxSugOff")||"{}");}catch(e){return {};}};
+function sugFor(di){const d=PLAN[di], fn=SUGGEST[d.date]; if(!fn||sugOff()[d.date]||d.date<todayCM()) return null;
+  const st=dayStops(di), r=fn(st.map(x=>({...x}))); const fixed=a=>a.filter(x=>isFixed(x,di)).length;
+  return r&&fixed(r.stops)===fixed(st)?r:null;}   // never drop a booking
+function sugHTML(di){const r=sugFor(di); if(!r) return "";
+  return `<div class="sug"><b>建議調整</b><ul>${r.what.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    <span class="sug-btns"><button type="button" class="chip small send" data-sug="${di}">套用</button><button type="button" class="linkbtn" data-sugoff="${di}">不用了</button></span></div>`;}
 function dayStops(di){
   const date=PLAN[di].date, live=PLAN_LIVE[date];
   const stops=live&&live.stops?Object.values(live.stops).map(fromFB).filter(st=>st.id||st.hotel||st.at):PLAN[di].stops.map(st=>({...st}));
@@ -1944,7 +1969,7 @@ function daySection(di){
       <span class="pday-links">${foldBtn}${ed?"":links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}
         <button type="button" class="chip small${ed?" send":""}" data-pedit="${di}">${ed?"完成":"編輯行程"}</button></span>
       ${ed&&live&&live.by?`<span class="pday-mod">${esc((WHO[live.by]||{name:live.by}).name)} 修改於 ${ago(live.ts||0)}</span>`:""}</header>
-    <div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>${ed?"":dayTipsHTML(d.date,di)}
+    ${ed?"":sugHTML(di)}<div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>${ed?"":dayTipsHTML(d.date,di)}
       ${ed?`<div class="ps-tools"><button type="button" class="chip small" data-padd="${di}">＋ 加地點</button>${stops.some(st=>bookedOn(st,d.date))?`<span class="local">標「已訂」的不能移動或刪除</span>`:""}</div>`:""}</div>
       <div class="pday-mapcol"><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div><button type="button" class="linkbtn pday-big" data-mapday="${di}">在大地圖看附近地點 →</button></div></div>
   </section>`;
@@ -2182,6 +2207,10 @@ document.addEventListener("click",async e=>{
   if(add){const di=add.dataset.day!==undefined?+add.dataset.day:mapState.planDay; if(di==null||!PLAN[di]) return; if(lmap) lmap.closePopup(); Object.values(planMaps).forEach(x=>x.m.closePopup()); addStop(di,add.dataset.addday); return;}
   const dc=e.target.closest("[data-decide]");
   if(dc){decideIdea(dc.dataset.idea,dc.dataset.decide); return;}
+  const sg=e.target.closest("[data-sug]");
+  if(sg){const di=+sg.dataset.sug, r=sugFor(di); if(r) saveDay(di,r.stops,`已套用 ${md(PLAN[di].date)} 的建議調整`); return;}
+  const sgo=e.target.closest("[data-sugoff]");
+  if(sgo){const di=+sgo.dataset.sugoff, o=sugOff(); o[PLAN[di].date]=1; try{localStorage.setItem("cnxSugOff",JSON.stringify(o));}catch(e){} renderDay(di); return;}
   const pf=e.target.closest("[data-pfold]");
   if(pf){const di=+pf.dataset.pfold; if(pastOpen.has(di)){pastOpen.delete(di); const x=planMaps[di]; if(x){x.m.remove(); delete planMaps[di];}} else pastOpen.add(di);
     renderDay(di); const b=document.querySelector(`[data-pfold="${di}"]`); if(b) b.focus({preventScroll:true}); return;}
