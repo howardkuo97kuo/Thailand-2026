@@ -2305,9 +2305,24 @@ buildControls(); readUrlState(); render();
 document.addEventListener("change",e=>{
   const f=e.target.closest("[data-pt],[data-pn]"); if(!f) return;
   const [di,i]=(f.dataset.pt||f.dataset.pn).split(":").map(Number), st=dayStops(di); if(!st[i]) return;
-  if(f.dataset.pt) st[i].t=f.value; else st[i].d=f.value.trim();
-  saveDay(di,st,null,true);
+  if(f.dataset.pn){st[i].d=f.value.trim(); saveDay(di,st,null,true); return;}
+  const note=pushLater(di,st,i,f.value);
+  if(note) saveDay(di,st,note); else saveDay(di,st,null,true);
 });
+// A stop's time was changed by hand: stops after it that are now under 30 minutes later move back, in order
+// (a booking counts from its end). Bookings themselves never move; a clash with one is reported instead.
+function pushLater(di,st,i,t){
+  st[i].t=t; const date=PLAN[di].date, bk=x=>bookedOn(x,date), ready=x=>{const b=bk(x); return b?toMin(b.end||b.time):toMin(x.t);};
+  let prev=ready(st[i]), pushed=0, clash=null; if(prev==null) return "";
+  for(let j=i+1;j<st.length;j++){
+    const x=st[j], b=bk(x), cur=toMin(b?b.time:x.t);
+    if(b){if(cur<prev+30&&!clash) clash=x; prev=ready(x); continue;}
+    if(cur==null||cur<prev+30){x.t=fromMin(up30(prev+30)); pushed++;}
+    prev=toMin(x.t);
+  }
+  const n=(planPoint(st[i])||{n:""}).n;
+  return pushed||clash?`「${n}」改到 ${t}`+(pushed?`；後面 ${pushed} 個地點跟著往後`:"")+(clash?`。注意：會撞到已訂的「${(planPoint(clash)||{n:""}).n}」，請手動調整`:""):"";
+}
 document.addEventListener("input",e=>{if(e.target.id==="pkQ") renderPicker(e.target.value);});
 document.addEventListener("change",e=>{if(e.target.id==="pkOpt") PK.opt=e.target.checked;});
 $("#ideaForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#ideaText").value.trim(); if(t) submitIdea(t);});

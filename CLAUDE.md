@@ -36,6 +36,7 @@ This file adds how to work with Howard and what has gone wrong before.
 ## 行程 behaviour to preserve
 - Half-hour times; consecutive stops ≥ 30 minutes apart; a moved or added stop is retimed from the stop before
   it (a booking counts from its end, the arrival from `ready`); later stops are pushed only when too close.
+  Changing a stop's time by hand (`pushLater`) does the same for the stops after it, with an undo toast.
 - Bookings and flights can't be moved, removed or retimed, and are put back if an edit drops them.
 - 彈性 (`opt`) stops show as **O** and stay off the route line; massage numbers/pins purple, classes blue;
   route pins carry a ♥n badge, list rows ♥ marks; day-map candidate dots are plain (no heart ring).
