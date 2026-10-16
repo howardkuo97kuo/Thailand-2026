@@ -942,7 +942,7 @@ const PLAN=[
   {t:"07:30",id:"jingjai",d:"週末手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤"},
   {t:"10:30",id:"lokmoli",d:"紅磚古塔"},
   {t:"11:00",id:"chiangman",d:"大象佛塔"},
-  {t:"11:45",id:"chum",d:"泰北菜午餐，有冷氣；想吃咖哩麵可改 Khao Soi Khun Yai（14:00 收）"},
+  {t:"12:00",id:"chum",d:"已訂位 3 人、室內 1 樓（有冷氣）"},
   {t:"13:00",id:"akhaama",d:"阿卡族咖啡＋香蕉蛋糕"},
   {t:"13:45",id:"phrasingh",d:"需遮肩過膝"},
   {t:"14:30",id:"kalm",d:"有冷氣的咖啡館，頂樓看柴迪隆寺"},
@@ -989,6 +989,7 @@ const BOOKINGS=[
   {id:"house",kind:"餐廳",date:"2026-10-15",time:"18:30",people:3},
   {id:"asiascenic",kind:"課程",date:"2026-10-16",time:"09:00",end:"14:00",note:"約 5 小時，含午餐"},
   {id:"baanlandai",kind:"餐廳",date:"2026-10-15",time:"12:00",people:2,note:"古城分店；Charlie 名義訂位（Howard、Charlie）"},
+  {id:"chum",kind:"餐廳",date:"2026-10-17",time:"12:00",people:3,note:"室內 1 樓；Howard 用 Messenger 訂的，店家已確認"},
   {id:"ekachan",kind:"餐廳",date:"2026-10-18",time:"11:30",people:3,note:"樓上座位；Howard 用 Google 地圖訂的，預約編號在 Howard 的確認信"},
   {id:"reliever",kind:"按摩",date:"2026-10-15",time:"14:00",people:2,note:"Howard 用 Messenger 訂的；不用訂金，要取消請先跟店家說；療程到店再選（推草藥熱壓＋熱椰子油 90 分）"}
 ];
@@ -1813,9 +1814,6 @@ const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 // One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
 // there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
 const SUGGEST={
-  "2026-10-17":st=>{const i=st.findIndex(x=>x.id==="chum"); if(i<0||st.some(x=>x.id==="linlaowu")) return null;
-    st[i]={...st[i],id:"linlaowu",d:"魚丸麵午餐，不用訂位、只收現金；CHUM 回覆了想去的話可以改回"};
-    return {stops:st,what:["午餐 CHUM（還沒訂到）改成林老五，就在 200 公尺外"]};},
   "2026-10-18":st=>{const what=[], i=st.findIndex(x=>x.id==="sapa");
     if(i>=0&&!st.some(x=>x.id==="kati")){st[i]={...st[i],id:"kati",d:"早午餐，離 Jhaban 走路約 6 分鐘；可刷卡，週日開到 14:00"}; what.push("早餐 Sapa（城南，要搭車）改成 Kati，走路就到");}
     const j=st.findIndex(x=>x.id==="sp"); if(j>=0){st.splice(j,1); what.push("拿掉 SP Chicken：11:30 已訂 Ekachan，10/20 還會吃 SP");}
