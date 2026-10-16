@@ -1820,16 +1820,16 @@ const SUGGEST={
     const what=[]; if(ji>=0){st.splice(ji,1); const h=st[0]; if(h&&h.hotel){h.t="09:00"; h.d="走路約 5 分鐘到 Abby 瑜伽；上課前早餐吃輕一點";} what.push("拿掉真心市集，09:00 從住宿走去瑜伽");}
     if(st.findIndex(x=>x.id==="lokmoli"&&x.opt)>=0){st.splice(st.findIndex(x=>x.id==="lokmoli"&&x.opt),1); what.push("拿掉羅摩利寺（彈性），瑜伽 10:30 結束後直接去 Akha Ama");}
     return {stops:st,what};},
-  "2026-10-19":st=>{if(!st.some(x=>["lung","madam","onepct","magic"].includes(x.id))) return null;
+  "2026-10-19":st=>{if(st.some(x=>x.id==="madam")&&!st.some(x=>["lung","onepct","magic"].includes(x.id))) return null;
     const keep=id=>(st.find(x=>x.id===id)||{}).d;
     return {stops:[{t:"05:30",d:"",id:"raintree"},
-      {t:"13:30",id:"kaosoy",d:"請導遊直接送到尼曼 Kao Soy Nimman；推泰北香腸咖哩麵，每人約 200–250 銖"},
-      {t:"14:30",id:"joost",d:keep("joost")||"走路 2 分鐘；山竹、酪梨冰沙"},
-      {t:"15:00",id:"roast8ry",opt:true,d:"自家烘豆精品咖啡，17:00 關；累了就跳過"},
+      {t:"13:30",id:"madam",d:"請導遊回程先送到 MADAM（古城東，離 THEE 很近）；包包 S 約 190、M 約 290 銖起，老闆娘會中文，可刷卡；只有平日開到 16:30"},
+      {t:"14:30",id:"kaosoy",d:"Grab 約 15 分鐘到尼曼；推泰北香腸咖哩麵，每人約 200–250 銖"},
+      {t:"15:30",id:"joost",d:keep("joost")||"走路 2 分鐘；山竹、酪梨冰沙"},
       {t:"16:00",id:"museforest",d:keep("museforest")||"按摩 90 分鐘，早起後放鬆；建議預約"},
       {t:"18:00",id:"moonim",d:"三個人都按愛心的泰式炭火火鍋；開店就排隊，Grab 約 10 分鐘"},
       {t:"20:00",hotel:"thee",d:"早點回去整理行李，明天最後一天"}],
-     what:["半日遊 05:30–13:00，回來後請導遊直接送到尼曼吃 Kao Soy","拿掉 Lung Khajohn（改 10/20）、MADAM、1% Pilates、Magic","晚餐改成三個人都愛的หมูนิ่ม火鍋，取代 Mooyim"]};},
+     what:["半日遊 05:30–13:00，回程請導遊先送到 MADAM 買包包","14:30 到尼曼吃 Kao Soy → Joost → 16:00 Muse 按摩 → 18:00 三個人都愛的หมูนิ่ม火鍋","拿掉 Lung Khajohn（改 10/20）、1% Pilates、Magic、Roast8ry、Mooyim"]};},
   "2026-10-20":st=>{const i=st.findIndex(x=>x.id==="maesai"); if(i<0||st.some(x=>x.id==="lung")) return null;
     st[i]={...st[i],id:"lung",d:"必比登椰奶蒸米皮捲（10/19 去不了）；離 THEE 走路約 12 分鐘，常在 11 點前賣完；10:40 前出發去按摩；只收現金"};
     return {stops:st,what:["Maesai 換成 Lung Khajohn：三個人都按了愛心、離 THEE 走路就到，10/19 去不了"]};}
