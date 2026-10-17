@@ -1,0 +1,49 @@
+# Lets Claude write one day of the itinerary (/plan/{date}) after Howard's OK. Guarded by:
+#  - expect_ts: the day's `ts` that Claude last read; if the live day changed since, nothing is written
+#  - a backup of the live day goes to the `snapshot` branch (backup/) before every write
+# Needs the repository secret FIREBASE_SECRET (added by Howard in Settings > Secrets; never pasted in chat).
+name: write-plan
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "YYYY-MM-DD"
+        required: true
+      expect_ts:
+        description: "ts of the live day when last read (null if the day is absent)"
+        required: true
+      payload:
+        description: "JSON {stops:[...],by,ts,done?}"
+        required: true
+permissions:
+  contents: write
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write
+        env:
+          DATE: ${{ inputs.date }}
+          EXPECT: ${{ inputs.expect_ts }}
+          PAYLOAD: ${{ inputs.payload }}
+          FB_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        run: |
+          set -e
+          DB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app"
+          [ -n "$FB_SECRET" ] || { echo "FIREBASE_SECRET is not set"; exit 1; }
+          echo "$DATE" | grep -Eq '^2026-10-(1[5-9]|20)$' || { echo "date not allowed"; exit 1; }
+          echo "$PAYLOAD" | jq -e '(.stops|type=="array") and (.stops|length>0) and (.by|type=="string") and (.ts|type=="number")' >/dev/null || { echo "payload invalid"; exit 1; }
+          curl -sSf "$DB/plan/$DATE.json" -o live.json
+          CUR=$(jq -r '.ts // "null"' live.json)
+          [ "$CUR" = "$EXPECT" ] || { echo "live day changed (ts $CUR, expected $EXPECT): merge first"; exit 1; }
+          git clone -q --branch snapshot --depth 1 "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" s 2>/dev/null || { git init -q s && git -C s checkout -q -b snapshot; }
+          mkdir -p s/backup && cp live.json "s/backup/plan-$DATE-$CUR.json"
+          echo "$PAYLOAD" > new.json
+          curl -sSf -X PUT -H "Content-Type: application/json" --data @new.json "$DB/plan/$DATE.json?auth=$FB_SECRET" -o /dev/null
+          curl -sSf "$DB/plan/$DATE.json" -o after.json
+          jq -e --slurpfile n new.json '. == $n[0]' after.json >/dev/null || { echo "read-back differs"; exit 1; }
+          cp after.json "s/snapshot-written-$DATE.json"
+          cd s
+          git -c user.name=github-actions -c user.email=actions@github.com add -A
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "write plan $DATE" || true
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" snapshot
