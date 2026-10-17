@@ -29,6 +29,7 @@ jobs:
           FB_SECRET: ${{ secrets.FIREBASE_SECRET }}
         run: |
           set -e
+          trap 'echo "::error::failed at line $LINENO (exit $?)"' ERR
           DB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app"
           [ -n "$FB_SECRET" ] || { echo "::error::FIREBASE_SECRET is not set"; exit 1; }
           echo "$DATE" | grep -Eq '^2026-10-(1[5-9]|20)$' || { echo "::error::date not allowed"; exit 1; }
