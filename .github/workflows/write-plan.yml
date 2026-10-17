@@ -42,6 +42,7 @@ jobs:
           mkdir -p s/backup && cp live.json "s/backup/plan-$DATE-$CUR.json"
           echo "$PAYLOAD" > new.json
           CODE=$(curl -sS -X PUT -H "Content-Type: application/json" --data @new.json "$DB/plan/$DATE.json?auth=$FB_SECRET" -o put.out -w '%{http_code}')
+          CODE=${CODE:0:3}
           [ "$CODE" = 200 ] || { echo "::error::PUT failed HTTP $CODE: $(head -c 200 put.out | tr -d '\n')"; exit 1; }
           curl -sSf "$DB/plan/$DATE.json" -o after.json
           jq -e --slurpfile n new.json '. == $n[0]' after.json >/dev/null || { echo "::error::read-back differs"; exit 1; }
