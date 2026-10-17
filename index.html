@@ -1817,10 +1817,9 @@ const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 // One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
 // there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
 const SUGGEST={
-  "2026-10-17":st=>{const ji=st.findIndex(x=>x.id==="jingjai"), hasKati=st.some(x=>x.id==="kati"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(ji<0&&lm<0&&hasKati) return null;
+  "2026-10-17":st=>{const ji=st.findIndex(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(ji<0&&lm<0) return null;
     const what=[]; if(ji>=0){st.splice(ji,1); what.push("拿掉真心市集");}
-    if(!hasKati){const h=st[0]&&st[0].hotel?st[0]:null; if(h){h.t="07:30"; h.d="出發吃早餐，走路約 6 分鐘";}
-      st.splice(h?1:0,0,{t:"08:00",id:"kati",d:"瑜伽前吃輕一點：評論最推優格碗、水果配吐司；可刷卡；09:15 走去瑜伽（約 8 分鐘）"}); what.push("08:00 先到 Kati 吃早餐，再走去 09:30 的瑜伽");}
+    if(ji>=0){const h=st[0]&&st[0].hotel?st[0]:null; if(h){h.t="09:00"; h.d="走路約 5 分鐘到 Abby 瑜伽";}}
     const l2=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(l2>=0){st.splice(l2,1); what.push("拿掉羅摩利寺（彈性），瑜伽 10:30 結束後直接去 Akha Ama");}
     return {stops:st,what};},
   "2026-10-19":st=>{if(st.some(x=>x.id==="madam")&&!st.some(x=>["lung","onepct","magic"].includes(x.id))) return null;
