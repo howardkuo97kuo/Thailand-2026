@@ -937,7 +937,7 @@ const PLAN=[
   {t:"19:45",id:"kiewkai",d:"One Nimman 的泰北菜；同一棟也有 GINGER FARM"},
   {t:"21:30",id:"warmup",d:"老牌 Live 夜店",opt:true},
   {t:"22:30",hotel:"jhaban",d:"回住宿"}]},
- {date:"2026-10-17",title:"真心市集・古城寺廟",stops:[
+ {date:"2026-10-17",title:"瑜伽・古城寺廟",stops:[
   {t:"07:00",hotel:"jhaban",d:"出發"},
   {t:"07:30",id:"jingjai",d:"週末手作與農夫市集，在小吃區吃早餐；MADAM 包包週末在這擺攤"},
   {t:"10:30",id:"lokmoli",d:"紅磚古塔"},
@@ -965,7 +965,7 @@ const PLAN=[
   {t:"17:30",id:"sunday",d:"週日限定，逛約 2 小時"},
   {t:"20:00",id:"rotipadae",d:"自己寫單、等叫號"},
   {t:"21:00",hotel:"thee",d:"回新住宿"}]},
- {date:"2026-10-19",title:"北區・尼曼",stops:[
+ {date:"2026-10-19",title:"雨樹瀑布半日遊・尼曼",stops:[
   {t:"07:30",hotel:"thee",d:"出發"},
   {t:"07:40",id:"lung",d:"椰奶蒸米皮捲，11 點前就會賣完；週日休所以排今天"},
   {t:"09:00",id:"magic",d:"泰奶、手沖；週三休，15:30 關"},
@@ -1805,7 +1805,8 @@ let PLAN_LIVE=(()=>{try{const v=JSON.parse(localStorage.getItem(PLAN_KEY)||"null
 let planBlocked=false, planLoaded=false, planHadCache=(()=>{try{return localStorage.getItem(PLAN_KEY)!==null;}catch(e){return false;}})();
 function savePlanCache(){try{localStorage.setItem(PLAN_KEY,JSON.stringify(PLAN_LIVE));}catch(e){}}
 const planEditing=new Set();
-const pastOpen=new Set();   // past days the viewer expanded this visit (past days start folded)
+const pastOpen=new Set();
+const dayDone=di=>{const d=PLAN[di]; return d.date<todayCM()||!!(PLAN_LIVE[d.date]&&PLAN_LIVE[d.date].done);};   // over, or finished early with 完成這天 (shared)   // past days the viewer expanded this visit (past days start folded)
 const fromFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at==="airport") o.at=AIRPORT; return o;};
 const toFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at) o.at="airport"; return o;};
 const bookedOn=(st,date)=>{
@@ -1959,7 +1960,7 @@ function hoursWarn(st,date){
 }
 function daySection(di){
   const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
-  const past=d.date<todayCM(), fold=past&&!ed&&!pastOpen.has(di);
+  const early=d.date>=todayCM()&&!!(live&&live.done), past=d.date<todayCM()||early, fold=past&&!ed&&!pastOpen.has(di);
   const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"O":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
@@ -1977,13 +1978,15 @@ function daySection(di){
       <div class="ps-b"><div class="ps-top">${name}${lock}</div>${wl}<span class="local">${esc(st.d||"")}</span></div>
       <a class="mini" href="${navUrl(pt)}" target="_blank" rel="noopener">導航</a></li>`+gap(i);}).join("");
   const main=stops.filter(st=>!st.opt).map(planPoint).filter(Boolean), links=dayRouteLinks(main);
-  const foldBtn=past&&!ed?`<button type="button" class="chip small" data-pfold="${di}" aria-expanded="${!fold}">${fold?"展開":"收合"}</button>`:"";
+  const foldBtn=(past&&!ed?`<button type="button" class="chip small" data-pfold="${di}" aria-expanded="${!fold}">${fold?"展開":"收合"}</button>`:"")
+    +(ed?"":early?`<button type="button" class="chip small" data-pdone="${di}" data-on="0">取消完成</button>`:!past?`<button type="button" class="chip small" data-pdone="${di}" data-on="1">完成這天</button>`:"");
+  const pastTag=`<span class="pday-past">${early?"已完成":"已結束"}</span>`;
   if(fold) return `<section class="pday past folded" id="pday${di+1}">
-    <header class="pday-h"><span class="pday-d">Day ${di+1}</span><span class="pday-past">已結束</span><h2>${md(d.date)}・${esc(d.title)}</h2>
+    <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${pastTag}<h2>${md(d.date)}・${esc(d.title)}</h2>
       <span class="pday-links">${foldBtn}</span></header>
   </section>`;
   return `<section class="pday${ed?" editing":""}${past?" past":""}" id="pday${di+1}">
-    <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}${past?`<span class="pday-past">已結束</span>`:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
+    <header class="pday-h"><span class="pday-d">Day ${di+1}</span>${di===ti?`<span class="pday-today">今天</span>`:""}${past?pastTag:""}<h2>${md(d.date)}・${esc(d.title)}</h2>
       <span class="pday-links">${foldBtn}${ed?"":links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}
         <button type="button" class="chip small${ed?" send":""}" data-pedit="${di}">${ed?"完成":"編輯行程"}</button></span>
       ${ed&&live&&live.by?`<span class="pday-mod">${esc((WHO[live.by]||{name:live.by}).name)} 修改於 ${ago(live.ts||0)}</span>`:""}</header>
@@ -1992,6 +1995,8 @@ function daySection(di){
       <div class="pday-mapcol"><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div><button type="button" class="linkbtn pday-big" data-mapday="${di}">在大地圖看附近地點 →</button></div></div>
   </section>`;
 }
+function refreshPlanNav(){const ti=PLAN.findIndex(d=>d.date===todayCM());
+  document.querySelectorAll("[data-pjump]").forEach(b=>{const i=+b.dataset.pjump-1; b.textContent=(dayDone(i)?"✓ ":"")+(i===ti?"今天 ":"")+md(PLAN[i].date);});}
 function renderPlan(){
   const el=$("#planPanel"); if(el.dataset.done==="1") return;
   if(!planLoaded&&!planHadCache){if(el.dataset.done!=="wait"){el.dataset.done="wait"; el.innerHTML=`<p class="tab-lead">載入行程中…</p>`; setTimeout(()=>{if(el.dataset.done==="wait"){el.dataset.done=""; renderPlan();}},2500);} return;}
@@ -2000,7 +2005,7 @@ function renderPlan(){
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
   <p class="plan-lead">O 是彈性（時間夠再去）；紫色是按摩、藍色是課程；地圖上淡化的點可以點了加到這天。</p>${MAP_LEGEND}
   <div id="nextStop" hidden></div>
-  <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${i===ti?"今天 ":d.date<todayCM()?"✓ ":""}${md(d.date)}</button>`).join("")}</nav>`+
+  <nav class="pnav" aria-label="跳到某一天">${PLAN.map((d,i)=>`<button type="button" class="chip small" data-pjump="${i+1}"${i===ti?' aria-current="date"':""}>${dayDone(i)?"✓ ":""}${i===ti?"今天 ":""}${md(d.date)}</button>`).join("")}</nav>`+
   PLAN.map((d,di)=>daySection(di)).join("");
   watchPlanMaps();
   renderNext();
@@ -2091,7 +2096,7 @@ const planErr=e=>showToast(e===401||e===403?"行程還不能修改（資料庫�
 // Save a day's stops; msg shows a toast with 復原 (undo restores what the day was before this change).
 async function saveDay(di,stops,msg,quiet){
   if(!me){askWho(()=>saveDay(di,stops,msg,quiet)); return;}
-  const date=PLAN[di].date, prev=PLAN_LIVE[date]||null, val={stops:stops.map(toFB),by:me,ts:Date.now()};
+  const date=PLAN[di].date, prev=PLAN_LIVE[date]||null, val={stops:stops.map(toFB),by:me,ts:Date.now()}; if(prev&&prev.done) val.done=true;
   PLAN_LIVE[date]=val; savePlanCache(); if(!quiet) renderDay(di);
   try{await putPlan(date,val); if(msg) showToast(msg,()=>setDay(di,prev));}
   catch(e){if(prev) PLAN_LIVE[date]=prev; else delete PLAN_LIVE[date]; savePlanCache(); renderDay(di); planErr(e);}
@@ -2119,6 +2124,7 @@ function applyPlan(d){
     const sec=$("#pday"+(i+1)), ae=document.activeElement;
     if(sec&&ae&&sec.contains(ae)&&(ae.tagName==="INPUT"||ae.tagName==="SELECT")){ae.addEventListener("blur",()=>renderDay(i),{once:true}); return;}   // don't yank a field someone is using
     renderDay(i);});
+  refreshPlanNav();
 }
 async function planTick(){
   try{const r=await fetch(FB+"/plan.json"); if(r.status===401||r.status===403){planBlocked=true; return;} if(!r.ok) return; applyPlan(await r.json());}catch(e){}
@@ -2229,6 +2235,14 @@ document.addEventListener("click",async e=>{
   if(sg){const di=+sg.dataset.sug, r=sugFor(di); if(r) saveDay(di,r.stops,`已套用 ${md(PLAN[di].date)} 的建議調整`); return;}
   const sgo=e.target.closest("[data-sugoff]");
   if(sgo){const di=+sgo.dataset.sugoff, o=sugOff(); o[PLAN[di].date]=1; try{localStorage.setItem("cnxSugOff2",JSON.stringify(o));}catch(e){} renderDay(di); return;}
+  const pdn=e.target.closest("[data-pdone]");
+  if(pdn){const di=+pdn.dataset.pdone, on=pdn.dataset.on==="1"; if(!me){askWho(()=>pdn.click()); return;}
+    const date=PLAN[di].date, prev=PLAN_LIVE[date]||null, val={stops:dayStops(di).map(toFB),by:me,ts:Date.now()}; if(on) val.done=true;
+    pastOpen.delete(di); if(on){const x=planMaps[di]; if(x){x.m.remove(); delete planMaps[di];}}
+    PLAN_LIVE[date]=val; savePlanCache(); renderDay(di); refreshPlanNav();
+    try{await putPlan(date,val); showToast(on?`${md(date)} 已完成，三個人的行程都收起來了`:`${md(date)} 已取消完成`,()=>{setDay(di,prev); refreshPlanNav();});}
+    catch(err){if(prev) PLAN_LIVE[date]=prev; else delete PLAN_LIVE[date]; savePlanCache(); renderDay(di); refreshPlanNav(); planErr(err);}
+    return;}
   const pf=e.target.closest("[data-pfold]");
   if(pf){const di=+pf.dataset.pfold; if(pastOpen.has(di)){pastOpen.delete(di); const x=planMaps[di]; if(x){x.m.remove(); delete planMaps[di];}} else pastOpen.add(di);
     renderDay(di); const b=document.querySelector(`[data-pfold="${di}"]`); if(b) b.focus({preventScroll:true}); return;}

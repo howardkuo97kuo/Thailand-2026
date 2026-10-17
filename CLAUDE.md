@@ -42,6 +42,7 @@ This file adds how to work with Howard and what has gone wrong before.
   route pins carry a ♥n badge, list rows ♥ marks; day-map candidate dots are plain (no heart ring).
 - Stops warn when the place is closed that weekday or not open at that time (`hoursWarn`).
 - Days before today (Asia/Bangkok) show 已結束 and start folded (header only, no map); 展開/收合 is per visit (`pastOpen`).
+- 完成這天 / 取消完成 sets `done:true` on `/plan/{date}` (shared, undoable); a done day folds like a past day with 已完成, and `saveDay` keeps the flag.
 - `SUGGEST` (by date) shows a 建議調整 box with 套用 (writes via `saveDay`, undoable) and 不用了 (localStorage `cnxSugOff`);
   each rule works on the live day and returns null once applied. Used when this cloud env can't reach Firebase.
 
