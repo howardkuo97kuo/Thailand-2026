@@ -1967,12 +1967,29 @@ function hoursWarn(st,date){
   const later=p.oh.map(([a])=>a).filter(a=>a>m&&a<(w+1)*1440).sort((x,y)=>x-y)[0];
   return later!=null?`${fromMin(later-w*1440)} 才開門`:`${st.t} 已打烊或沒營業（${p.h||""}）`;
 }
+// "⚠ 從上一站約 15 分鐘車程，只留 10 分鐘": the gap before a stop is shorter than the trip from the one before it (distance as the crow
+// flies; walking under 0.8 km, else Grab ≈ 8 min + 3 min/km). A stop is assumed to take 30 min (0 for the lodging), 60 for a booking with no end time; trips under 6 min and out-of-town stops are skipped.
+function travelWarn(stops,i,date){
+  const a=stops[i-1], b=stops[i], pa=a&&planPoint(a), pb=planPoint(b); if(!pa||!pb||!pa.ll||!pb.ll||pa.airport||pb.airport) return "";
+  const d=km(pa.ll,pb.ll); if(d<.3) return "";
+  const ba=bookedOn(a,date), bb=bookedOn(b,date), ta=toMin(ba?ba.time:a.t), tb=toMin(bb?bb.time:b.t); if(ta==null||tb==null) return "";
+  if(pa.p&&pa.p.r==="郊區") return "";   // a tour or outing out of town: the return time is the guide's, not a Grab ride
+  const endA=ba?(ba.end?toMin(ba.end):ta+60):ta+(pa.hotel?0:30), trip=d<.8?Math.round(d*13):8+Math.round(d*3), left=tb-endA;
+  return trip>=6&&left<trip?`從上一站約 ${trip} ${d<.8?"分鐘步行":"分鐘車程"}，只留 ${Math.max(0,left)} 分鐘`:"";
+}
+// Short sleep: back late tonight and out early tomorrow.
+function sleepWarn(di){
+  const a=dayStops(di), b=di+1<PLAN.length?dayStops(di+1):[]; if(!a.length||!b.length) return "";
+  const la=a[a.length-1], fb=b[0], ta=toMin(la.t), bb=bookedOn(fb,PLAN[di+1].date), tb=toMin(bb?bb.time:fb.t);
+  if(ta==null||tb==null||ta<22*60+30||tb>6*60) return "";
+  return `今晚 ${la.t} 回、明天 ${bb?bb.time:fb.t} 出發，只睡約 ${((tb+1440-ta)/60).toFixed(1).replace(".0","")} 小時，可以早點收工`;
+}
 function daySection(di){
   const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
   const early=d.date>=todayCM()&&!!(live&&live.done), past=d.date<todayCM()||early, fold=past&&!ed&&!pastOpen.has(di);
   const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"O":pt.hotel?"宿":pt.airport?"機":++k;
-    const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=hoursWarn(st,d.date), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
+    const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=[hoursWarn(st,d.date),i>0?travelWarn(stops,i,d.date):""].filter(Boolean).join("；"), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
     const hl=pt.p&&pt.p.c==="按摩"?" k-spa":pt.p&&pt.p.c==="課程體驗"?" k-class":"";
     const name=`<span class="ps-nm">${pt.p?`<button type="button" class="linkbtn ps-name" data-pcard="${esc(st.id)}">${esc(pt.n)}</button>`:`<b class="ps-name">${esc(pt.n)}</b>`}${michMark(pt.p)}${heartMarks(pt.p)}</span>`;
     if(ed&&bk) return `<li class="ps edit fixed${hl}" data-i="${i}"><span class="ps-lock" aria-hidden="true"></span><span class="ps-n">${num}</span>
@@ -1999,7 +2016,7 @@ function daySection(di){
       <span class="pday-links">${foldBtn}${ed?"":links.map((u,i)=>`<a class="chip small" href="${u}" target="_blank" rel="noopener">Google 地圖路線${links.length>1?`（${i===0?"前段":"後段"}）`:""}</a>`).join("")}
         <button type="button" class="chip small${ed?" send":""}" data-pedit="${di}">${ed?"完成":"編輯行程"}</button></span>
       ${ed&&live&&live.by?`<span class="pday-mod">${esc((WHO[live.by]||{name:live.by}).name)} 修改於 ${ago(live.ts||0)}</span>`:""}</header>
-    ${ed?"":sugHTML(di)}<div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>${ed?"":dayTipsHTML(d.date,di)}
+    ${ed?"":sugHTML(di)}<div class="pday-body"><div class="ps-col"><ol class="ps-list">${rows||`<li class="ps-empty">這天還沒有地點。</li>`}</ol>${ed||!sleepWarn(di)?"":`<p class="ps-warn">⚠ ${esc(sleepWarn(di))}</p>`}${ed?"":dayTipsHTML(d.date,di)}
       ${ed?`<div class="ps-tools"><button type="button" class="chip small" data-padd="${di}">＋ 加地點</button>${stops.some(st=>bookedOn(st,d.date))?`<span class="local">標「已訂」的不能移動或刪除</span>`:""}</div>`:""}</div>
       <div class="pday-mapcol"><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div><button type="button" class="linkbtn pday-big" data-mapday="${di}">在大地圖看附近地點 →</button></div></div>
   </section>`;

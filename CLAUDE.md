@@ -41,6 +41,8 @@ This file adds how to work with Howard and what has gone wrong before.
 - 彈性 (`opt`) stops show as **O** and stay off the route line; massage numbers/pins purple, classes blue;
   route pins carry a ♥n badge, list rows ♥ marks; day-map candidate dots are plain (no heart ring).
 - Stops warn when the place is closed that weekday or not open at that time (`hoursWarn`).
+- `travelWarn` flags a stop whose gap after the previous one is shorter than the estimated trip (walk <0.8 km, else Grab 8 min + 3 min/km; lodging stays 0, out-of-town stops skipped); `sleepWarn` flags back after 22:30 and out before 06:00 the next day.
+- Reading/writing live data from this cloud env goes through GitHub Actions: `read-firebase.yml` (`path=all` → `snapshot` branch) and `write-plan.yml` (needs repo secret `FIREBASE_SECRET`; checks `expect_ts`, backs up to `snapshot/backup/`, reads back). Dispatch with `gh api -X POST …/dispatches` (GraphQL/`gh run` are blocked).
 - Days before today (Asia/Bangkok) show 已結束 and start folded (header only, no map); 展開/收合 is per visit (`pastOpen`).
 - 完成這天 / 取消完成 sets `done:true` on `/plan/{date}` (shared, undoable); a done day folds like a past day with 已完成, and `saveDay` keeps the flag.
 - `SUGGEST` (by date) shows a 建議調整 box with 套用 (writes via `saveDay`, undoable) and 不用了 (localStorage `cnxSugOff`);
