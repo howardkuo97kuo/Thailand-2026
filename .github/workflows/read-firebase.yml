@@ -1,0 +1,22 @@
+# Lets Claude read the live itinerary: the cloud session can't reach Firebase, but GitHub can.
+# Run with: gh workflow run read-firebase.yml -f path=plan   (then gh run view --log)
+name: read-firebase
+on:
+  workflow_dispatch:
+    inputs:
+      path:
+        description: "Firebase path to read (plan, plan/2026-10-17, hearts, must)"
+        default: "plan"
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read
+        env:
+          P: ${{ inputs.path }}
+        run: |
+          case "$P" in plan*|hearts*|must*|feedback*) ;; *) echo "path not allowed"; exit 1;; esac
+          curl -sSf "https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app/$P.json" -o out.json
+          echo "=====BEGIN=====" ; cat out.json ; echo ; echo "=====END====="
