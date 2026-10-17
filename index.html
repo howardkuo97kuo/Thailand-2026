@@ -1817,24 +1817,31 @@ const isFixed=(st,di)=>!!bookedOn(st,PLAN[di].date);
 // One-tap suggested changes (10/16). Each works on the day as it is now and returns {stops,what} or null when
 // there's nothing left to change (already applied, or the place was moved by hand), which hides the box.
 const SUGGEST={
-  "2026-10-17":st=>{const ji=st.findIndex(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt), ls=st.some(x=>x.id==="libseed"); if(ji<0&&lm<0&&ls) return null;
+  "2026-10-17":st=>{const ji=st.findIndex(x=>x.id==="jingjai"), lm=st.findIndex(x=>x.id==="lokmoli"&&x.opt), ls=st.some(x=>x.id==="libseed"), tm=st.some(x=>["phrasingh","chedi"].includes(x.id)), wr=st.some(x=>x.id==="warorot"); if(ji<0&&lm<0&&ls&&(wr||!tm)) return null;
     const what=[];
     if(!ls){const libs={t:"11:00",id:"libseed",d:"瑜伽後去的自家烘焙咖啡（住宿同一條路）"}, ak=st.findIndex(x=>x.id==="akhaama");   // 10/17 went here instead of Akha Ama
       if(ak>=0){st.splice(ak,1,libs); what.push("11:00 Akha Ama 換成 LibSeed（實際去的咖啡店）");}
-      else{const c=st.findIndex(x=>x.id==="chum"); st.splice(c>=0?c:st.length,0,libs); what.push("加入 11:00 LibSeed 咖啡");}} if(ji>=0){st.splice(ji,1); what.push("拿掉真心市集");}
+      else{const c=st.findIndex(x=>x.id==="chum"); st.splice(c>=0?c:st.length,0,libs); what.push("加入 11:00 LibSeed 咖啡");}}
+    if(tm&&!wr){const w={t:"13:45",id:"warorot",d:"從 CHUM 搭 Grab 約 10 分鐘；逛到 15:15 再去 Kalm（市場 18:00 關門）"};
+      for(let i=st.length-1;i>=0;i--) if(["phrasingh","chedi"].includes(st[i].id)) st.splice(i,1);
+      const c=st.findIndex(x=>x.id==="chum"); st.splice(c>=0?c+1:st.length,0,w); what.push("下午拿掉帕辛寺、柴迪隆寺，改 13:45 瓦洛洛市場，15:30 Kalm 之後不變");} if(ji>=0){st.splice(ji,1); what.push("拿掉真心市集");}
     if(ji>=0){const h=st[0]&&st[0].hotel?st[0]:null; if(h){h.t="09:00"; h.d="走路約 5 分鐘到 Abby 瑜伽";}}
     const l2=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(l2>=0){st.splice(l2,1); what.push("拿掉羅摩利寺（彈性），瑜伽 10:30 結束後直接去喝咖啡");}
     return {stops:st,what};},
-  "2026-10-19":st=>{if(st.some(x=>x.id==="madam")&&!st.some(x=>["lung","onepct","magic"].includes(x.id))){   // already applied: only Joost (been there) left to drop
-      const j=st.findIndex(x=>x.id==="joost"); if(j<0) return null; st.splice(j,1); return {stops:st,what:["拿掉 Joost（已經去過了）"]};}
+  "2026-10-19":st=>{if(st.some(x=>x.id==="madam")&&!st.some(x=>["lung","onepct","magic"].includes(x.id))){   // already applied: drop Joost (been there), Muse earlier
+      const what=[], j=st.findIndex(x=>x.id==="joost"); if(j>=0){st.splice(j,1); what.push("拿掉 Joost（已經去過了）");}
+      const T={kaosoy:"14:30",museforest:"15:30",moonim:"17:30"}; let mv=false;
+      st.forEach(x=>{const t=x.id?T[x.id]:(x.hotel==="thee"&&x!==st[0]?"19:30":null); if(t&&x.t!==t){x.t=t; mv=true;}});
+      if(mv){st.sort((a,b)=>a.t<b.t?-1:a.t>b.t?1:0); what.push("Muse 按摩提早：14:30 Kao Soy → 15:30 Muse → 17:30 หมูนิ่ม → 19:30 回 THEE");}
+      return what.length?{stops:st,what}:null;}
     const keep=id=>(st.find(x=>x.id===id)||{}).d;
     return {stops:[{t:"05:30",d:"",id:"raintree"},
       {t:"13:30",id:"madam",d:"請導遊回程先送到 MADAM（古城東，離 THEE 很近）；包包 S 約 190、M 約 290 銖起，老闆娘會中文，可刷卡；只有平日開到 16:30"},
       {t:"14:30",id:"kaosoy",d:"Grab 約 15 分鐘到尼曼；推泰北香腸咖哩麵，每人約 200–250 銖"},
-      {t:"16:00",id:"museforest",d:keep("museforest")||"按摩 90 分鐘，早起後放鬆；建議預約"},
-      {t:"18:00",id:"moonim",d:"三個人都按愛心的泰式炭火火鍋；開店就排隊，Grab 約 10 分鐘"},
-      {t:"20:00",hotel:"thee",d:"早點回去整理行李，明天最後一天"}],
-     what:["半日遊 05:30–13:00，回程請導遊先送到 MADAM 買包包","14:30 到尼曼吃 Kao Soy → 16:00 Muse 按摩 → 18:00 三個人都愛的หมูนิ่ม火鍋","拿掉 Lung Khajohn（改 10/20）、Joost（去過了）、1% Pilates、Magic、Roast8ry、Mooyim"]};},
+      {t:"15:30",id:"museforest",d:keep("museforest")||"按摩 90 分鐘，早起後放鬆；建議預約"},
+      {t:"17:30",id:"moonim",d:"三個人都按愛心的泰式炭火火鍋；開店就排隊，Grab 約 10 分鐘"},
+      {t:"19:30",hotel:"thee",d:"早點回去整理行李，明天最後一天"}],
+     what:["半日遊 05:30–13:00，回程請導遊先送到 MADAM 買包包","14:30 到尼曼吃 Kao Soy → 15:30 Muse 按摩 → 17:30 三個人都愛的หมูนิ่ม火鍋","拿掉 Lung Khajohn（改 10/20）、Joost（去過了）、1% Pilates、Magic、Roast8ry、Mooyim"]};},
   "2026-10-20":st=>{const mi=st.findIndex(x=>x.id==="maesai"); if(mi<0&&st[0]&&st[0].id==="lung"&&st[0].t==="08:30") return null;
     const what=[]; if(mi>=0){st.splice(mi,1); what.push("拿掉 Maesai");}
     const li=st.findIndex(x=>x.id==="lung"); if(li>=0) st.splice(li,1);
