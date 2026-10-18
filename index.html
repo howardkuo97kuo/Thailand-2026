@@ -1828,7 +1828,7 @@ const SUGGEST={
     if(ji>=0){const h=st[0]&&st[0].hotel?st[0]:null; if(h){h.t="09:00"; h.d="走路約 5 分鐘到 Abby 瑜伽";}}
     const l2=st.findIndex(x=>x.id==="lokmoli"&&x.opt); if(l2>=0){st.splice(l2,1); what.push("拿掉羅摩利寺（彈性），瑜伽 10:30 結束後直接去喝咖啡");}
     return {stops:st,what};},
-  "2026-10-19":st=>{if(st.some(x=>x.id==="madam")&&!st.some(x=>["lung","onepct","magic"].includes(x.id))){   // already applied: drop Joost (been there), Muse earlier
+  "2026-10-19":st=>{if(st.some(x=>["madam","raintree"].includes(x.id))&&!st.some(x=>["lung","onepct","magic"].includes(x.id))){   // already applied (MADAM was bought at Jing Jai 10/18, so it may be gone): drop Joost (been there), Muse earlier
       const what=[], j=st.findIndex(x=>x.id==="joost"); if(j>=0){st.splice(j,1); what.push("拿掉 Joost（已經去過了）");}
       const T={kaosoy:"14:30",museforest:"15:30",moonim:"17:30"}; let mv=false;
       st.forEach(x=>{const t=x.id?T[x.id]:(x.hotel==="thee"&&x!==st[0]?"19:30":null); if(t&&x.t!==t){x.t=t; mv=true;}});
