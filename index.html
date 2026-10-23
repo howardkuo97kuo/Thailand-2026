@@ -885,7 +885,7 @@ header.top>.side{order:2}
 (async()=>{
 let DATA; try{const r=await fetch("places.json",{cache:"no-cache"}); /* revalidate: GitHub Pages lets browsers keep it 10 min, and new bookings need the new places */ if(!r.ok) throw r.status; DATA=await r.json();}
 catch(e){const n=document.getElementById("notice"); n.textContent="地點資料沒有載入，請檢查網路後重新整理。"; n.hidden=false; return;}
-const CATS=DATA.cats, REGIONS=DATA.regions, P=DATA.places;
+const CATS=DATA.cats, REGIONS=DATA.regions, PLACES=DATA.places;
 // Category icons: one line family (24px grid, round joins) drawn for this trip — chedi, khao soi bowl, coffee,
 // herbal compress ball, wok, Bo Sang paper umbrella, tuk-tuk, lotus.
 const CAT_PATHS={
@@ -909,8 +909,8 @@ const ICON_HOME='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="tr
 const ICON_STAR='<svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M8 2.2l1.7 3.5 3.8.5-2.8 2.7.7 3.8L8 10.8l-3.4 1.9.7-3.8-2.8-2.7 3.8-.5z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>';
 // places.json fields — m: Charlie's starting heart; src: 清單 / 建議; tip: 小提醒; ll: lat,lng; cd: closed weekdays; oh: weekly open minutes
 // Practical stops (換匯, a friend's place) aren't choices: they're listed on the 住宿 tab, not among the places.
-const UTIL=P.filter(p=>p.c==="其他");
-P.splice(0,P.length,...P.filter(p=>p.c!=="其他"));
+const UTIL=PLACES.filter(p=>p.c==="其他");
+PLACES.splice(0,PLACES.length,...PLACES.filter(p=>p.c!=="其他"));
 const IMG={};
 const PLAN_ASOF="2026-10-11";  // the hearts the itinerary was planned from
 // Suggested itinerary (from the team's hearts, fixed bookings, opening hours and closed days).
@@ -1063,7 +1063,7 @@ const LIVE={}, liveTried=new Set();
 const MAX_PHOTOS=5;   // at least 4 per place after skips; each photo is one billable request
 // Google photos reviewed by hand and left out (position in Google's list + author, so a reorder can't hide the wrong one).
 const SKIP_PHOTOS={reliever:[[0,"Reliever Health massage"]],gex:[[4,"chloe mo"]],maekha:[[2,"Deborah Long"]]};
-const placeById=id=>P.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id);
+const placeById=id=>PLACES.find(x=>x.id===id)||LODGING.find(x=>x.id===id)||UTIL.find(x=>x.id===id);
 const mediaUrl=(name,w)=>`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${w}&key=${GMAPS_KEY}`;
 const phList=p=>LIVE[p.id]||(IMG[p.id]||[]).map(u=>({src:u,thumb:u,by:null}));
 const credit=x=>x&&x.by?`<a class="credit" href="${esc(x.by.uri||"#")}" target="_blank" rel="noopener">Google 地圖 · ${esc(x.by.displayName||"")}</a>`:"";
@@ -1089,11 +1089,11 @@ function updatePlaces(ids){
   if(pcId()&&ids.includes(pcId())) renderPopup();
   if(state.heartF||state.sortKey==="must"){render(); return;}
   ids.forEach(id=>{
-    const p=P.find(x=>x.id===id); if(!p) return;
+    const p=PLACES.find(x=>x.id===id); if(!p) return;
     const c=document.querySelector(`#out [data-card="${CSS.escape(id)}"]`); if(c){c.outerHTML=card(p); return;}
     const r=document.querySelector(`#out tr[data-row="${CSS.escape(id)}"]`); if(r){const t=document.createElement("tbody"); t.innerHTML=pickRow(p); r.replaceWith(t.firstElementChild);}
   });
-  $("#sMust").textContent=P.filter(isMust).length; $("#sAll").textContent=P.filter(allHearted).length;
+  $("#sMust").textContent=PLACES.filter(isMust).length; $("#sAll").textContent=PLACES.filter(allHearted).length;
   releaseLanterns(); watchPhotos(); renderProgress(); renderBanner();
   if(mapReady) drawMarkers(); else refreshPlanOthers();
   if(!$("#mapPanel").hidden) renderTrip();
@@ -1129,7 +1129,7 @@ const imgUrl=p=>"https://www.google.com/search?tbm=isch&q="+encodeURIComponent(p
 
 function buildControls(){
   const cats=$("#cats");
-  const nCat=c=>c==="全部"?P.length:P.filter(p=>p.c===c).length;
+  const nCat=c=>c==="全部"?PLACES.length:PLACES.filter(p=>p.c===c).length;
   ["全部",...CATS].forEach(c=>{const b=document.createElement("button");b.type="button";b.className="chip";b.innerHTML=`${c==="全部"?"":catIcon(c)}${esc(c)}<span class="n">${nCat(c)}</span>`;b.dataset.cat=c;b.setAttribute("aria-pressed",String(c===state.cat));b.onclick=()=>{state.cat=c;state.sub="全部";syncChips();render();};cats.appendChild(b);});
   $("#region").innerHTML=["全部",...REGIONS].map(r=>`<option value="${r}">${r==="全部"?"所有地區":r}</option>`).join("");
   $("#region").onchange=e=>{state.region=e.target.value;render();};
@@ -1162,11 +1162,11 @@ function syncMe(){
 function setMe(k){me=WHO[k]?k:null; try{me?localStorage.setItem("cnxMe",me):localStorage.removeItem("cnxMe");}catch(e){} syncMe(); note(""); render();}
 // Trip days: 10/15 (Day 1) to 10/20 (Day 6). Closed weekdays (p.cd, 0 = Sunday) come from Google opening hours.
 const TRIP_DAYS=["2026-10-15","2026-10-16","2026-10-17","2026-10-18","2026-10-19","2026-10-20"];
-const WDN="日一二三四五六";
+const WEEKDAY_ZH="日一二三四五六";
 const weekday=iso=>new Date(iso+"T00:00:00").getDay();
 const closedLabel=p=>{const cd=p.cd||[]; if(!cd.length) return "";
-  if(cd.length>=4){const open=[0,1,2,3,4,5,6].filter(d=>!cd.includes(d)); return "只有週"+open.map(d=>WDN[d]).join("、");}
-  return "週"+cd.map(d=>WDN[d]).join("、")+"休";};
+  if(cd.length>=4){const open=[0,1,2,3,4,5,6].filter(d=>!cd.includes(d)); return "只有週"+open.map(d=>WEEKDAY_ZH[d]).join("、");}
+  return "週"+cd.map(d=>WEEKDAY_ZH[d]).join("、")+"休";};
 // Night's hotel for a date; the departure day uses the last hotel.
 const hotelFor=iso=>LODGING.find(h=>h.in<=iso&&iso<h.out)||LODGING[LODGING.length-1];
 const km=(a,b)=>{const R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r,x=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
@@ -1196,7 +1196,7 @@ function clearFilters(){
 function setView(v,quiet){state.view=v;$("#vCards").setAttribute("aria-pressed",String(v==="cards"));$("#vTable").setAttribute("aria-pressed",String(v==="table"));try{localStorage.setItem("cnxView",v);}catch(e){} if(!quiet)render();}
 
 function filtered(){
-  return P.filter(p=>(state.cat==="全部"||p.c===state.cat)&&(state.sub==="全部"||p.sub===state.sub)&&(state.region==="全部"||p.r===state.region)
+  return PLACES.filter(p=>(state.cat==="全部"||p.c===state.cat)&&(state.sub==="全部"||p.sub===state.sub)&&(state.region==="全部"||p.r===state.region)
     &&heartPass(p)
     &&(!state.q||[p.n,p.loc,p.a,p.note,p.tip,p.c,p.r,p.sub].join(" ").toLowerCase().includes(state.q.toLowerCase())))
    .sort((a,b)=>sortCmp(a,b)||CATS.indexOf(a.c)-CATS.indexOf(b.c));
@@ -1321,7 +1321,7 @@ function tripList(){
   if(mapState.planDay!=null){   // a day is on the map: its stops, in order
     const di=mapState.planDay; return dayStops(di).filter(st=>st.id).map(st=>{const p=placeById(st.id); return p&&p.c!=="其他"?{...p,_t:(bookedOn(st,PLAN[di].date)?bkTime(bookedOn(st,PLAN[di].date)):st.t)}:null;}).filter(Boolean);
   }
-  return P.filter(p=>mapState.cats.has(p.c)&&whoPass(p)&&dayPass(p)&&tripQ(p))
+  return PLACES.filter(p=>mapState.cats.has(p.c)&&whoPass(p)&&dayPass(p)&&tripQ(p))
     .sort((a,b)=>sortCmp(a,b,TRIP_BY,tripState.sortKey,tripState.sortDir)||sortCmp(a,b,TRIP_BY,"must","asc")||CATS.indexOf(a.c)-CATS.indexOf(b.c));
 }
 function openBadge(p){const o=openNow(p); return o==null?"":`<span class="opennow ${o?"on":"off"}">${o?"營業中":"休息中"}</span>`;}
@@ -1342,9 +1342,9 @@ function tripSort(key){
   renderTrip();
 }
 function renderSubs(){
-  const box=$("#subs"); const subs=[...new Set(P.filter(p=>p.c===state.cat&&p.sub).map(p=>p.sub))];
+  const box=$("#subs"); const subs=[...new Set(PLACES.filter(p=>p.c===state.cat&&p.sub).map(p=>p.sub))];
   box.hidden=!subs.length; if(!subs.length){box.innerHTML="";return;}
-  box.innerHTML=`<span class="sublabel">${esc(state.cat)}小分類</span>`+["全部",...subs].map(x=>`<button type="button" class="chip small" data-sub="${esc(x)}" aria-pressed="${x===state.sub}">${esc(x)}<span class="n">${P.filter(p=>p.c===state.cat&&(x==="全部"||p.sub===x)).length}</span></button>`).join("");
+  box.innerHTML=`<span class="sublabel">${esc(state.cat)}小分類</span>`+["全部",...subs].map(x=>`<button type="button" class="chip small" data-sub="${esc(x)}" aria-pressed="${x===state.sub}">${esc(x)}<span class="n">${PLACES.filter(p=>p.c===state.cat&&(x==="全部"||p.sub===x)).length}</span></button>`).join("");
 }
 // Shareable views: filters live in the query string (?cat=美食&day=2026-10-17 …); the tab stays in the hash.
 const URL_KEYS={cat:"全部",sub:"全部",region:"全部",heartF:"",q:"",sortKey:"",sortDir:"asc",view:""};
@@ -1367,26 +1367,26 @@ function writeUrlState(){
   if(url!==location.pathname+location.search+location.hash) history.replaceState(null,"",url);
 }
 function renderBanner(){
-  const HP=P.filter(heartable), left=me?HP.filter(p=>!seen(p)).length:HP.length;
+  const HP=PLACES.filter(heartable), left=me?HP.filter(p=>!seen(p)).length:HP.length;
   $("#qpbSub").textContent=!me?"一次看一個地點，按「想去」或「之後再說」，幾分鐘就能看完。":left?`還有 ${left} 個地點你還沒看過，一次看一個，按「想去」或「之後再說」。`:"全部都看過了！之後再說的地點還在列表裡，隨時可以再按愛心。";
   $("#qpOpen").lastChild.textContent=me&&left&&left<HP.length?"繼續挑選":"開始挑選";
   $("#qpOpen").disabled=!!me&&!left;
 }
 function renderProgress(){
   const el=$("#progress"); if(!me){el.hidden=true; return;}
-  const HP=P.filter(heartable), n=HP.filter(seen).length, h=HP.filter(p=>hearted(p,me)).length;
+  const HP=PLACES.filter(heartable), n=HP.filter(seen).length, h=HP.filter(p=>hearted(p,me)).length;
   el.hidden=false;
   el.innerHTML=`<span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(n/HP.length*100)}%"></span></span><span>${WHO[me].name} 已看過 <b>${n}</b>／${HP.length}・想去 ${h}</span>`;
 }
 function render(){
   renderSubs();
   const list=filtered();
-  $("#sTotal").textContent=P.length; $("#nPlaces").textContent=P.length;
-  $("#sMust").textContent=P.filter(isMust).length;
-  $("#sAll").textContent=P.filter(allHearted).length;
+  $("#sTotal").textContent=PLACES.length; $("#nPlaces").textContent=PLACES.length;
+  $("#sMust").textContent=PLACES.filter(isMust).length;
+  $("#sAll").textContent=PLACES.filter(allHearted).length;
   writeUrlState();
-  $("#count").textContent=`顯示 ${list.length} 個地點`+(list.length!==P.length?`（共 ${P.length}）`:"");
-  $("#clearTop").hidden=list.length===P.length||!list.length;
+  $("#count").textContent=`顯示 ${list.length} 個地點`+(list.length!==PLACES.length?`（共 ${PLACES.length}）`:"");
+  $("#clearTop").hidden=list.length===PLACES.length||!list.length;
   const nf=activeFilters(); $("#filterBtn").textContent=nf?`篩選 (${nf})`:"篩選";
   $("#out").innerHTML=!list.length?`<div class="empty">${EMPTY_ART}<span>這個條件下沒有地點，換個條件試試。</span><button type="button" class="chip" data-clear>清除所有篩選</button></div>`:state.view==="table"?table(list):`<div class="grid">${list.map(card).join("")}</div>`;
   renderPopup();
@@ -1399,15 +1399,14 @@ function render(){
 // Release a lantern once, only when a place newly reaches all three hearts (not on load or re-render).
 let lastAll=null;
 function releaseLanterns(){
-  const now=new Set(P.filter(allHearted).map(p=>p.id));
+  const now=new Set(PLACES.filter(allHearted).map(p=>p.id));
   if(lastAll) now.forEach(id=>{if(lastAll.has(id)) return;
     const b=document.querySelector(`[data-badge="${id}"]`); if(!b) return;
     const l=document.createElement("span"); l.className="khomloi"; l.innerHTML=ICON_HEART; b.appendChild(l);
     l.addEventListener("animationend",()=>l.remove());});
   lastAll=now;
 }
-const WD="日一二三四五六";
-const md=iso=>{const d=new Date(iso+"T00:00:00");return `${d.getMonth()+1}/${d.getDate()}（${WD[d.getDay()]}）`;};
+const md=iso=>{const d=new Date(iso+"T00:00:00");return `${d.getMonth()+1}/${d.getDate()}（${WEEKDAY_ZH[d.getDay()]}）`;};
 const nights=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 const utilCard=p=>`<article class="util-card">
         <div class="util-h"><span class="tcatin">${catIcon(p.c)}<b>${esc(p.n)}</b></span>${p.sub?`<span class="tag">${esc(p.sub)}</span>`:""}</div>
@@ -1416,7 +1415,7 @@ const utilCard=p=>`<article class="util-card">
         ${p.pid||p.ll?`<a class="mini" href="${mapsUrl(p)}" target="_blank" rel="noopener">Google 地圖</a>`:""}
       </article>`;
 // 行李清單: tick-off list saved on this device only (per 我是誰). Clothing counts assume 6 days / 5 nights with a laundry option.
-const PACK=[
+const PACKING_LIST=[
   {t:"證件與錢",open:true,items:["護照（效期 6 個月以上）","機票或登機證截圖：Howard、Charlie 長榮 BR257；Lindsay 星宇 JX751；回程 10/20 17:20 起飛","住宿與訂位確認信截圖（Jhaban、THEE、Baan Landai、Reliever、THE HOUSE、Ekachan、料理課）","信用卡 1–2 張（小店多只收現金，刷卡常加 3%）","泰銖現金，小鈔多帶：先換約 3,000–5,000 銖，不夠再提款或換匯","旅遊保險資料"]},
   {t:"衣物（6 天 5 夜，不用一天一套，可送洗）",open:true,items:["上衣 4–5 件：透氣快乾的 T 恤為主","長褲或長裙 2 件：10/17 整天寺廟、10/15 清曼寺要過膝","短褲或輕便褲 1–2 件：其他天和夜市","有袖薄外套、襯衫或大圍巾 1 件：遮肩進寺廟，也擋冷氣","內衣褲 6 套","襪子 3–4 雙：進寺廟要脫鞋，鞋子悶時換穿","睡衣 1–2 套","泳衣 1 套：THEE 有泳池，下午有免費飲料","10/16 料理課穿不怕弄髒的衣服 1 套","晚餐好看一點的 1–2 套：THE HOUSE、Ekachan 比較精緻（非必要）"]},
   {t:"鞋與配件",open:false,items:["好走的球鞋 1 雙：每天走 6–13 公里","好穿脫的涼鞋或拖鞋 1 雙：進寺廟、按摩、料理課","小傘或輕便雨衣：十月雨季尾聲，午後可能有雷陣雨","帽子、墨鏡","防水袋或夾鏈袋：下雨保護手機和證件","小摺疊購物袋：10/18 在瓦洛洛、Big C 買伴手禮"]},
@@ -1427,15 +1426,15 @@ const PACK=[
 const packKey=()=>"cnxPack_"+(me||"guest");
 function packState(){try{return JSON.parse(localStorage.getItem(packKey())||"{}")||{};}catch(e){return {};}}
 function packHTML(){
-  const st=packState(), total=PACK.reduce((n,g)=>n+g.items.length,0), done=Object.values(st).filter(Boolean).length;
+  const st=packState(), total=PACKING_LIST.reduce((n,g)=>n+g.items.length,0), done=Object.values(st).filter(Boolean).length;
   return `<section class="pack" aria-labelledby="packH"><div class="pack-h"><h2 id="packH">行李清單</h2><span class="pack-sum" id="packSum">${me?esc(WHO[me].name)+" ":""}已帶 ${done}／${total}</span><button type="button" class="linkbtn" data-packreset>全部取消勾選</button></div>
     <p class="pack-lead">打勾只存在這支手機上，每個人各自打勾，不會互相影響。</p>
-    ${PACK.map((g,gi)=>`<details class="pack-g"${g.open?" open":""}><summary>${esc(g.t)}<span class="pack-n" data-packn="${gi}">${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}</span></summary><ul>${g.items.map((x,ii)=>`<li><label><input type="checkbox" data-pack="g${gi}i${ii}"${st["g"+gi+"i"+ii]?" checked":""}><span>${esc(x)}</span></label></li>`).join("")}</ul></details>`).join("")}</section>`;
+    ${PACKING_LIST.map((g,gi)=>`<details class="pack-g"${g.open?" open":""}><summary>${esc(g.t)}<span class="pack-n" data-packn="${gi}">${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}</span></summary><ul>${g.items.map((x,ii)=>`<li><label><input type="checkbox" data-pack="g${gi}i${ii}"${st["g"+gi+"i"+ii]?" checked":""}><span>${esc(x)}</span></label></li>`).join("")}</ul></details>`).join("")}</section>`;
 }
 function packRecount(){
-  const st=packState(), total=PACK.reduce((n,g)=>n+g.items.length,0), el=$("#packSum"); if(!el) return;
+  const st=packState(), total=PACKING_LIST.reduce((n,g)=>n+g.items.length,0), el=$("#packSum"); if(!el) return;
   el.textContent=(me?WHO[me].name+" ":"")+`已帶 ${Object.values(st).filter(Boolean).length}／${total}`;
-  PACK.forEach((g,gi)=>{const n=document.querySelector(`[data-packn="${gi}"]`); if(n) n.textContent=`${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}`;});
+  PACKING_LIST.forEach((g,gi)=>{const n=document.querySelector(`[data-packn="${gi}"]`); if(n) n.textContent=`${g.items.filter((_,ii)=>st["g"+gi+"i"+ii]).length}／${g.items.length}`;});
 }
 document.addEventListener("change",e=>{const c=e.target.closest("[data-pack]"); if(!c) return;
   const st=packState(); if(c.checked) st[c.dataset.pack]=true; else delete st[c.dataset.pack];
@@ -1541,7 +1540,7 @@ let mapReady=false, lmap=null, lLayer=null, leafletReady=null;
 function openMap(){
   if(!$("#mapCats").innerHTML){
     $("#mapCats").innerHTML=CATS.map(c=>`<button type="button" class="chip" data-mapcat="${esc(c)}" aria-pressed="true"><span class="dot" style="background:${CAT_COLOR[c]}"></span>${esc(c)}</button>`).join("");
-    const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti>=0&&mapState.planDay==null&&!mapState.autoDay){mapState.autoDay=true; mapState.planDay=ti;}
+    const ti=PLAN.findIndex(d=>d.date===todayInChiangMai()); if(ti>=0&&mapState.planDay==null&&!mapState.autoDay){mapState.autoDay=true; mapState.planDay=ti;}
     syncWho(); syncMapPlan(); syncMapFilterBtn();
   }
   if(lmap||window.__mapsLoading) return;
@@ -1554,10 +1553,10 @@ function openMap(){
   }).catch(()=>{window.__mapsLoading=false; $("#map").innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
 // Initial view frames the city (within 8 km of the old city); far-out places stay reachable by zooming out.
-const CITY=[18.7883,98.9853];
-const nearCity=ll=>km(ll,CITY)<=8;
+const CITY_CENTER=[18.7883,98.9853];
+const nearCity=ll=>km(ll,CITY_CENTER)<=8;
 const tripQ=p=>{const q=tripState.q.toLowerCase(); return !q||[p.n,p.loc,p.a,p.c,p.sub,p.r,p.tip].join(" ").toLowerCase().includes(q);};
-const mapPlaces=()=>P.filter(p=>p.ll&&mapState.cats.has(p.c)&&whoPass(p)&&dayPass(p)&&tripQ(p));
+const mapPlaces=()=>PLACES.filter(p=>p.ll&&mapState.cats.has(p.c)&&whoPass(p)&&dayPass(p)&&tripQ(p));
 const HOUSE_SVG='<svg viewBox="-10 -9 20 19" width="26" height="25" aria-hidden="true"><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="#231f1c" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M-8 1 0-7 8 1M-6 -1V8H6V-1" fill="none" stroke="#231f1c" stroke-width="1.4" stroke-linejoin="round"/></svg>';
 function drawLeaflet(fit){
   lLayer.clearLayers(); const pts=[], di=mapState.planDay, stops=di==null?null:dayStops(di), onRoute=new Set((stops||[]).map(st=>st.id).filter(Boolean));
@@ -1594,20 +1593,20 @@ function askWho(then){
   if(d.showModal) d.showModal(); else d.setAttribute("open","");
   const first=d.querySelector(".whobtn"); if(first) first.focus();
 }
-async function putFB(path,val){const r=await fetch(FB+"/"+path+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status;}
+async function putFB(path,val){const r=await fetch(FIREBASE_URL+"/"+path+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status;}
 async function setHeartNow(p,val){remote[me][p.id]=val; updatePlaces([p.id]); try{await putFB(WHO[me].path+"/"+encodeURIComponent(p.id),val); setSync(true);}catch(e){setSync(false); showToast("愛心沒有存到雲端，請檢查網路後再試一次。");}}
 // Quick pick: one undecided place at a time with big 想去 / 之後再說 / 不想去 buttons.
-const QP={queue:[],i:0,hist:[]};
+const QUICK_PICK={queue:[],i:0,hist:[]};
 function openQuickPick(){
   if(!me){askWho(openQuickPick); return;}
-  loadSeen(); QP.queue=filtered().filter(p=>heartable(p)&&!seen(p)).map(p=>p.id); QP.i=0; QP.hist=[];
+  loadSeen(); QUICK_PICK.queue=filtered().filter(p=>heartable(p)&&!seen(p)).map(p=>p.id); QUICK_PICK.i=0; QUICK_PICK.hist=[];
   const d=$("#qp"); renderQP(); d.showModal?d.showModal():d.setAttribute("open","");
 }
-function qpCurrent(){return QP.i<QP.queue.length?placeById(QP.queue[QP.i]):null;}
+function qpCurrent(){return QUICK_PICK.i<QUICK_PICK.queue.length?placeById(QUICK_PICK.queue[QUICK_PICK.i]):null;}
 function renderQP(){
-  const HP=P.filter(heartable), p=qpCurrent(), done=HP.filter(seen).length;
+  const HP=PLACES.filter(heartable), p=qpCurrent(), done=HP.filter(seen).length;
   const head=`<div class="qp-top"><span class="pg-bar" aria-hidden="true"><span style="width:${Math.round(done/HP.length*100)}%"></span></span><span class="qp-count">${WHO[me].name} 已看過 ${done}／${HP.length}</span><button type="button" class="linkbtn" data-qp="close">關閉</button></div>`;
-  if(!p){$("#qpIn").innerHTML=head+`<div class="qp-done"><h2 id="qpName">這一批都看完了</h2><p>目前想去 ${P.filter(x=>hearted(x,me)).length} 個。之後再說的地點還在列表裡，隨時可以再按愛心。</p><button type="button" class="chip send" data-qp="close">完成</button></div>`; return;}
+  if(!p){$("#qpIn").innerHTML=head+`<div class="qp-done"><h2 id="qpName">這一批都看完了</h2><p>目前想去 ${PLACES.filter(x=>hearted(x,me)).length} 個。之後再說的地點還在列表裡，隨時可以再按愛心。</p><button type="button" class="chip send" data-qp="close">完成</button></div>`; return;}
   loadLive(p.id);
   const ph=phList(p)[0];
   $("#qpIn").innerHTML=head+`<div class="qp-card">
@@ -1623,26 +1622,26 @@ function renderQP(){
       <button type="button" class="qpa later" data-qp="later"><span>之後再說</span></button>
       <button type="button" class="qpa yes" data-qp="yes">${ICON_HEART}<span>想去</span></button>
     </div>
-    <div class="qp-foot"><button type="button" class="linkbtn" data-qp="undo" ${QP.hist.length?"":"disabled"}>上一步</button><span class="local">第 ${QP.i+1}／${QP.queue.length} 個・鍵盤 ← 之後再說、→ 想去</span></div>`;
+    <div class="qp-foot"><button type="button" class="linkbtn" data-qp="undo" ${QUICK_PICK.hist.length?"":"disabled"}>上一步</button><span class="local">第 ${QUICK_PICK.i+1}／${QUICK_PICK.queue.length} 個・鍵盤 ← 之後再說、→ 想去</span></div>`;
 }
 async function qpAct(a){
   const p=qpCurrent();
   if(a==="close"){const d=$("#qp"); d.close?d.close():d.removeAttribute("open"); render(); return;}
-  if(a==="undo"){const h=QP.hist.pop(); if(!h) return; const q=placeById(h.id); if(hearted(q,me)!==h.heart) await setHeartNow(q,h.heart); if(!h.seen){SEEN.delete(q.id); saveSeen();} QP.i=Math.max(0,QP.i-1); renderQP(); return;}
+  if(a==="undo"){const h=QUICK_PICK.hist.pop(); if(!h) return; const q=placeById(h.id); if(hearted(q,me)!==h.heart) await setHeartNow(q,h.heart); if(!h.seen){SEEN.delete(q.id); saveSeen();} QUICK_PICK.i=Math.max(0,QUICK_PICK.i-1); renderQP(); return;}
   if(!p) return;
-  QP.hist.push({id:p.id,heart:hearted(p,me),seen:SEEN.has(p.id)});
+  QUICK_PICK.hist.push({id:p.id,heart:hearted(p,me),seen:SEEN.has(p.id)});
   if(a==="yes") await setHeartNow(p,true);
   SEEN.add(p.id); saveSeen();
-  QP.i++; renderQP();
+  QUICK_PICK.i++; renderQP();
 }
 // Photo viewer: tap a card photo for a large view; arrows, swipe or keys move between photos.
-const LB={id:null,i:0};
-function openLightbox(id,i){LB.id=id; LB.i=i||0; renderLB(); const d=$("#lb"); d.showModal?d.showModal():d.setAttribute("open","");}
-function lbGo(step){const ph=phList(placeById(LB.id)); if(!ph.length) return; LB.i=(LB.i+step+ph.length)%ph.length; renderLB();}
+const LIGHTBOX={id:null,i:0};
+function openLightbox(id,i){LIGHTBOX.id=id; LIGHTBOX.i=i||0; renderLB(); const d=$("#lb"); d.showModal?d.showModal():d.setAttribute("open","");}
+function lbGo(step){const ph=phList(placeById(LIGHTBOX.id)); if(!ph.length) return; LIGHTBOX.i=(LIGHTBOX.i+step+ph.length)%ph.length; renderLB();}
 function renderLB(){
-  const p=placeById(LB.id), ph=phList(p), x=ph[LB.i]; if(!x) return;
-  $("#lbIn").innerHTML=`<img src="${x.big||x.src}" alt="${esc(p.n)} 照片 ${LB.i+1}">
-    <div class="lb-bar"><b>${esc(p.n)}</b><span>${LB.i+1}／${ph.length}</span>${x.by?`<a href="${esc(x.by.uri||"#")}" target="_blank" rel="noopener">Google 地圖 · ${esc(x.by.displayName||"")}</a>`:""}<button type="button" class="linkbtn" data-lb="close">關閉</button></div>
+  const p=placeById(LIGHTBOX.id), ph=phList(p), x=ph[LIGHTBOX.i]; if(!x) return;
+  $("#lbIn").innerHTML=`<img src="${x.big||x.src}" alt="${esc(p.n)} 照片 ${LIGHTBOX.i+1}">
+    <div class="lb-bar"><b>${esc(p.n)}</b><span>${LIGHTBOX.i+1}／${ph.length}</span>${x.by?`<a href="${esc(x.by.uri||"#")}" target="_blank" rel="noopener">Google 地圖 · ${esc(x.by.displayName||"")}</a>`:""}<button type="button" class="linkbtn" data-lb="close">關閉</button></div>
     ${ph.length>1?`<button type="button" class="lb-nav prev" data-lb="prev" aria-label="上一張"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="lb-nav next" data-lb="next" aria-label="下一張"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:""}`;
 }
 let lbTouch=null;
@@ -1662,12 +1661,12 @@ document.addEventListener("touchend",e=>{if(!swipe) return; const t=e.changedTou
 let ADDED={}, REMOVED={}, INBOX={}, inboxBlocked=false;
 const validAdded=p=>p&&typeof p==="object"&&typeof p.n==="string"&&typeof p.c==="string"&&typeof p.id==="string";
 function mergeAdded(){
-  for(let i=P.length-1;i>=0;i--) if(P[i].added) P.splice(i,1);
+  for(let i=PLACES.length-1;i>=0;i--) if(PLACES[i].added) PLACES.splice(i,1);
   for(let i=UTIL.length-1;i>=0;i--) if(UTIL[i].added) UTIL.splice(i,1);
   Object.values(ADDED).forEach(p=>{
-    if(!validAdded(p)||REMOVED[p.id]||P.some(x=>x.id===p.id)) return;
+    if(!validAdded(p)||REMOVED[p.id]||PLACES.some(x=>x.id===p.id)) return;
     const q={...p,added:true,m:false};
-    (q.c==="其他"?UTIL:P).push(q);
+    (q.c==="其他"?UTIL:PLACES).push(q);
   });
   render(); if(!$("#stayPanel").hidden) renderStay(); if(!$("#addPanel").hidden) renderInbox();
 }
@@ -1675,7 +1674,7 @@ function mergeAdded(){
 // So agent-added places, removals and the inbox are polled instead of streamed (faster while 新增地點 is open).
 const polled={};
 function liveJSON(path,apply){
-  const tick=async()=>{try{const r=await fetch(FB+"/"+path+".json"); if(r.status===401||r.status===403){if(path==="inbox") inboxBlocked=true; return;} if(!r.ok) return;
+  const tick=async()=>{try{const r=await fetch(FIREBASE_URL+"/"+path+".json"); if(r.status===401||r.status===403){if(path==="inbox") inboxBlocked=true; return;} if(!r.ok) return;
     const txt=await r.text(); if(polled[path]===txt) return; polled[path]=txt; apply(JSON.parse(txt)||{});}catch(e){}};
   tick(); setInterval(()=>{if(path==="inbox"&&$("#addPanel").hidden) return; tick();},path==="inbox"?8000:30000);
   if(path==="inbox") setInterval(()=>{if($("#addPanel").hidden) tick();},60000);
@@ -1697,13 +1696,13 @@ function renderIdeas(){
 }
 async function submitIdea(text){
   if(!me){askWho(()=>submitIdea(text)); return;}
-  try{const r=await fetch(FB+"/feedback.json",{method:"POST",body:JSON.stringify({text,who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
-    $("#ideaText").value=""; showToast("已送出，今晚 11 點會整理成建議。"); const d=await (await fetch(FB+"/feedback.json")).json(); IDEAS=d||{}; renderIdeas();}
+  try{const r=await fetch(FIREBASE_URL+"/feedback.json",{method:"POST",body:JSON.stringify({text,who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
+    $("#ideaText").value=""; showToast("已送出，今晚 11 點會整理成建議。"); const d=await (await fetch(FIREBASE_URL+"/feedback.json")).json(); IDEAS=d||{}; renderIdeas();}
   catch(e){showToast(e===401||e===403?"意見箱還沒開放（資料庫權限），設定好之後就能使用。":"沒有送出，請檢查網路後再試一次。");}
 }
 async function decideIdea(id,status){
   if(me!=="howard") return;
-  try{const r=await fetch(FB+"/feedback/"+id+".json",{method:"PATCH",body:JSON.stringify({status,decidedBy:me,decidedAt:Date.now()})}); if(!r.ok) throw r.status;
+  try{const r=await fetch(FIREBASE_URL+"/feedback/"+id+".json",{method:"PATCH",body:JSON.stringify({status,decidedBy:me,decidedAt:Date.now()})}); if(!r.ok) throw r.status;
     IDEAS[id]={...IDEAS[id],status}; renderIdeas(); showToast(status==="approved"?"已同意，今晚 11 點會執行。":"已標記為不採用。");}
   catch(e){showToast("沒有存到雲端，請稍後再試。");}
 }
@@ -1716,18 +1715,18 @@ function renderInbox(){
   el.innerHTML=items.map(([iid,x])=>{const st=INBOX_STATUS[x.status]||INBOX_STATUS.new, p=x.placeId?placeById(x.placeId):null, rm=x.placeId&&REMOVED[x.placeId];
     return `<li class="inbox-i"><div class="inbox-main"><b>${esc(x.text)}</b>${x.note?`<span class="local">${esc(x.note)}</span>`:""}<span class="local">${esc((WHO[x.who]||{name:x.who||"?"}).name)}・${ago(x.ts||0)}</span>${x.msg?`<span class="inbox-msg">${esc(x.msg)}</span>`:""}</div>
       <div class="inbox-side"><span class="opennow ${rm?"off":st[1]==="ok"?"on":"off"}">${rm?"已移除":st[0]}</span>
-      ${x.placeId&&x.status==="added"?(rm?`<button type="button" class="linkbtn" data-restore="${esc(x.placeId)}">恢復</button>`:`${p&&P.includes(p)?`<button type="button" class="linkbtn" data-gocard="${esc(x.placeId)}">看卡片</button>`:""}<button type="button" class="linkbtn" data-remove="${esc(x.placeId)}">移除</button>`):""}</div></li>`;}).join("");
+      ${x.placeId&&x.status==="added"?(rm?`<button type="button" class="linkbtn" data-restore="${esc(x.placeId)}">恢復</button>`:`${p&&PLACES.includes(p)?`<button type="button" class="linkbtn" data-gocard="${esc(x.placeId)}">看卡片</button>`:""}<button type="button" class="linkbtn" data-remove="${esc(x.placeId)}">移除</button>`):""}</div></li>`;}).join("");
 }
 async function submitInbox(text,noteTxt){
   if(!me){askWho(()=>submitInbox(text,noteTxt)); return;}
   if(inboxBlocked){showToast("收件匣還沒開放，資料庫權限設定好之後就能使用。"); return;}
-  try{const r=await fetch(FB+"/inbox.json",{method:"POST",body:JSON.stringify({text,note:noteTxt||"",who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
+  try{const r=await fetch(FIREBASE_URL+"/inbox.json",{method:"POST",body:JSON.stringify({text,note:noteTxt||"",who:me,ts:Date.now(),status:"new"})}); if(!r.ok) throw r.status;
     $("#addText").value=""; $("#addNote").value=""; showToast("已送出，AI 處理好之後會自動出現在地點庫。");
-    try{const d=await (await fetch(FB+"/inbox.json")).json(); INBOX=d||{}; renderInbox();}catch(e){}}
+    try{const d=await (await fetch(FIREBASE_URL+"/inbox.json")).json(); INBOX=d||{}; renderInbox();}catch(e){}}
   catch(e){showToast(e===401||e===403?"收件匣還沒開放，資料庫權限設定好之後就能使用。":"沒有送出，請檢查網路後再試一次。");}
 }
 async function setRemoved(id,val){
-  try{const r=await fetch(FB+"/removed/"+encodeURIComponent(id)+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status; REMOVED[id]=val; mergeAdded(); showToast(val?"已從地點庫移除，可以在這裡恢復。":"已恢復到地點庫。");}
+  try{const r=await fetch(FIREBASE_URL+"/removed/"+encodeURIComponent(id)+".json",{method:"PUT",body:JSON.stringify(val)}); if(!r.ok) throw r.status; REMOVED[id]=val; mergeAdded(); showToast(val?"已從地點庫移除，可以在這裡恢復。":"已恢復到地點庫。");}
   catch(e){showToast("沒有存到雲端，請稍後再試。");}
 }
 // 行程 tab: each day lists its stops and draws them on its own map (numbered, in order).
@@ -1806,7 +1805,7 @@ let planBlocked=false, planLoaded=false, planHadCache=(()=>{try{return localStor
 function savePlanCache(){try{localStorage.setItem(PLAN_KEY,JSON.stringify(PLAN_LIVE));}catch(e){}}
 const planEditing=new Set();
 const pastOpen=new Set();
-const dayDone=di=>{const d=PLAN[di]; return d.date<todayCM()||!!(PLAN_LIVE[d.date]&&PLAN_LIVE[d.date].done);};   // over, or finished early with 完成這天 (shared)   // past days the viewer expanded this visit (past days start folded)
+const dayDone=di=>{const d=PLAN[di]; return d.date<todayInChiangMai()||!!(PLAN_LIVE[d.date]&&PLAN_LIVE[d.date].done);};   // over, or finished early with 完成這天 (shared)   // past days the viewer expanded this visit (past days start folded)
 const fromFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at==="airport") o.at=AIRPORT; return o;};
 const toFB=st=>{const o={t:st.t||"",d:st.d||""}; if(st.opt) o.opt=true; if(st.id) o.id=st.id; else if(st.hotel) o.hotel=st.hotel; else if(st.at) o.at="airport"; return o;};
 const bookedOn=(st,date)=>{
@@ -1853,7 +1852,7 @@ const SUGGEST={
     return {stops:st,what};}
 };
 const sugOff=()=>{try{return JSON.parse(localStorage.getItem("cnxSugOff2")||"{}");}catch(e){return {};}};
-function sugFor(di){const d=PLAN[di], fn=SUGGEST[d.date]; if(!fn||sugOff()[d.date]||d.date<todayCM()) return null;
+function sugFor(di){const d=PLAN[di], fn=SUGGEST[d.date]; if(!fn||sugOff()[d.date]||d.date<todayInChiangMai()) return null;
   const st=dayStops(di), r=fn(st.map(x=>({...x}))); const fixed=a=>a.filter(x=>isFixed(x,di)).length;
   return r&&fixed(r.stops)===fixed(st)?r:null;}   // never drop a booking
 function sugHTML(di){const r=sugFor(di); if(!r) return "";
@@ -1874,7 +1873,7 @@ function dayStops(di){
 // Order matters: 行程 comes first and 地點 last, so any cut only eats places (tips go first).
 function chatContext(){
   const MAX=30000, now=cmNow(), pad=n=>String(n).padStart(2,"0");   // Chiang Mai clock, like the rest of the site
-  const today=`${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())}（週${WD[now.getUTCDay()]}）`;
+  const today=`${now.getUTCFullYear()}-${pad(now.getUTCMonth()+1)}-${pad(now.getUTCDate())}（週${WEEKDAY_ZH[now.getUTCDay()]}）`;
   const stopName=st=>st.id?(placeById(st.id)||{}).n:st.hotel?(LODGING.find(x=>x.id===st.hotel)||{}).n:st.at&&st.at.n;
   const plan=PLAN.flatMap((d,di)=>[`${md(d.date)}${d.title}`,...dayStops(di).filter(stopName).map(st=>`${st.t||"未定"} ${st.opt?"（可選）":""}${stopName(st)}${st.d?"｜"+st.d:""}`)]);
   const stay=LODGING.map(l=>[l.n,l.r,l.a,`入住 ${md(l.in)}`,`退房 ${md(l.out)}`,l.note].filter(Boolean).join("｜"));
@@ -1882,7 +1881,7 @@ function chatContext(){
   const flights=FLIGHTS.map(f=>[f.kind==="arrive"?"抵達":"回程",f.who?(WHO[f.who]||{name:f.who}).name+" 另外搭":f.people||"全團",f.no&&`${f.airline||""} ${f.no}`.trim(),md(f.date),f.time,f.note].filter(Boolean).join("｜"));
   const place=(p,tip)=>[p.n+(p.loc?`（${p.loc}）`:""),[p.c,p.sub].filter(Boolean).join("/"),p.r,p.a,p.h,p.rt&&`評分 ${p.rt}${p.rv?`（${p.rv} 則）`:""}`,p.note,tip&&p.tip].filter(Boolean).join("｜");
   const util=UTIL.length?["【實用地點】",...UTIL.map(p=>place(p,true))]:[];  // shown on the 已訂 tab; keeps its tips
-  const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,...util,"【地點】",...P.map(p=>place(p,tip))].join("\n");
+  const build=tip=>["今天："+today,"【行程】",...plan,"【住宿】",...stay,"【訂位】",...booked,"【航班】",...flights,...util,"【地點】",...PLACES.map(p=>place(p,tip))].join("\n");
   let s=build(true); if(s.length>MAX) s=build(false);
   return s.length>MAX?s.slice(0,MAX):s;
 }
@@ -1949,7 +1948,7 @@ $("#chatIn").addEventListener("input",chatGrow);
 $("#chatIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault(); $("#chatForm").requestSubmit();}});
 $("#chatEmpty").addEventListener("click",e=>{const b=e.target.closest("[data-chatq]"); if(b&&!chatBusy) chatSend(b.dataset.chatq);});
 const canon=v=>JSON.stringify(v,(k,x)=>x&&typeof x==="object"&&!Array.isArray(x)?Object.fromEntries(Object.entries(x).sort()):x);
-const todayCM=()=>cmToday();
+const todayInChiangMai=()=>cmToday();
 // Times are picked in half-hour steps (05:00–24:00); an older off-grid time (e.g. 19:45) stays selectable until changed.
 const HALF_HOURS=Array.from({length:39},(_,i)=>{const m=300+i*30; return String(Math.floor(m/60)).padStart(2,"0")+":"+(m%60?"30":"00");});
 function timeOptions(t){
@@ -1960,7 +1959,7 @@ function timeOptions(t){
 function hoursWarn(st,date){
   const p=st.id&&placeById(st.id); if(!p||bookedOn(st,date)) return "";
   const w=weekday(date);
-  if((p.cd||[]).includes(w)) return `週${WD[w]}公休`;
+  if((p.cd||[]).includes(w)) return `週${WEEKDAY_ZH[w]}公休`;
   const t=toMin(st.t); if(t==null||!Array.isArray(p.oh)||!p.oh.length) return "";
   const m=w*1440+t, open=p.oh.some(([a,b])=>(m>=a&&m<b)||(m+10080>=a&&m+10080<b));
   if(open) return "";
@@ -1985,8 +1984,8 @@ function sleepWarn(di){
   return `今晚 ${la.t} 回、明天 ${bb?bb.time:fb.t} 出發，只睡約 ${((tb+1440-ta)/60).toFixed(1).replace(".0","")} 小時，可以早點收工`;
 }
 function daySection(di){
-  const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayCM()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
-  const early=d.date>=todayCM()&&!!(live&&live.done), past=d.date<todayCM()||early, fold=past&&!ed&&!pastOpen.has(di);
+  const d=PLAN[di], stops=dayStops(di), ti=PLAN.findIndex(x=>x.date===todayInChiangMai()), ed=planEditing.has(di), live=PLAN_LIVE[d.date];
+  const early=d.date>=todayInChiangMai()&&!!(live&&live.done), past=d.date<todayInChiangMai()||early, fold=past&&!ed&&!pastOpen.has(di);
   const gap=i=>{const a=planPoint(stops[i]), b=stops[i+1]&&planPoint(stops[i+1]); if(!a||!b||!a.ll||!b.ll) return ""; const d=km(a.ll,b.ll); return d<.05?"":`<li class="ps-gap" aria-hidden="true">↓ ${fmtKm(d)}</li>`;};
   let k=0; const rows=stops.map((st,i)=>{const pt=planPoint(st); if(!pt) return ""; const num=st.opt?"O":pt.hotel?"宿":pt.airport?"機":++k;
     const bk=bookedOn(st,d.date), time=bk?bkTime(bk):st.t, lock=bk?`<span class="tag booked">已訂</span>`:"", warn=[hoursWarn(st,d.date),i>0?travelWarn(stops,i,d.date):""].filter(Boolean).join("；"), wl=warn?`<span class="ps-warn">⚠ ${esc(warn)}</span>`:"";
@@ -2021,13 +2020,13 @@ function daySection(di){
       <div class="pday-mapcol"><div class="pday-map" data-pmap="${di}" role="img" aria-label="Day ${di+1} 路線地圖"></div><button type="button" class="linkbtn pday-big" data-mapday="${di}">在大地圖看附近地點 →</button></div></div>
   </section>`;
 }
-function refreshPlanNav(){const ti=PLAN.findIndex(d=>d.date===todayCM());
+function refreshPlanNav(){const ti=PLAN.findIndex(d=>d.date===todayInChiangMai());
   document.querySelectorAll("[data-pjump]").forEach(b=>{const i=+b.dataset.pjump-1; b.textContent=(dayDone(i)?"✓ ":"")+(i===ti?"今天 ":"")+md(PLAN[i].date);});}
 function renderPlan(){
   const el=$("#planPanel"); if(el.dataset.done==="1") return;
   if(!planLoaded&&!planHadCache){if(el.dataset.done!=="wait"){el.dataset.done="wait"; el.innerHTML=`<p class="tab-lead">載入行程中…</p>`; setTimeout(()=>{if(el.dataset.done==="wait"){el.dataset.done=""; renderPlan();}},2500);} return;}
   el.dataset.done="1";
-  const ti=PLAN.findIndex(d=>d.date===todayCM());
+  const ti=PLAN.findIndex(d=>d.date===todayInChiangMai());
   el.innerHTML=`<p class="tab-lead">依大家的愛心排好的每日行程。按「編輯行程」調整順序、加減地點，三個人即時同步；已訂的時間固定不動。</p>
   <p class="plan-lead">O 是彈性（時間夠再去）；紫色是按摩、藍色是課程；地圖上淡化的點可以點了加到這天。</p>${MAP_LEGEND}
   <div id="nextStop" hidden></div>
@@ -2086,7 +2085,7 @@ function initSort(di){
 // During the trip: the next stop today (by time), with one-tap navigation from where you are.
 function renderNext(){
   const el=$("#nextStop"); if(!el) return;
-  const ti=PLAN.findIndex(d=>d.date===todayCM()); if(ti<0){el.hidden=true; return;}
+  const ti=PLAN.findIndex(d=>d.date===todayInChiangMai()); if(ti<0){el.hidden=true; return;}
   const n=cmNow(), now=n.getUTCHours()*60+n.getUTCMinutes(), stops=dayStops(ti).filter(st=>planPoint(st));
   const timeOf=st=>{const b=bookedOn(st,PLAN[ti].date); return toMin(b?b.time:st.t);};
   const nx=stops.find(st=>{const t=timeOf(st); return t!=null&&t>=now-15;});
@@ -2099,7 +2098,7 @@ function renderNext(){
 }
 setInterval(()=>{if(!$("#planPanel").hidden&&!document.hidden) renderNext();},60000);
 function renderDay(di){
-  if(PLAN[di]&&PLAN[di].date===todayCM()) renderNext();
+  if(PLAN[di]&&PLAN[di].date===todayInChiangMai()) renderNext();
   if(pcId()) renderPopup();
   if(mapReady&&mapState.planDay===di){drawMarkers(); if(!$("#mapPanel").hidden) renderTrip();}
   const sec=$("#pday"+(di+1)); if(!sec) return;
@@ -2117,7 +2116,7 @@ function renderDay(di){
   }
   if(planEditing.has(di)) initSort(di);
 }
-async function putPlan(date,val){const r=await fetch(FB+"/plan/"+date+".json",val?{method:"PUT",body:JSON.stringify(val)}:{method:"DELETE"}); if(!r.ok) throw r.status;}
+async function putPlan(date,val){const r=await fetch(FIREBASE_URL+"/plan/"+date+".json",val?{method:"PUT",body:JSON.stringify(val)}:{method:"DELETE"}); if(!r.ok) throw r.status;}
 const planErr=e=>showToast(e===401||e===403?"行程還不能修改（資料庫權限），設定好之後就能使用。":"沒有存到雲端，請檢查網路後再試一次。");
 // Save a day's stops; msg shows a toast with 復原 (undo restores what the day was before this change).
 async function saveDay(di,stops,msg,quiet){
@@ -2153,14 +2152,14 @@ function applyPlan(d){
   refreshPlanNav();
 }
 async function planTick(){
-  try{const r=await fetch(FB+"/plan.json"); if(r.status===401||r.status===403){planBlocked=true; return;} if(!r.ok) return; applyPlan(await r.json());}catch(e){}
+  try{const r=await fetch(FIREBASE_URL+"/plan.json"); if(r.status===401||r.status===403){planBlocked=true; return;} if(!r.ok) return; applyPlan(await r.json());}catch(e){}
 }
 // Live: Firebase pushes every change (about a second). If the stream can't open, check every 8 s instead.
 let planTimer=null, planES=null;
 function startPlanLive(){
   planTick();
   try{
-    planES=new EventSource(FB+"/plan.json");
+    planES=new EventSource(FIREBASE_URL+"/plan.json");
     const onEvt=kind=>ev=>{try{const m=JSON.parse(ev.data), path=(m.path||"/").replace(/^\/+|\/+$/g,"");
       if(!path){if(kind==="put") applyPlan(m.data||{}); else applyPlan({...PLAN_LIVE,...(m.data||{})}); return;}
       const [date,...rest]=path.split("/");
@@ -2172,20 +2171,20 @@ function startPlanLive(){
   }catch(e){planTimer=setInterval(()=>{if(!document.hidden) planTick();},8000);}
 }
 // Place picker: add a place to a day (from the day's 「＋ 加地點」), or choose the day (from a card's 「加入行程」).
-const PK={mode:"place",day:0,id:null,opt:false};
+const PLACE_PICKER={mode:"place",day:0,id:null,opt:false};
 function openPicker(mode,arg){
   if(!me){askWho(()=>openPicker(mode,arg)); return;}
-  PK.mode=mode; PK.opt=false; if(mode==="place") PK.day=arg; else PK.id=arg;
+  PLACE_PICKER.mode=mode; PLACE_PICKER.opt=false; if(mode==="place") PLACE_PICKER.day=arg; else PLACE_PICKER.id=arg;
   const d=$("#pk"); renderPicker(""); if(!d.open) d.showModal?d.showModal():d.setAttribute("open","");
   const q=$("#pkQ"); if(q&&!matchMedia("(pointer:coarse)").matches) q.focus();
 }
 function renderPicker(q){
-  const optBox=`<label class="pk-opt"><input type="checkbox" id="pkOpt"${PK.opt?" checked":""}> 加為「彈性」（時間夠再去，不算進主要路線）</label>`;
-  if(PK.mode==="day"){const p=placeById(PK.id);
+  const optBox=`<label class="pk-opt"><input type="checkbox" id="pkOpt"${PLACE_PICKER.opt?" checked":""}> 加為「彈性」（時間夠再去，不算進主要路線）</label>`;
+  if(PLACE_PICKER.mode==="day"){const p=placeById(PLACE_PICKER.id);
     $("#pkIn").innerHTML=`<h2 class="pk-h">把「${esc(p?p.n:"")}」加到哪一天？</h2>${optBox}<div class="pk-days">${PLAN.map((d,i)=>`<button type="button" class="pk-day" data-pkday="${i}"><b>${md(d.date)}</b><span>${esc(d.title)}</span></button>`).join("")}</div>`; return;}
-  const ql=q.toLowerCase(), list=[...LODGING,...P].filter(p=>!ql||[p.n,p.loc,p.c,p.sub,p.r].join(" ").toLowerCase().includes(ql))
+  const ql=q.toLowerCase(), list=[...LODGING,...PLACES].filter(p=>!ql||[p.n,p.loc,p.c,p.sub,p.r].join(" ").toLowerCase().includes(ql))
     .sort((a,b)=>(LODGING.includes(b)-LODGING.includes(a))||(heartCount(b)-heartCount(a))||a.n.localeCompare(b.n,"zh-Hant")).slice(0,60);
-  const head=`<h2 class="pk-h">加地點到 ${md(PLAN[PK.day].date)}</h2><input id="pkQ" type="search" placeholder="搜尋地點" aria-label="搜尋地點" value="${esc(q)}">${optBox}`;
+  const head=`<h2 class="pk-h">加地點到 ${md(PLAN[PLACE_PICKER.day].date)}</h2><input id="pkQ" type="search" placeholder="搜尋地點" aria-label="搜尋地點" value="${esc(q)}">${optBox}`;
   const items=list.map(p=>{const h=LODGING.includes(p); return `<li><button type="button" class="pk-i" data-pkpick="${p.id}"><b>${esc(p.n)}</b><span class="local">${h?"住宿":esc(p.c)+(p.r?"・"+esc(p.r):"")}${!h&&heartCount(p)?`・${heartCount(p)} 個愛心`:""}</span></button></li>`;}).join("");
   if($("#pkQ")){$("#pkList").innerHTML=items||`<li class="ps-empty">找不到符合的地點。</li>`; return;}
   $("#pkIn").innerHTML=head+`<ol class="pk-list" id="pkList">${items}</ol>`;
@@ -2207,7 +2206,7 @@ function drawPlanMap(box){
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(m);
     const others=L.layerGroup().addTo(m), route=L.layerGroup().addTo(m);
     const all=addRoute(route,d.stops,di);
-    if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15}); else m.setView(CITY,13);
+    if(all.length) m.fitBounds(all,{padding:[28,28],maxZoom:15}); else m.setView(CITY_CENTER,13);
     addOthers(others,di,d.stops); planMaps[di]={m,others,route};   // vector layers need the view set first
   }).catch(()=>{box.innerHTML=`<p class="map-msg">地圖無法載入，請檢查網路後重新整理。</p>`;});
 }
@@ -2291,9 +2290,9 @@ document.addEventListener("click",async e=>{
   const adp=e.target.closest("[data-addplan]");
   if(adp){openPicker("day",adp.dataset.addplan); return;}
   const pkp=e.target.closest("[data-pkpick]");
-  if(pkp){closePicker(); addStop(PK.day,pkp.dataset.pkpick,PK.opt); return;}
+  if(pkp){closePicker(); addStop(PLACE_PICKER.day,pkp.dataset.pkpick,PLACE_PICKER.opt); return;}
   const pkd=e.target.closest("[data-pkday]");
-  if(pkd){closePicker(); addStop(+pkd.dataset.pkday,PK.id,PK.opt); return;}
+  if(pkd){closePicker(); addStop(+pkd.dataset.pkday,PLACE_PICKER.id,PLACE_PICKER.opt); return;}
   if(e.target.closest("[data-pkclose]")||e.target===$("#pk")){closePicker(); return;}
   const gt=e.target.closest("[data-gotab]");
   if(gt){e.preventDefault(); setTab(gt.dataset.gotab); window.scrollTo(0,$("#"+TABS.find(x=>x[0]===gt.dataset.gotab)[2]).offsetTop-60); return;}
@@ -2335,7 +2334,7 @@ document.addEventListener("click",async e=>{
   const s=e.target.closest("[data-heart]");
   if(s&&!s.disabled){
     if(!me){const hid=s.dataset.heart; askWho(()=>{const b=document.querySelector(`[data-heart="${hid}"]`); if(b) b.click();}); return;}
-    const id=s.dataset.heart, who=me, pk=who+"/"+id, p=P.find(x=>x.id===id), name=WHO[who].name;
+    const id=s.dataset.heart, who=me, pk=who+"/"+id, p=PLACES.find(x=>x.id===id), name=WHO[who].name;
     const prevLocal=hearted(p,who), next=!prevLocal;
     const orig=pending[pk]?pending[pk].orig:prevLocal;
     if(pending[pk]) clearTimeout(pending[pk].timer);
@@ -2343,7 +2342,7 @@ document.addEventListener("click",async e=>{
     const commit=async()=>{
       delete pending[pk];
       if(next===orig){setSync(true);return;}
-      try{const r=await fetch(FB+"/"+WHO[who].path+"/"+encodeURIComponent(id)+".json",{method:"PUT",body:JSON.stringify(next)}); if(!r.ok) throw 0; setSync(true);}
+      try{const r=await fetch(FIREBASE_URL+"/"+WHO[who].path+"/"+encodeURIComponent(id)+".json",{method:"PUT",body:JSON.stringify(next)}); if(!r.ok) throw 0; setSync(true);}
       catch(err){setSync(false); note(name+" 的愛心沒有存到雲端，請檢查網路後再按一次。");}
     };
     pending[pk]={timer:setTimeout(commit,UNDO_MS),orig};
@@ -2384,7 +2383,7 @@ function pushLater(di,st,i,t){
   return pushed||clash?`「${n}」改到 ${t}`+(pushed?`；後面 ${pushed} 個地點跟著往後`:"")+(clash?`。注意：會撞到已訂的「${(planPoint(clash)||{n:""}).n}」，請手動調整`:""):"";
 }
 document.addEventListener("input",e=>{if(e.target.id==="pkQ") renderPicker(e.target.value);});
-document.addEventListener("change",e=>{if(e.target.id==="pkOpt") PK.opt=e.target.checked;});
+document.addEventListener("change",e=>{if(e.target.id==="pkOpt") PLACE_PICKER.opt=e.target.checked;});
 $("#ideaForm").addEventListener("submit",e=>{e.preventDefault(); const t=$("#ideaText").value.trim(); if(t) submitIdea(t);});
 $("#addForm").addEventListener("submit",async e=>{e.preventDefault(); const t=$("#addText").value.trim(), b=$("#addSend"); if(!t||b.disabled) return;
   b.disabled=true; b.textContent="送出中…"; try{await submitInbox(t,$("#addNote").value.trim());} finally{b.disabled=false; b.textContent="送出";}});
@@ -2401,7 +2400,7 @@ $("#qp").addEventListener("close",()=>render());
 // other photos are hidden so the card's illustrated background shows instead of a broken image.
 document.addEventListener("error",e=>{
   const im=e.target; if(!(im instanceof HTMLImageElement)||!im.src.includes("places.googleapis.com")) return;
-  if(im.closest("#lbIn")&&im.src.includes("maxWidthPx=1200")){const x=phList(placeById(LB.id))[LB.i]; if(x&&x.src!==im.src){im.src=x.src; return;}}
+  if(im.closest("#lbIn")&&im.src.includes("maxWidthPx=1200")){const x=phList(placeById(LIGHTBOX.id))[LIGHTBOX.i]; if(x&&x.src!==im.src){im.src=x.src; return;}}
   im.classList.add("img-fail");
 },true);
 $("#lb").addEventListener("touchstart",e=>{lbTouch=e.touches[0].clientX;},{passive:true});
@@ -2411,7 +2410,7 @@ $(".tabs").addEventListener("keydown",e=>{if(e.key!=="ArrowRight"&&e.key!=="Arro
   const i=TABS.findIndex(x=>$("#"+x[1]).getAttribute("aria-selected")==="true"), n=(i+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length; setTab(TABS[n][0],true);});
 {const hash=location.hash==="#trip"?"#map":location.hash, h=TABS.find(x=>x[3]&&x[3]===hash); if(h) setTab(h[0]); else if(!hash&&TRIP_DAYS.includes(cmToday())) setTab("plan");}
 
-const FB="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app";
+const FIREBASE_URL="https://thailand-2026-7304d-default-rtdb.asia-southeast1.firebasedatabase.app";
 function setSync(ok){const n=document.getElementById("sync"); if(n){n.dataset.state=ok?"ok":"off"; n.textContent=ok?"已同步":navigator.onLine===false?"沒有網路：顯示上次存下的資料，修改會存不到":"離線，愛心可能沒存到";}}
 addEventListener("offline",()=>setSync(false)); addEventListener("online",()=>setSync(true));
 if("serviceWorker" in navigator&&location.protocol==="https:"){const reg=()=>navigator.serviceWorker.register("sw.js").catch(()=>{}); document.readyState==="complete"?reg():addEventListener("load",reg);}
@@ -2423,7 +2422,7 @@ function applyAll(who,obj){
 }
 // A denied path (rules not opened yet) disables that person's hearts instead of flagging the page offline.
 async function pullOne(x){
-  try{const r=await fetch(FB+"/"+x.path+".json");
+  try{const r=await fetch(FIREBASE_URL+"/"+x.path+".json");
     if(r.status===401||r.status===403){if(reachable[x.key]!==false){reachable[x.key]=false;render();} return true;}
     if(!r.ok) throw 0; const was=reachable[x.key]; reachable[x.key]=true; applyAll(x.key,await r.json()); if(was===false) listen(x); return true;}
   catch(e){return false;}
@@ -2431,7 +2430,7 @@ async function pullOne(x){
 async function pull(){const res=await Promise.all(PEOPLE.map(pullOne)); setSync(res.every(Boolean));}
 function listen(x){
   try{
-    const es=new EventSource(FB+"/"+x.path+".json");
+    const es=new EventSource(FIREBASE_URL+"/"+x.path+".json");
     es.addEventListener("put",ev=>{try{const d=JSON.parse(ev.data);
       if(d.path==="/"){applyAll(x.key,d.data);}
       else{const id=d.path.slice(1), before=remote[x.key][id]; if(typeof d.data==="boolean") remote[x.key][id]=d.data; else delete remote[x.key][id]; if(before!==remote[x.key][id]) updatePlaces([id]);}

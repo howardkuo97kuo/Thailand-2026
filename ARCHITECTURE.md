@@ -29,17 +29,18 @@
 | `places.json` | `cats`、`regions`、`places`；網頁與 `tools/` 讀同一份。內建地點的唯一來源 |
 | `sw.js` | 離線快取，見下文「離線」 |
 | `worker/index.js` | 問 AI 的後端，只做轉送、規則、模型輪替 |
-| `tools/cnx_common.py` | 排程工具共用：Firebase REST（帶密鑰）、讀 `places.json` |
+| `tools/common.py` | 排程工具共用：Firebase REST（帶密鑰）、讀 `places.json` |
 | `tools/inbox_agent.py` | 把 `/inbox` 的推薦地點用 Google Places 查好，寫進 `/places` |
 | `tools/feedback_agent.py` | 把 `/feedback` 的意見整理成建議；Howard 同意後才真的修改 |
 | `.github/workflows/read-firebase.yml`、`write-plan.yml` | 讓雲端的 Claude 讀寫 Firebase（見「Claude 的讀寫橋接」） |
-| `docs/superpowers/` | 問 AI 當初的設計與計畫文件，只供參考 |
+| `docs/chatbot/` | 問 AI 當初的設計（`design.md`）與計畫（`plan.md`），只供參考 |
+| `docs/trip-site-template.md`、`docs/site-retrospective-2026-10-23.md` | 開新旅程網站用的範本，以及清邁站的做法回顧 |
 
 ## 前端分層（`index.html` 的 script）
 
 沒有框架，狀態放在模組內的變數，畫面用字串模板重畫。由上到下大致是：
 
-1. **資料常數**：`CATS`/`REGIONS`/`P`（來自 `places.json`）、`PLAN`（預設行程）、`BOOKINGS`、`FLIGHTS`、`LODGING`、`PEOPLE`、`NO_HEART`、`SPA_RANK`、`DAY_TIPS`、`TRIP_DAYS`。
+1. **資料常數**：`CATS`/`REGIONS`/`PLACES`（來自 `places.json`）、`PLAN`（預設行程）、`BOOKINGS`、`FLIGHTS`、`LODGING`、`PEOPLE`、`NO_HEART`、`SPA_RANK`、`DAY_TIPS`、`TRIP_DAYS`。
    這些是「清邁專屬」的部分，也是最難複製到別的旅程的部分。
 2. **地點與照片**：`placeById`、`loadLive`（Google Places API (New) 取營業時間與照片，每個地點最多 `MAX_PHOTOS` 張）、燈箱、地點彈窗。
 3. **挑地點**：`filtered`／`sortCmp`／`card`／`table`／`render`，篩選條件同步到網址（`readUrlState`／`writeUrlState`）。
@@ -51,13 +52,13 @@
    時間規則由 `retime`／`pushLater` 實作，預約與航班由 `bookedOn`／`isFixed` 鎖定。
 7. **推薦與意見**：`submitInbox`／`renderInbox`、`submitIdea`／`decideIdea`／`renderIdeas`。
 8. **問 AI**：`chatContext()` 把網站資料組成不超過 30,000 字的摘要，`chatSend` 送到 Worker 並逐字顯示。
-9. **同步**：檔案最後的 `FB`、`pull`／`listen`／`liveJSON`／`startPlanLive`、`setSync`，以及 service worker 註冊。
+9. **同步**：檔案最後的 `FIREBASE_URL`、`pull`／`listen`／`liveJSON`／`startPlanLive`、`setSync`，以及 service worker 註冊。
 
 ## 資料流
 
 ### 地點
 內建地點來自 `places.json`；人們推薦的地點先進 `/inbox`，`inbox_agent.py` 查好 Google 資料後寫進 `/places`，
-網頁用 `liveJSON("places")` 收到後由 `mergeAdded` 併進 `P`；被移除的地點記在 `/removed`。
+網頁用 `liveJSON("places")` 收到後由 `mergeAdded` 併進 `PLACES`；被移除的地點記在 `/removed`。
 
 ### Firebase 路徑
 

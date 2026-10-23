@@ -9,11 +9,11 @@ Every night a scheduled Claude task runs this script:
   python tools/feedback_agent.py fail <id> "<reason>"    -> set status "failed" with a short reason shown on the site
 
 Only Howard can approve a proposal on the site (status "approved"); nothing is changed before that.
-Firebase access and the secret file are in cnx_common.py.
+Firebase access and the secret file are in common.py.
 """
 import io, json, sys, time
 
-from cnx_common import fb
+from common import fb
 
 
 def read_text(path):

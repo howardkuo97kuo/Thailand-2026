@@ -11,7 +11,7 @@
 
 **Tech Stack:** 原生 HTML/CSS/JS（沒有建置步驟）、Cloudflare Workers（主控台部署）、Gemini API REST。
 
-**Spec:** `docs/superpowers/specs/2026-10-12-chatbot-design.md`
+**Spec:** `docs/chatbot/design.md`
 
 ## Global Constraints
 

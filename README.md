@@ -17,7 +17,7 @@
 | `worker/index.js` | 「問 AI」的後端（Cloudflare Worker），整個檔案貼到 Cloudflare 主控台部署 |
 | `tools/inbox_agent.py` | 處理「新地點推薦」分頁送出的地點 |
 | `tools/feedback_agent.py` | 處理「意見」分頁的建議 |
-| `tools/cnx_common.py` | 兩支工具共用：Firebase 讀寫、讀 `places.json` |
+| `tools/common.py` | 兩支工具共用：Firebase 讀寫、讀 `places.json` |
 
 ## 地點資料
 

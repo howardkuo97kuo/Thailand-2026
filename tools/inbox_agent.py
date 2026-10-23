@@ -8,12 +8,12 @@ The site's 新增地點 tab writes submissions to Firebase /inbox. A scheduled C
   python tools/inbox_agent.py dup <inboxId> <placeId>
   python tools/inbox_agent.py fail <inboxId> "<reason shown to people>"
 
-Firebase access and the secret file are in cnx_common.py. Categories, regions and the built-in places come from
+Firebase access and the secret file are in common.py. Categories, regions and the built-in places come from
 places.json. The Google key is read from index.html; requests send the site's allowed Referer.
 """
 import io, json, os, re, sys, time, urllib.parse, urllib.request
 
-from cnx_common import ROOT, fb, site_data
+from common import ROOT, fb, site_data
 
 REFERER = "http://localhost:8765/"
 SITE = site_data()

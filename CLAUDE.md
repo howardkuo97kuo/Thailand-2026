@@ -66,6 +66,12 @@
 - 避免用會比對到自己指令列的 `pkill -f`。
 - commit 訊息依環境指示結尾加上 Claude 的 `Co-Authored-By:` 行。
 
+## 命名慣例
+- 檔名與程式碼用英文，文件用繁體中文；範本與回顧在 `docs/`，問 AI 的設計在 `docs/chatbot/`。
+- 常數用大寫全名（例：`PLACES`、`FIREBASE_URL`、`QUICK_PICK`、`PLACE_PICKER`、`LIGHTBOX`、`PACKING_LIST`、`todayInChiangMai()`），不要再用單一字母。
+- **刻意不改的名稱**：Firebase 路徑、`cnx` 開頭的 localStorage 鍵（`cnxMe`、`cnxPlan` 等）與 `sw.js` 的快取名（改了會清掉每個人裝置上的設定與快取）、
+  兩個 workflow 的檔名（派送網址與 Claude 的做法依賴它們）、Worker 名稱 `cnx-chat`、本機密鑰路徑 `~/.cnx/`。
+
 ## 已知限制（如實記錄）
 - 清邁專屬值寫死在程式裡：日期、`Asia/Bangkok`、Firebase 網址、Worker 網址、`cnx` 開頭的 localStorage 鍵與 `cnx-v3` 快取名、`write-plan.yml` 的日期範圍。
 - 預設行程、住宿、訂位、航班等資料與程式一起放在 `index.html`（約 2,450 行），不在 JSON。
